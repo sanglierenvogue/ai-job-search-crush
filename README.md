@@ -4,6 +4,22 @@
 
 # AI Job Search
 
+> ## 🚀 OpenCode Edition
+>
+> This fork adds full [opencode](https://github.com/opencode-ai/opencode) compatibility to the original [ai-job-search](https://github.com/MadsLorentzen/ai-job-search) framework.
+>
+> **What's different:**
+> - `AGENTS.md` — opencode equivalent of CLAUDE.md (candidate profile + workflow rules)
+> - `.opencode/command/*.md` — 6 command files for /setup, /apply, /scrape, etc.
+> - **Zero changes** to original files — sync upstream freely
+>
+> ```bash
+> opencode
+> /setup   # configure your profile
+> /scrape  # search jobs
+> /apply   # generate tailored CV + cover letter
+> ```
+
 An AI-powered job application framework built for [Claude Code](https://claude.com/claude-code) and [opencode](https://github.com/opencode-ai/opencode). Fork it, fill in your profile, and let AI evaluate job postings, tailor your CV, write cover letters, and prepare you for interviews.
 
 <p align="center">

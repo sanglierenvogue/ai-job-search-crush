@@ -4,7 +4,7 @@
 
 # AI Job Search
 
-> ## 🚀 OpenCode Edition
+> ## OpenCode Edition
 >
 > This fork adds full [opencode](https://github.com/opencode-ai/opencode) compatibility to the original [ai-job-search](https://github.com/MadsLorentzen/ai-job-search) framework.
 >

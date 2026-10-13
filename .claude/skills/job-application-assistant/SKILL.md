@@ -3,8 +3,9 @@ name: job-application-assistant
 description: >
   Assists with job applications: evaluating job postings, tailoring CVs, writing cover letters,
   and preparing for interviews. Triggers on keywords like: job posting, job application, CV,
-  cover letter, resume, interview prep, job fit, career, application, apply, ansøgning, stilling
-allowed-tools: Read, Glob, Grep, WebFetch, WebSearch, Edit, Write, AskUserQuestion
+  cover letter, resume, interview prep, job fit, career, application, apply, ansøgning, stilling.
+  User-invocable as project:job-application-assistant.
+user-invocable: true
 ---
 
 # Job Application Assistant
@@ -16,16 +17,16 @@ allowed-tools: Read, Glob, Grep, WebFetch, WebSearch, Edit, Write, AskUserQuesti
 When the user provides a job posting (URL or text), follow this workflow:
 
 ### Step 1: Research & Evaluate Fit
-- Fetch the job posting content (use WebFetch for URLs)
+- Fetch the job posting content (use `fetch` for URLs)
 - Analyze the posting for required competencies, keywords, and priorities
-- Research the company (website, LinkedIn, mission, recent news)
+- Research the company (website, LinkedIn, mission, recent news) using `agentic_fetch` and `fetch`
 - Score the posting against the candidate's profile using the framework in `04-job-evaluation.md`
 - Present the evaluation table and verdict
 - Suggest whether the candidate should call the employer before applying (see `04-job-evaluation.md` for guidance)
 - Ask the user if they want to proceed with an application
 
 ### Step 2: Tailor CV
-- Read the most relevant existing CV variant from `cv/` as a starting point
+- Read the most relevant existing CV variant from `cv/` with `view` as a starting point
 - Follow the guidelines in `05-cv-templates.md`
 - Create `cv/main_<company>.tex` with tailored content
 - Adjust: profile statement, skills section, experience bullet emphasis, section order

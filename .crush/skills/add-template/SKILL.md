@@ -1,23 +1,33 @@
-# /add-template - Register a Custom CV or Cover Letter Template
+---
+name: add-template
+description: >
+  Register a custom LaTeX CV or cover letter template: store the template files, capture
+  compile instructions, run a mandatory test compile, and wire the template into the apply
+  workflow. User-invocable as project:add-template, optionally with --list, --use <name>,
+  or a path to a .tex template file.
+user-invocable: true
+---
 
-You are helping the user register their own LaTeX template with the AI Job Search framework. The framework ships with moderncv (banking style) for CVs and a custom `cover.cls` for cover letters. This command lets the user swap in their own template: store the template files, capture usage instructions (compile engine, fonts, style rules, page limits), verify the template compiles, and wire it into the `/apply` workflow so every future application uses it.
+# Add-Template: Register a Custom CV or Cover Letter Template
 
-`$ARGUMENTS` may contain a subcommand, a file path, or nothing.
+You are helping the user register their own LaTeX template with the AI Job Search framework. The framework ships with moderncv (banking style) for CVs and a custom `cover.cls` for cover letters. This command lets the user swap in their own template: store the template files, capture usage instructions (compile engine, fonts, style rules, page limits), verify the template compiles, and wire it into the `project:apply` workflow so every future application uses it.
+
+The user's invocation message may contain a subcommand, a file path, or nothing.
 
 Follow these steps **in order**.
 
 ---
 
-## Step 0: Parse Arguments
+## Step 0: Parse the Invocation
 
-- If `$ARGUMENTS` contains `--list`: run **List Mode** below and stop.
-- If `$ARGUMENTS` contains `--use <name>`: skip to **Step 5: Activate** with that template name. `--use default` deactivates any custom template and restores the stock guidance (see Step 5).
-- If `$ARGUMENTS` contains a file path or @-mentioned file: treat it as the template source and carry it into Step 1.
+- If the invocation contains `--list`: run **List Mode** below and stop.
+- If the invocation contains `--use <name>`: skip to **Step 5: Activate** with that template name. `--use default` deactivates any custom template and restores the stock guidance (see Step 5).
+- If the invocation contains a file path: treat it as the template source and carry it into Step 1.
 - Otherwise: start the registration flow at Step 1.
 
 ### List Mode
 
-Use Glob with `templates/**/TEMPLATE.md` to find registered templates. For each, read the manifest and print a table:
+Use `glob` with pattern `templates/**/TEMPLATE.md` to find registered templates. For each, read the manifest and print a table:
 
 ```
 ## Registered Templates
@@ -27,27 +37,27 @@ Use Glob with `templates/**/TEMPLATE.md` to find registered templates. For each,
 | <name> | CV / Cover letter | lualatex/xelatex/pdflatex | <main font> | yes/no |
 ```
 
-A template is **active** if `05-cv-templates.md` (CV) or `06-cover-letter-templates.md` (cover letter) contains an `ACTIVE-TEMPLATE` managed block naming it. If no custom templates exist, say so and explain that `/add-template` registers one. Stop here.
+A template is **active** if `05-cv-templates.md` (CV) or `06-cover-letter-templates.md` (cover letter) contains an `ACTIVE-TEMPLATE` managed block naming it. If no custom templates exist, say so and explain that `project:add-template` registers one. Stop here.
 
 ---
 
 ## Step 1: Template Type and Source
 
-Ask the user (skip anything already answered by `$ARGUMENTS`):
+Ask the user (skip anything already answered by the invocation):
 
 1. **Type:** Is this a **CV** template or a **cover letter** template?
 2. **Source:** Where is the template? Accept any of:
-   - A path or @-mention of a `.tex` file (plus optional `.cls`/`.sty` files)
+   - A path to a `.tex` file (plus optional `.cls`/`.sty` files)
    - Pasted LaTeX content
    - A directory containing the template and its assets (class files, fonts, images)
 
-Read every provided file. If the template references a document class or package that is not part of standard TeX distributions (e.g. a custom `.cls`), confirm the user has the file and ask for it if missing — the template cannot compile without it.
+Read every provided file with `view`. If the template references a document class or package that is not part of standard TeX distributions (e.g. a custom `.cls`), confirm the user has the file and ask for it if missing — the template cannot compile without it.
 
 ---
 
 ## Step 2: Capture Template Instructions
 
-Interview the user for the metadata that `/apply` needs to use the template correctly. Infer as much as possible from the LaTeX source first (documentclass, `\fontspec` calls, geometry, colors) and present your inferences for confirmation rather than asking blind questions.
+Interview the user for the metadata that `project:apply` needs to use the template correctly. Infer as much as possible from the LaTeX source first (documentclass, `\fontspec` calls, geometry, colors) and present your inferences for confirmation rather than asking blind questions.
 
 Collect:
 
@@ -57,7 +67,7 @@ Collect:
    - **Bundled font files** (`.ttf`/`.otf` shipped with the template): copy them into the template folder in Step 3 and record the relative `Path` used in `\fontspec` calls.
    - **System / TeX-distribution fonts**: record the font name and note that the user's machine must have it installed.
 4. **Style rules** - anything the drafter must preserve when filling the template: color scheme, section order, heading style, spacing conventions, bullet formatting, date format.
-5. **Page limit** - hard page count for the compiled PDF. Default: **2 pages** for a CV, **1 page** for a cover letter. `/apply`'s compile-and-inspect loop enforces this.
+5. **Page limit** - hard page count for the compiled PDF. Default: **2 pages** for a CV, **1 page** for a cover letter. The `project:apply` compile-and-inspect loop enforces this.
 6. **Known pitfalls** (optional) - macros that break with certain content (like the stock template's `\lettercontent{}`/`itemize` interaction), characters that need escaping, sections that must not be reordered.
 
 ---
@@ -69,7 +79,7 @@ Create the template folder:
 - CV: `templates/cv/<name>/`
 - Cover letter: `templates/cover_letters/<name>/`
 
-Write into it:
+Write into it (with the `write` tool):
 
 1. **`template.tex`** - the template skeleton. Replace all personal data in the source with `[PLACEHOLDER]` tokens (`[YOUR_NAME]`, `[YOUR_EMAIL]`, `[YOUR_PHONE]`, `[YOUR_LINKEDIN_URL]`, ...) so the template is shareable and profile-agnostic. Keep the structure, preamble, and styling exactly as provided.
 2. **Class/style files** - copy any `.cls`/`.sty` files alongside `template.tex`.
@@ -111,7 +121,7 @@ Never register a template without a successful test compile. LaTeX templates tha
    cd templates/<type>/<name> && <engine> -interaction=nonstopmode _compile_test.tex
    ```
 3. If the compile fails: show the user the relevant error lines, diagnose (missing font file, wrong engine, missing class), fix what you can (e.g. font `Path` values), and re-compile. If the fix needs input only the user has (a missing font file, a license-restricted class), ask for it and wait.
-4. On success, Read the PDF and confirm the layout renders sensibly (no overlapping text, fonts loaded, page count plausible for dummy content). Record any surprises in the manifest's "Known pitfalls".
+4. On success, render the PDF to images (`pdftoppm -png -r 100 _compile_test.pdf page`) and inspect them with `view` to confirm the layout renders sensibly (no overlapping text, fonts loaded, page count plausible for dummy content). Record any surprises in the manifest's "Known pitfalls".
 5. Delete the scratch files: `_compile_test.tex`, `_compile_test.pdf`, and all `.aux`/`.log`/`.out` artifacts.
 
 Do not proceed to Step 5 until the test compile passes.
@@ -120,12 +130,12 @@ Do not proceed to Step 5 until the test compile passes.
 
 ## Step 5: Activate the Template
 
-Activation wires the template into `/apply` by adding a **managed block** to the top of the relevant guidance file — `05-cv-templates.md` for CVs, `06-cover-letter-templates.md` for cover letters. `/apply` reads these files in its drafting step, so the block is all it takes.
+Activation wires the template into `project:apply` by adding a **managed block** to the top of the relevant guidance file — `05-cv-templates.md` for CVs, `06-cover-letter-templates.md` for cover letters. The apply workflow reads these files in its drafting step, so the block is all it takes.
 
 Insert (or replace, if one exists) this block immediately after the file's H1 title:
 
 ```markdown
-<!-- BEGIN ACTIVE-TEMPLATE (managed by /add-template - do not edit by hand) -->
+<!-- BEGIN ACTIVE-TEMPLATE (managed by project:add-template - do not edit by hand) -->
 > **Active template override: `<name>`**
 >
 > A custom template is active. Where this block conflicts with the stock guidance below, this block wins. Structural advice below (tailoring, page-budget, cutting rules) still applies.
@@ -155,12 +165,12 @@ Present a summary:
 >
 > - Files: `templates/<type>/<name>/` (skeleton, manifest<, class files><, fonts>)
 > - Test compile: passed with `<engine>` (<N> page(s))
-> - `/apply` will now draft <CVs | cover letters> from this template.
+> - `project:apply` will now draft <CVs | cover letters> from this template.
 >
 > Useful follow-ups:
-> - `/add-template --list` — see all registered templates
-> - `/add-template --use <other-name>` — switch templates
-> - `/add-template --use default` — go back to the stock <moderncv | cover.cls> template
+> - `project:add-template --list` — see all registered templates
+> - `project:add-template --use <other-name>` — switch templates
+> - `project:add-template --use default` — go back to the stock <moderncv | cover.cls> template
 
 ---
 
@@ -168,5 +178,5 @@ Present a summary:
 
 - Registration is idempotent: re-running with the same name offers to update the existing template rather than duplicating it.
 - Templates are stored profile-agnostic (`[PLACEHOLDER]` tokens) so they can be shared or committed without leaking personal data.
-- The compile check in Step 4 is non-negotiable — a template that has never compiled will fail mid-`/apply`, which is the worst place to discover it.
-- Activation is a small managed block, not a rewrite of the guidance files: `/setup` and manual edits to `05`/`06` survive template switches, and `--use default` is a clean revert.
+- The compile check in Step 4 is non-negotiable — a template that has never compiled will fail mid-`project:apply`, which is the worst place to discover it.
+- Activation is a small managed block, not a rewrite of the guidance files: `project:setup` and manual edits to `05`/`06` survive template switches, and `--use default` is a clean revert.

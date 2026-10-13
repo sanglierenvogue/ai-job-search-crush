@@ -1,6 +1,6 @@
 ---
 name: jobdanmark-search
-version: 1.0.0
+user-invocable: true
 description: >
   Make sure to use this skill whenever the user mentions anything related to Danish
   job listings, job search in Denmark, finding work in Denmark, or job vacancies on
@@ -16,8 +16,6 @@ description: >
   ledige job, ansøgningsfrist, søg job, job opslaget, jobopslag, danish vacancies,
   work in denmark, employment denmark, job denmark, jobs near me denmark,
   apprentice denmark, internship denmark, part-time denmark, full-time denmark.
-context: fork
-allowed-tools: Bash(bun run skills/jobdanmark-search/cli/src/cli.ts *)
 ---
 
 # Jobdanmark Search Skill

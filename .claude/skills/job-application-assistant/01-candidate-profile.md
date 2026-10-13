@@ -1,7 +1,7 @@
 # Candidate Profile
 
-<!-- SETUP: This file is populated by running /setup -->
-<!-- After running /setup, all sections will be filled with your actual information -->
+<!-- SETUP: This file is populated by running project:setup -->
+<!-- After running project:setup, all sections will be filled with your actual information -->
 
 ## Identity
 - **Name:** [YOUR_NAME]

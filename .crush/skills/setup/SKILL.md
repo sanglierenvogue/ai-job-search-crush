@@ -1,6 +1,16 @@
-# /setup - Profile Onboarding
+---
+name: setup
+description: >
+  Profile onboarding for the job search framework. Collects the candidate's professional
+  information via documents folder, single CV import, or interview mode, and populates all
+  profile files. User-invocable as project:setup, optionally with --section <name> for an
+  update-only flow (e.g. project:setup --section search).
+user-invocable: true
+---
 
-You are running the onboarding setup for the AI Job Search framework. Your goal is to collect the user's professional information and populate all profile files so the `/apply` workflow works out of the box.
+# Setup: Profile Onboarding
+
+You are running the onboarding setup for the AI Job Search framework. Your goal is to collect the user's professional information and populate all profile files so the `project:apply` workflow works out of the box.
 
 There are three paths into setup. Step 0 picks the right one; all three converge on Step 3 (file generation) and Step 4 (confirmation).
 
@@ -8,9 +18,9 @@ There are three paths into setup. Step 0 picks the right one; all three converge
 
 ## Step 0: Welcome & Choose Path
 
-If `$ARGUMENTS` contains `--section <name>`, skip directly to that section in Path C for an update-only flow. Do not run the path-selection prompt below.
+If the user's invocation includes `--section <name>` (e.g. `project:setup --section search`), skip directly to that section in Path C for an update-only flow. Do not run the path-selection prompt below.
 
-Otherwise, before greeting the user, scan the `documents/` folder. Use Glob with `documents/**/*` and count files per subfolder (`cv/`, `linkedin/`, `diplomas/`, `references/`, `applications/`).
+Otherwise, before greeting the user, scan the `documents/` folder. Use `glob` with pattern `documents/**/*` and count files per subfolder (`cv/`, `linkedin/`, `diplomas/`, `references/`, `applications/`).
 
 Then welcome the user with a single message that lists three paths. The wording changes based on what was found.
 
@@ -18,13 +28,13 @@ Then welcome the user with a single message that lists three paths. The wording 
 
 > **Welcome to the AI Job Search setup!**
 >
-> I'll help you build your professional profile so Claude can evaluate job postings, tailor CVs, write cover letters, and prepare you for interviews.
+> I'll help you build your professional profile so the AI can evaluate job postings, tailor CVs, write cover letters, and prepare you for interviews.
 >
 > I see files in your `documents/` folder: [list per subfolder, e.g. "2 in cv/, 1 in linkedin/, 3 in references/"]. Three ways to start:
 >
 > **Path A: Read my documents folder** (recommended for what you have) - I'll read everything in `documents/`, cross-reference for consistency, and build your profile from real source materials. Idempotent and safe to re-run as you add more documents.
 >
-> **Path B: Single CV import** - Paste or @-mention a single CV/resume here. I'll extract it and ask follow-up questions for what's missing.
+> **Path B: Single CV import** - Paste the CV/resume text here, or give me a path to a CV file. I'll extract it and ask follow-up questions for what's missing.
 >
 > **Path C: Interview mode** - I'll walk you through structured questions section by section.
 >
@@ -34,13 +44,13 @@ Then welcome the user with a single message that lists three paths. The wording 
 
 > **Welcome to the AI Job Search setup!**
 >
-> I'll help you build your professional profile so Claude can evaluate job postings, tailor CVs, write cover letters, and prepare you for interviews.
+> I'll help you build your professional profile so the AI can evaluate job postings, tailor CVs, write cover letters, and prepare you for interviews.
 >
 > Three ways to start:
 >
 > **Path A: Documents folder** (best signal if you have several materials) - Drop your CV / LinkedIn export / diplomas / reference letters in the `documents/` folder, then say "go". I'll read everything and build your profile from it. See `documents/README.md` for the folder layout.
 >
-> **Path B: Single CV import** - Paste or @-mention a single CV/resume here. I'll extract it and ask follow-up questions for what's missing.
+> **Path B: Single CV import** - Paste the CV/resume text here, or give me a path to a CV file. I'll extract it and ask follow-up questions for what's missing.
 >
 > **Path C: Interview mode** - I'll walk you through structured questions section by section. Good if you're starting from scratch.
 >
@@ -58,7 +68,7 @@ Follow these steps **exactly in order**.
 
 ### Step A1: Inventory
 
-Use Glob with `documents/**/*` to scan the full tree. Print:
+Use `glob` with pattern `documents/**/*` to scan the full tree. Print:
 
 ```
 ## Documents Found
@@ -76,7 +86,7 @@ If every subfolder is empty, stop and tell the user to populate the folder. Poin
 
 ### Step A2: Read Existing Skill Files
 
-Read these in parallel before extracting anything. You must know what is already there to make the merge intelligent.
+Read these in parallel with `view` before extracting anything. You must know what is already there to make the merge intelligent.
 
 - `.claude/skills/job-application-assistant/01-candidate-profile.md`
 - `.claude/skills/job-application-assistant/02-behavioral-profile.md`
@@ -90,7 +100,7 @@ Hold this content in context throughout Path A. Do not re-read.
 
 ### Step A3: Parse Documents
 
-Read each document found in Step A1. Process subfolders in this order: `cv/`, `linkedin/`, `diplomas/`, `references/`, `applications/`.
+Read each document found in Step A1 with `view`. Process subfolders in this order: `cv/`, `linkedin/`, `diplomas/`, `references/`, `applications/`.
 
 **`cv/` documents:** name, contact (email, phone, LinkedIn, GitHub), education (degree, institution, dates, thesis), work experience (title, company, dates, location, bullets), skills, publications, awards, profile/summary.
 
@@ -211,9 +221,9 @@ Wait for the user's choice on each conflict. If no conflicts, state "No conflict
 
 ### Step A7: Write Confirmed Changes and Fill Gaps
 
-Apply the confirmed changes with the Edit tool. Make targeted edits only. Do not rewrite entire files. State which changes were applied per file. If a file has no confirmed changes, state "No changes made to [filename]."
+Apply the confirmed changes with the `edit` tool. Make targeted edits only. Do not rewrite entire files. State which changes were applied per file. If a file has no confirmed changes, state "No changes made to [filename]."
 
-Documents cover skills, experience, education, references, and behavioral signal. They do not cover everything `/apply` and `/scrape` need. After the writes, ask follow-up questions for gaps:
+Documents cover skills, experience, education, references, and behavioral signal. They do not cover everything the `project:apply` and `project:job-scraper` workflows need. After the writes, ask follow-up questions for gaps:
 
 - Career goals and target role types
 - What excites the user in their next role
@@ -222,7 +232,7 @@ Documents cover skills, experience, education, references, and behavioral signal
 - Commute or location constraints (if not visible from CV)
 - Job search configuration (use the questions from Path C Section 9 below)
 
-Then proceed to Step 3 to populate the non-skill files (`CLAUDE.md`, `cv/main_example.tex`, `.claude/skills/job-scraper/search-queries.md`). Step 3 will detect that the seven skill files are already populated and skip those substeps.
+Then proceed to Step 3 to populate the non-skill files (`AGENTS.md`, `cv/main_example.tex`, `.claude/skills/job-scraper/search-queries.md`). Step 3 will detect that the seven skill files are already populated and skip those substeps.
 
 ---
 
@@ -230,7 +240,7 @@ Then proceed to Step 3 to populate the non-skill files (`CLAUDE.md`, `cv/main_ex
 
 If the user provides a single CV/resume:
 
-1. Read the document thoroughly.
+1. Read the document thoroughly with `view`.
 2. Extract all structured information: name, contact, education, experience, skills, publications, awards.
 3. Present a summary of what was extracted.
 4. Ask follow-up questions for gaps (behavioral profile, career goals, deal-breakers, salary expectations, references).
@@ -306,7 +316,7 @@ For each reference:
 - Relationship to the user
 
 ### Section 9: Job Search Configuration
-This section generates the search queries that power `/scrape`. Use the information from Sections 1, 4, and 7 to build targeted queries.
+This section generates the search queries that power `project:job-scraper`. Use the information from Sections 1, 4, and 7 to build targeted queries.
 
 Ask about:
 - **Role titles to search for:** "What job titles should I search for? For example: Data Scientist, ML Engineer, Geophysicist." Collect 3-8 specific titles.
@@ -328,7 +338,7 @@ This proactive suggestion step helps users discover career paths they might not 
 
 Once data collection is complete, generate or finish populating the following files. **For Path A**, the seven skill files are already populated by Step A7; check each before writing and skip if its content is no longer placeholder text.
 
-### 1. Update `CLAUDE.md`
+### 1. Update `AGENTS.md`
 Replace all `[PLACEHOLDER]` tokens with the user's actual information. Keep the structure, workflow, and verification checklist intact.
 
 ### 2. Populate `01-candidate-profile.md` *(Path B and C; skip if Path A populated it)*
@@ -374,19 +384,19 @@ Present a summary:
 
 > **Setup complete!** Here's what was generated:
 >
-> - `CLAUDE.md` - Your full candidate profile
+> - `AGENTS.md` - Your full candidate profile
 > - `.claude/skills/job-application-assistant/01-candidate-profile.md` - Structured profile
 > - `.claude/skills/job-application-assistant/02-behavioral-profile.md` - Behavioral assessment
 > - `.claude/skills/job-application-assistant/04-job-evaluation.md` - Personalized evaluation framework
 > - `.claude/skills/job-application-assistant/05-cv-templates.md` - CV templates with your profile statements
 > - `.claude/skills/job-application-assistant/07-interview-prep.md` - STAR examples from your experience
 > - `cv/main_example.tex` - Your LaTeX CV template
-> - `.claude/skills/job-scraper/search-queries.md` - Job search queries for `/scrape`
+> - `.claude/skills/job-scraper/search-queries.md` - Job search queries for `project:job-scraper`
 >
 > **Try it out:**
-> - Run `/scrape` to search for matching jobs right now
-> - Run `/apply` with a job posting URL to see the full application workflow
-> - Run `/setup --section search` later to update your search queries as your priorities evolve
+> - Run `project:job-scraper` to search for matching jobs right now
+> - Run `project:apply` with a job posting URL to see the full application workflow
+> - Run `project:setup --section search` later to update your search queries as your priorities evolve
 
 If Path A left any STAR stubs in `07-interview-prep.md`, also note:
 
@@ -401,6 +411,6 @@ If Path A left any STAR stubs in `07-interview-prep.md`, also note:
 - Path A labels inferred behavioral or style additions so the user can review them critically before relying on them.
 - Each section in Path C is a natural conversation, not a form. The user can skip optional sections.
 - Synthesize answers into structured formats (the user does not need to know markdown or LaTeX).
-- Can be re-run with `--section <name>` to update specific sections (e.g., `/setup --section search` to reconfigure job search queries without re-doing the full profile).
+- Can be re-run with `--section <name>` to update specific sections (e.g., `project:setup --section search` to reconfigure job search queries without re-doing the full profile).
 - Section 9 (search) in Path C, and the equivalent follow-up questions in Path A, proactively suggest role types the user may not have considered.
-- At the end, suggest running `/scrape` and `/apply` with a test job posting.
+- At the end, suggest running `project:job-scraper` and `project:apply` with a test job posting.

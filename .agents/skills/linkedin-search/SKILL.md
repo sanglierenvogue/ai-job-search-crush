@@ -1,6 +1,6 @@
 ---
 name: linkedin-search
-version: 1.0.0
+user-invocable: true
 description: >
   Use this skill whenever the user wants to search for jobs in any location or
   market, find job listings, or look up a specific job posting — in any country,
@@ -10,8 +10,6 @@ description: >
   find a job, job search, search for jobs, job openings, vacancies, hiring,
   positions open, remote jobs, "are there any X jobs in <place>", look up this
   job posting.
-context: fork
-allowed-tools: Bash(bun run skills/linkedin-search/cli/src/cli.ts *)
 ---
 
 # LinkedIn Search Skill

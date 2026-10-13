@@ -1,24 +1,33 @@
-# /reset - Reset Candidate Profile Data
+---
+name: reset
+description: >
+  Reset candidate profile data or the documents folder back to a blank state so the user
+  can start fresh. Destructive: nothing is deleted until the user types RESET to confirm.
+  User-invocable as project:reset with a scope of profile, documents, or all.
+user-invocable: true
+---
 
-You are resetting parts of the job search framework back to a blank state so the user can start fresh with `/setup`.
+# Reset: Reset Candidate Profile Data
+
+You are resetting parts of the job search framework back to a blank state so the user can start fresh with `project:setup`.
 
 **This command is destructive.** Nothing is deleted until the user explicitly confirms. Follow these steps exactly in order.
 
 ---
 
-## Step 0: Parse Scope from Arguments
+## Step 0: Parse Scope from the Invocation
 
-Check `$ARGUMENTS` for a scope keyword:
+Check the user's invocation message for a scope keyword:
 
 - `profile` — clears candidate profile data from skill files only
 - `documents` — deletes user-provided files from the `documents/` folder only
 - `all` — both of the above
 
-If `$ARGUMENTS` is empty or does not contain a recognized scope keyword, ask:
+If the invocation is empty or does not contain a recognized scope keyword, ask:
 
 > **What would you like to reset?**
 >
-> - **`profile`** — Clears candidate data from the skill files (profile, behavioral, STAR examples, profile statements). The framework structure and writing rules are preserved. Use this to re-run `/setup` from scratch.
+> - **`profile`** — Clears candidate data from the skill files (profile, behavioral, STAR examples, profile statements). The framework structure and writing rules are preserved. Use this to re-run `project:setup` from scratch.
 >
 > - **`documents`** — Deletes all files you've placed in the `documents/` folder (CV PDFs, LinkedIn export, diplomas, references, past applications). The folder structure and `README.md` are preserved.
 >
@@ -36,7 +45,7 @@ Before doing anything, show the user precisely what will be wiped.
 
 ### If scope includes `profile`:
 
-Read the current state of these files and report whether each has content or is already empty:
+Read the current state of these files with `view` and report whether each has content or is already empty:
 
 - `.claude/skills/job-application-assistant/01-candidate-profile.md`
 - `.claude/skills/job-application-assistant/02-behavioral-profile.md`
@@ -68,7 +77,7 @@ The following files are NOT touched (they contain framework rules, not candidate
 
 ### If scope includes `documents`:
 
-Use Glob to list all files present in `documents/cv/`, `documents/linkedin/`, `documents/diplomas/`, `documents/references/`, and `documents/applications/`. Present as:
+Use `glob` to list all files present in `documents/cv/`, `documents/linkedin/`, `documents/diplomas/`, `documents/references/`, and `documents/applications/`. Present as:
 
 ```
 ## Documents reset will delete:
@@ -119,7 +128,7 @@ Wait for the user's response.
 ```markdown
 # Candidate Profile
 
-<!-- Run /setup to populate this file -->
+<!-- Run project:setup to populate this file -->
 
 ## Identity
 
@@ -143,7 +152,7 @@ Wait for the user's response.
 ```markdown
 # Behavioral Profile
 
-<!-- Run /setup to populate this file -->
+<!-- Run project:setup to populate this file -->
 
 ## Overview
 
@@ -165,28 +174,28 @@ Wait for the user's response.
 ```markdown
 **Profile statement templates:**
 
-<!-- Run /setup to populate role-specific profile statements -->
+<!-- Run project:setup to populate role-specific profile statements -->
 ```
 
 Leave all other content in `05-cv-templates.md` intact.
 
 **For `07-interview-prep.md`**, locate and remove:
 - The entire `## Ready-Made STAR Examples` section and all numbered STAR examples under it
-- Any `## STAR Candidates (Complete Manually)` section added by `/setup` Path A
+- Any `## STAR Candidates (Complete Manually)` section added by `project:setup` Path A
 
 Replace with:
 
 ```markdown
 ## Ready-Made STAR Examples
 
-<!-- Run /setup to populate STAR examples from your actual experience -->
+<!-- Run project:setup to populate STAR examples from your actual experience -->
 ```
 
 Leave all other content in `07-interview-prep.md` intact (STAR format explanation, tough questions, questions to ask interviewers, phone/video tips, follow-up etiquette, roleplay guidelines).
 
 ### Documents reset
 
-For each non-empty document subfolder, delete all files within it using Bash `rm`. Do not delete the folder itself, and do not delete `documents/README.md`.
+For each non-empty document subfolder, delete all files within it using `bash` with `rm`. Do not delete the folder itself, and do not delete `documents/README.md`.
 
 ```bash
 rm -f documents/cv/*
@@ -215,10 +224,10 @@ After the reset is complete, report:
 Then tell the user what to do next based on what was reset:
 
 **If profile was reset:**
-> Your candidate profile is now blank. Run `/setup` to repopulate it. The command auto-detects any files in your `documents/` folder and offers to read from there; otherwise it walks you through a CV import or interactive interview.
+> Your candidate profile is now blank. Run `project:setup` to repopulate it. The skill auto-detects any files in your `documents/` folder and offers to read from there; otherwise it walks you through a CV import or interactive interview.
 
 **If documents were reset:**
-> The `documents/` folder is now empty. Add your career documents and run `/setup` to populate your profile. See `documents/README.md` for instructions on what to put where.
+> The `documents/` folder is now empty. Add your career documents and run `project:setup` to populate your profile. See `documents/README.md` for instructions on what to put where.
 
 **If both were reset:**
-> Both your profile files and documents folder are now empty. Add documents to `documents/` (or skip and use the CV import / interview path), then run `/setup`.
+> Both your profile files and documents folder are now empty. Add documents to `documents/` (or skip and use the CV import / interview path), then run `project:setup`.

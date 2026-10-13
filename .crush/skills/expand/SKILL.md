@@ -1,4 +1,14 @@
-# /expand - Competency Expansion from Documents and Online Presence
+---
+name: expand
+description: >
+  Enriches the candidate profile by scanning documents and public online presence
+  (GitHub, portfolio, Google Scholar, Kaggle) for hidden competencies and looking up
+  syllabi for named courses and certifications. Additive only, never modifies existing
+  content. User-invocable as project:expand.
+user-invocable: true
+---
+
+# Expand: Competency Expansion from Documents and Online Presence
 
 You are enriching the candidate profile by discovering competencies hidden in documents and public online presence. This command is additive only — it never modifies existing profile content, only extends it.
 
@@ -8,7 +18,7 @@ Follow these steps **exactly in order**. Do not skip steps.
 
 ## Step 0: Read Existing Profile Files
 
-Read these two files in parallel before doing anything else. You must know what is already there so you do not propose duplicates.
+Read these two files in parallel with `view` before doing anything else. You must know what is already there so you do not propose duplicates.
 
 - `.claude/skills/job-application-assistant/01-candidate-profile.md`
 - `.claude/skills/job-application-assistant/02-behavioral-profile.md`
@@ -22,7 +32,7 @@ Hold this content in context throughout the command. Do not re-read these files 
 Scan every available source for "experience items" — anything that implies skill, knowledge, or competency. Process sources in this order.
 
 ### 1a. documents/cv/
-Read all files in `documents/cv/`. Extract:
+Read all files in `documents/cv/` with `view`. Extract:
 - Every course or module listed (including university coursework and online courses)
 - Every certification mentioned, with issuer and date
 - Every job responsibility bullet point (tools, methods, outcomes)
@@ -30,7 +40,7 @@ Read all files in `documents/cv/`. Extract:
 - Every volunteer or extracurricular role
 
 ### 1b. documents/linkedin/
-Read all files in `documents/linkedin/`. Extract:
+Read all files in `documents/linkedin/` with `view`. Extract:
 - Courses and certifications in the "Licenses & Certifications" section
 - Skills and endorsements list
 - Volunteer experiences
@@ -38,20 +48,20 @@ Read all files in `documents/linkedin/`. Extract:
 - Any platform-specific items not already found in the CV
 
 ### 1c. documents/diplomas/
-Read all files in `documents/diplomas/`. Extract:
+Read all files in `documents/diplomas/` with `view`. Extract:
 - All course/module names listed on transcripts
 - Thesis title and subject area
 - Any specialisation or track name
 
 ### 1d. documents/references/
-Read all files in `documents/references/`. Extract:
+Read all files in `documents/references/` with `view`. Extract:
 - Competency language used by the referee (what skills or qualities they mention)
 - Any specific projects, tools, or methods named
 
 ### 1e. GitHub Profile
 Look up the GitHub username from `01-candidate-profile.md`. If a GitHub URL or username is present:
 
-1. Use WebFetch or WebSearch to retrieve the public profile and pinned repositories
+1. Use fetch or agentic_fetch to retrieve the public profile and pinned repositories
 2. For each repository found:
    - Fetch the repository README
    - Note: name, description, primary language(s), topics/tags, any frameworks or libraries mentioned in the README
@@ -123,7 +133,7 @@ Remove anything already present in `01-candidate-profile.md` or `02-behavioral-p
 Present all new competencies for the user's review before writing anything. Format:
 
 ```
-## /expand found [N] new competency signals across [M] sources
+## project:expand found [N] new competency signals across [M] sources
 
 **COURSES & CERTIFICATIONS**
 Source: [Course/cert name — Provider]
@@ -166,14 +176,14 @@ Wait for the user's response before writing anything.
 
 ## Step 5: Write Confirmed Additions
 
-Apply only the confirmed items. Use the Edit tool to add to the relevant sections of each file — do not rewrite entire files.
+Apply only the confirmed items. Use the `edit` tool to add to the relevant sections of each file — do not rewrite entire files.
 
 ### Additions to `01-candidate-profile.md`
 - Technical skills (primary and secondary) → append to the Technical Skills section
 - Domain knowledge → append to the Domain Knowledge or Technical Skills section (match the existing structure)
 - Methods and practices → append appropriately
 
-For each addition, add a brief source annotation in a comment or parenthetical: *(Coursera — Deep Learning Specialisation)*, *(GitHub — project-name)*, etc. This makes future `/expand` runs idempotent.
+For each addition, add a brief source annotation in a comment or parenthetical: *(Coursera — Deep Learning Specialisation)*, *(GitHub — project-name)*, etc. This makes future `project:expand` runs idempotent.
 
 ### Additions to `02-behavioral-profile.md`
 - Soft/behavioral signals → append to the "Strongest Behavioral Traits" or "How I Work Best" section (match existing structure)
@@ -186,7 +196,7 @@ For each addition, add a brief source annotation in a comment or parenthetical: 
 After writing, present:
 
 ```
-## /expand Complete
+## project:expand Complete
 
 ### Added to 01-candidate-profile.md
 [List each competency added, with source]

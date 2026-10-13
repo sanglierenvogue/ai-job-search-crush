@@ -1,6 +1,6 @@
 # Job Evaluation Framework
 
-<!-- SETUP: Skill match areas and career goals are personalized by running /setup -->
+<!-- SETUP: Skill match areas and career goals are personalized by running project:setup -->
 
 ## Scoring Dimensions
 
@@ -125,7 +125,7 @@ Present the evaluation as:
 - [bullet points]
 
 ### Recommendation
-[1-2 sentences: apply/skip/apply with caveats]
+[1-2 sentences: apply/skipproject:apply with caveats]
 
 ### Company Research Checklist
 - [ ] Checked company website (mission, values, recent news)

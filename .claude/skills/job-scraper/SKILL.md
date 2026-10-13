@@ -1,9 +1,10 @@
 ---
 name: job-scraper
 description: >
-  Scrapes Danish job sites for new positions matching your profile. Deduplicates across runs.
-  Triggers on: job scrape, find jobs, search jobs, new jobs, job search, scrape jobs, /scrape
-allowed-tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Agent, AskUserQuestion
+  Scrapes Danish job sites for new positions matching your profile. Deduplicates across
+  runs. Triggers on: job scrape, find jobs, search jobs, new jobs, job search, scrape
+  jobs. User-invocable as project:job-scraper, optionally with a focus area or "broad".
+user-invocable: true
 ---
 
 # Job Scraper
@@ -20,11 +21,11 @@ The user triggers this skill by saying things like:
 - "Find new jobs"
 - "Scrape for jobs"
 - "Any new positions?"
-- "/scrape"
+- "project:job-scraper"
 
 Optional arguments:
-- A focus area, e.g. "/scrape data science" or "/scrape geophysics"
-- "broad" to run all search categories, e.g. "/scrape broad"
+- A focus area, e.g. "project:job-scraper data science" or "project:job-scraper geophysics"
+- "broad" to run all search categories, e.g. "project:job-scraper broad"
 
 ---
 
@@ -32,25 +33,25 @@ Optional arguments:
 
 ### Step 0: Load State
 
-1. Read `job_scraper/seen_jobs.json` (create if missing - start with `{"seen": {}}`)
-2. Read `job_search_tracker.csv` to extract already-applied companies+roles
-3. Read `search-queries.md` (this directory) for the search strategy
+1. Read `job_scraper/seen_jobs.json` with `view` (create if missing - start with `{"seen": {}}`)
+2. Read `job_search_tracker.csv` with `view` to extract already-applied companies+roles
+3. Read `search-queries.md` (this directory) with `view` for the search strategy
 
 ### Step 1: Search
 
-Run **WebSearch** queries from `search-queries.md`. By default, run the top 3 priority categories. If the user said "broad", run all categories.
+Run **`agentic_fetch`** (web search) queries from `search-queries.md`. By default, run the top 3 priority categories. If the user said "broad", run all categories.
 
 If the user specified a focus area (e.g. "data science"), prioritize queries from that category.
 
 For each search:
-- Use `WebSearch` with site-specific queries (jobindex.dk, linkedin.com/jobs, karriere.dk, etc.)
+- Use `agentic_fetch` (web search, no URL) with site-specific queries (jobindex.dk, linkedin.com/jobs, karriere.dk, etc.)
 - Target your configured geographic area
 - Look for postings from the last 14 days
 
 ### Step 2: Fetch & Parse
 
 For each promising result from Step 1:
-- Use `WebFetch` to retrieve the job posting page
+- Use `fetch` (markdown format) to retrieve the job posting page
 - Extract: **job title**, **company**, **location**, **posting date** (or "recent"), **URL**, **key requirements** (brief), **application deadline** (if listed)
 - Skip if the URL or company+title combo already exists in `seen_jobs.json`
 - Skip if the company+role already appears in `job_search_tracker.csv`
@@ -115,9 +116,9 @@ If the user decides to apply to any job, add a row to `job_search_tracker.csv`.
 
 ## Important Rules
 
-1. **Never fabricate job postings.** Only present jobs found via actual WebSearch/WebFetch results.
+1. **Never fabricate job postings.** Only present jobs found via actual `agentic_fetch`/`fetch` results.
 2. **Respect deduplication.** Always check seen_jobs.json AND job_search_tracker.csv before presenting.
 3. **Focus on configured geographic area.** Skip jobs that require relocation or are clearly outside commute range.
 4. **Only open positions.** Skip postings with expired deadlines or those marked as closed.
-5. **Be efficient with WebFetch.** Don't fetch every search result - use titles and snippets to pre-filter before fetching.
-6. **Parallel searches.** Use the Agent tool or parallel WebSearch calls to speed up the search phase.
+5. **Be efficient with `fetch`.** Don't fetch every search result - use titles and snippets to pre-filter before fetching.
+6. **Parallel searches.** Use the `agent` tool (read-only subagent) or parallel `agentic_fetch` calls to speed up the search phase.

@@ -1,26 +1,35 @@
-# /add-portal - Generate a Job-Portal Search Skill for Your Local Market
+---
+name: add-portal
+description: >
+  Generate a job-portal search skill for a job board in your local market: investigate the
+  portal, scaffold the CLI skill from the canonical structure, test-run a live query, and
+  register. User-invocable as project:add-portal, optionally with --list or a portal URL.
+user-invocable: true
+---
+
+# Add-Portal: Generate a Job-Portal Search Skill for Your Local Market
 
 You are helping the user build a job-portal search skill for a job board in their market. The repo ships worked examples of the pattern (four Danish portals plus the country-agnostic `linkedin-search`), and the README invites users elsewhere to build equivalents — this command turns that invitation into a guided workflow: investigate the portal, scaffold the skill from the canonical structure, and test-run a live query before registering anything.
 
 The generator is **country-agnostic**: it works for any portal in any market and language. The skills it produces are typically market-specific and live in the user's fork (per repo policy, country-specific portal skills are not merged upstream — the generator is the upstream feature, its output is yours).
 
-`$ARGUMENTS` may contain a subcommand, a portal URL, or nothing.
+The user's invocation message may contain a subcommand, a portal URL, or nothing.
 
 Follow these steps **in order**.
 
 ---
 
-## Step 0: Parse Arguments
+## Step 0: Parse the Invocation
 
-- If `$ARGUMENTS` contains `--list`: use Glob with `.agents/skills/*/SKILL.md`, print a table of installed portal skills (name, market from the description, data source from `url-reference.md`), and stop.
-- If `$ARGUMENTS` contains a URL: treat it as the portal URL and carry it into Step 1.
+- If the invocation contains `--list`: use `glob` with pattern `.agents/skills/*/SKILL.md`, print a table of installed portal skills (name, market from the description, data source from `url-reference.md`), and stop.
+- If the invocation contains a URL: treat it as the portal URL and carry it into Step 1.
 - Otherwise: start the interview at Step 1.
 
 ---
 
 ## Step 1: Interview - Portal Basics
 
-Ask the user (skip anything already answered by `$ARGUMENTS`):
+Ask the user (skip anything already answered by the invocation):
 
 1. **Portal URL** - the job board's public site (e.g. `https://www.seek.com.au`, `https://www.stepstone.de`).
 2. **Skill name** - kebab-case, suffixed `-search` (e.g. `seek-search`, `stepstone-search`). Must not collide with an existing folder in `.agents/skills/`.
@@ -31,9 +40,9 @@ Ask the user (skip anything already answered by `$ARGUMENTS`):
 
 ## Step 2: Investigate the Portal
 
-Do reconnaissance before writing any code. Use WebFetch (or `curl` via Bash) on the portal:
+Do reconnaissance before writing any code. Use the `fetch` tool on the portal:
 
-1. **Find the search URL pattern.** Load the portal's search page, run a search in the URL bar mentally or via fetch, and identify: the search endpoint, the query parameter, and any parameters for location, posting age, and pagination. Prefer a JSON API if one backs the site (check for `/api/` XHR endpoints in the page source); otherwise plan to parse the HTML results page.
+1. **Find the search URL pattern.** Load the portal's search page (with `fetch`), run a search in the URL bar mentally or via fetch, and identify: the search endpoint, the query parameter, and any parameters for location, posting age, and pagination. Prefer a JSON API if one backs the site (check for `/api/` XHR endpoints in the page source); otherwise plan to parse the HTML results page.
 2. **Fetch one search-results response** for the test query and identify the per-result fields: **id, title, company, location, posting date, and URL**. For HTML, note the class names / attributes that anchor each field. For JSON, note the field paths.
 3. **Find the detail-page pattern** - the URL that returns a single posting's full description, and where the description, deadline, employment type, and apply link live in it.
 4. **Check access requirements and terms.**
@@ -71,7 +80,7 @@ Create `.agents/skills/<name>/` with:
 
 ### The portal-skill contract (every generated skill MUST honor this)
 
-These conventions are what make portal skills interchangeable for `/scrape` and for users reading any skill's docs:
+These conventions are what make portal skills interchangeable for `project:job-scraper` and for users reading any skill's docs:
 
 - **Commands:** `search` and `detail <id|url>`.
 - **Search flags:** `--query`/`-q`, `--jobage <days>` (posting age; map to the portal's parameter, note in SKILL.md if unsupported), `--page <n>` (1-indexed), `--limit <n>` (client-side cap), `--format json|table|plain` (default `json`). Add `--location`/`-l` if the portal supports location as a parameter; if it only supports location inside the keyword query, document that in SKILL.md the way `jobindex-search` does ("include the city in `--query`").
@@ -83,7 +92,7 @@ These conventions are what make portal skills interchangeable for `/scrape` and 
 
 ### File specifics
 
-- **`SKILL.md` frontmatter:** `name`, `version: 1.0.0`, a `description` written for skill triggering - it must name the portal, the market, and include trigger phrases in English **and** the market's language; `context: fork`; `allowed-tools: Bash(bun run skills/<name>/cli/src/cli.ts *)`.
+- **`SKILL.md` frontmatter:** `name`, a `description` written for skill triggering - it must name the portal, the market, and include trigger phrases in English **and** the market's language; `user-invocable: true` so the skill can be run directly (e.g. `project:seek-search`). Crush ignores Claude-Code-style fields such as `context: fork` and `allowed-tools`; do not emit them.
 - **`SKILL.md` body:** what the skill searches, the personal-use warning if Step 2 found terms restrictions, command reference with flags, 4-6 usage examples using the user's market (real cities, realistic roles), output-format table, and a Notes section recording portal quirks found in Step 2.
 - **`url-reference.md`:** the endpoints, parameters table, and response-structure notes from Step 2 - this is the file a future maintainer needs when the portal changes its markup.
 - **`package.json`:** name `<portal>-cli`, `"type": "module"`, scripts `start`, `test` (`bun test --timeout 30000`), and `typecheck` (`tsc --noEmit`); dev-only dependencies in the zero-dependency default.
@@ -118,7 +127,7 @@ Do not proceed to Step 5 until search, detail, and tests all pass.
 
 ## Step 5: Register
 
-1. Ask whether the user wants the new portal added to their `/scrape` search strategy. If yes, add the portal's site to the relevant query categories in `.claude/skills/job-scraper/search-queries.md` (site-specific queries, like the existing `jobindex.dk` entries) so `/scrape` includes it.
+1. Ask whether the user wants the new portal added to their `project:job-scraper` search strategy. If yes, add the portal's site to the relevant query categories in `.claude/skills/job-scraper/search-queries.md` (site-specific queries, like the existing `jobindex.dk` entries) so `project:job-scraper` includes it.
 2. Remind the user to add the install line for their own records if they maintain a fork README:
    ```bash
    cd .agents/skills/<name>/cli && bun install && cd ../../../..

@@ -1,7 +1,7 @@
-# AI Job Search — OpenCode Agent Instructions
+# AI Job Search — Crush Agent Instructions
 
-<!-- SETUP: This file is populated by running /setup -->
-<!-- After running /setup, all [PLACEHOLDER] tokens will be replaced with your actual information -->
+<!-- SETUP: This file is populated by running project:setup -->
+<!-- After running project:setup, all [PLACEHOLDER] tokens will be replaced with your actual information -->
 
 ## Role
 This repo is a job application workspace. The AI acts as a career advisor and application assistant for [YOUR_NAME], helping with:
@@ -13,7 +13,7 @@ This repo is a job application workspace. The AI acts as a career advisor and ap
 
 ## Candidate Profile
 
-<!-- This section is auto-populated by /setup. You can also fill it in manually. -->
+<!-- This section is auto-populated by project:setup. You can also fill it in manually. -->
 
 ### Identity
 - **Name:** [YOUR_NAME]
@@ -79,8 +79,10 @@ This repo is a job application workspace. The AI acts as a career advisor and ap
 ## Repo Structure
 - `cv/` - LaTeX CV variants (moderncv template, banking style)
 - `cover_letters/` - LaTeX cover letters (custom cover.cls template)
-- `.claude/skills/` - AI skill definitions for the application workflow (auto-discovered by opencode)
-- `.agents/skills/` - Job search CLI tools (auto-discovered by opencode)
+- `.crush/skills/` - Workflow skills (setup, apply, expand, reset, add-template, add-portal), user-invocable
+- `.claude/skills/` - AI skill definitions for the application workflow (auto-discovered by Crush)
+- `.agents/skills/` - Job search CLI tools (auto-discovered by Crush)
+- `crushrc` - Project-local Crush configuration (tool permissions for the workflows)
 
 ## Workflow for New Job Applications
 1. User provides a job posting (URL or text)
@@ -95,10 +97,10 @@ This repo is a job application workspace. The AI acts as a career advisor and ap
 After creating or updating a CV or cover letter, re-read the generated file and verify **all** of the following before presenting to the user. Report the results as a pass/fail checklist.
 
 ### Factual accuracy
-- [ ] All claims match actual profile (CLAUDE.md / candidate profile) - no fabricated skills, experience, or achievements
+- [ ] All claims match actual profile (AGENTS.md / candidate profile) - no fabricated skills, experience, or achievements
 - [ ] Job titles, dates, company names, and locations are correct
 - [ ] Contact details are correct
-- [ ] All company-specific claims (partnerships, products, technology, expansions) have been independently verified via WebFetch/WebSearch - do not trust reviewer agent research without verification
+- [ ] All company-specific claims (partnerships, products, technology, expansions) have been independently verified via `fetch`/`agentic_fetch` - do not trust subagent-provided research without verification
 
 ### Targeting
 - [ ] Profile statement / opening paragraph is tailored to the specific role (not generic)
@@ -120,54 +122,54 @@ After creating or updating a CV or cover letter, re-read the generated file and 
 - [ ] Cover letter fits approximately one page
 
 ### Compiled PDF verification (MANDATORY - never skip)
-Both documents MUST be compiled and visually inspected via the Read tool on the PDF output. "Looks fine in the .tex" is not acceptable - LaTeX page-break decisions are unpredictable. Iterate until these all pass:
+Both documents MUST be compiled and visually inspected: render each PDF's pages to images (`pdftoppm -png`) and inspect them via the `view` tool (the tool cannot read PDFs directly). "Looks fine in the .tex" is not acceptable - LaTeX page-break decisions are unpredictable. Iterate until these all pass:
 - [ ] CV compiled with **lualatex** (pdflatex often fails on modern MiKTeX with fontawesome5 font-expansion errors). Cover letter compiled with **xelatex** (cover.cls requires fontspec).
 - [ ] **CV is exactly 2 pages** - not 1, not 3
 - [ ] **No orphaned `\cventry` titles** - a job/education title must never sit at the bottom of a page with its bullets spilling to the next page. Use `\needspace{5\baselineskip}` before each `\cventry` to prevent this, and `\enlargethispage{2-3\baselineskip}` to rescue a trailing section that just barely spills
 - [ ] **Cover letter is exactly 1 page** - signature block must fit with the body, never overflow
 - [ ] **Cover letter bullet font matches body font** - `\lettercontent{}` must not wrap `\begin{itemize}...\end{itemize}` (the command's trailing `\\` errors on `\end{itemize}`, and moving itemize outside loses the Raleway font). Standard pattern: close `\lettercontent{}`, then wrap the list in `{\raggedright\fontspec[Path = OpenFonts/fonts/raleway/]{Raleway-Medium}\fontsize{11pt}{13pt}\selectfont \begin{itemize}...\end{itemize}\par}`
 
-## Available Commands & Skills
+## Available Skills & Workflows
 
-### Core Workflow Commands
-- `/apply` — Full application workflow (evaluate fit → draft CV + cover letter → review → compile PDFs)
-- `/setup` — Profile onboarding (documents folder, CV import, or interview mode)
-- `/expand` — Competency expansion from documents and online presence
-- `/reset` — Reset candidate profile data or documents folder
-- `/add-template` — Register custom LaTeX CV or cover letter template
-- `/add-portal` — Generate a job-portal search skill for your local market
+Skills are auto-discovered by Crush from `.crush/skills/`, `.claude/skills/`, and `.agents/skills/`. User-invocable skills run as `project:<skill-name>`.
 
-### Job Search Skills (Auto-discovered)
-- `/scrape` — Search Danish job portals for matching positions (job-scraper skill)
-- `/upskill` — Skill gap analysis and learning plan from tracked jobs (upskill skill)
-- `/job-application-assistant` — Evaluate job postings, tailor CVs, write cover letters, interview prep
+### Core Workflow Skills
+- `project:setup` — Profile onboarding (documents folder, CV import, or interview mode)
+- `project:apply` — Full application workflow (evaluate fit → draft CV + cover letter → company research + fresh-context reviewer subagent → revise → compile PDFs)
+- `project:job-scraper` — Search Danish job portals for matching positions (job-scraper skill)
+- `project:upskill` — Skill gap analysis and learning plan from tracked jobs (upskill skill)
+- `project:job-application-assistant` — Evaluate job postings, tailor CVs, write cover letters, interview prep
+- `project:expand` — Competency expansion from documents and online presence
+- `project:reset` — Reset candidate profile data or documents folder
+- `project:add-template` — Register custom LaTeX CV or cover letter template
+- `project:add-portal` — Generate a job-portal search skill for your local market
 
-### Job Portal CLI Tools (Auto-discovered)
-- `jobbank-search` — Akademikernes Jobbank (Denmark)
-- `jobdanmark-search` — Jobdanmark.dk (Denmark)
-- `jobindex-search` — Jobindex.dk (Denmark)
-- `jobnet-search` — Jobnet.dk (Denmark, government portal)
-- `linkedin-search` — LinkedIn public job listings (country-agnostic, zero runtime deps)
+### Job Portal CLI Tools (also user-invocable)
+- `project:jobbank-search` — Akademikernes Jobbank (Denmark)
+- `project:jobdanmark-search` — Jobdanmark.dk (Denmark)
+- `project:jobindex-search` — Jobindex.dk (Denmark)
+- `project:jobnet-search` — Jobnet.dk (Denmark, government portal)
+- `project:linkedin-search` — LinkedIn public job listings (country-agnostic, zero runtime deps)
 
 ### Usage Examples
 ```bash
 # Search for jobs
-/scrape
-/scrape data science
+project:job-scraper
+project:job-scraper data science
 
 # Apply to a job
-/apply https://jobindex.dk/job/1234567
+project:apply https://jobindex.dk/job/1234567
 
 # Update search queries
-/setup --section search
+project:setup --section search
 
 # Analyze skill gaps
-/upskill
-/upskill https://jobindex.dk/job/1234567
+project:upskill
+project:upskill https://jobindex.dk/job/1234567
 
 # Register custom template
-/add-template
+project:add-template
 
 # Generate new portal skill
-/add-portal
+project:add-portal
 ```

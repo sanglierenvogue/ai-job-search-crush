@@ -1,6 +1,6 @@
 ---
 name: jobbank-search
-version: 1.0.0
+user-invocable: true
 description: >
   Make sure to use this skill whenever the user mentions anything related to job
   searching on Akademikernes Jobbank, jobbank.dk, or looking for academic or
@@ -18,8 +18,6 @@ description: >
   nyuddannede job, job til nyuddannede, international job denmark,
   jobbank søgning, find stilling, data scientist job, software developer job,
   projektleder stilling, konsulent job, data analyse job.
-context: fork
-allowed-tools: Bash(bun run skills/jobbank-search/cli/src/cli.ts *)
 ---
 
 # Jobbank Search Skill

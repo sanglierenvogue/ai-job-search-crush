@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Project-local Crush configuration for the AI Job Search workspace.
+# The application workflow (project:apply, project:job-scraper, project:setup, ...)
+# needs unrestricted read/write, web access, and shell access (bun CLIs,
+# python salary_lookup.py, LaTeX compiles) to run without permission prompts.
+
+permissions allow view ls glob grep edit multiedit write fetch agentic_fetch bash agent question

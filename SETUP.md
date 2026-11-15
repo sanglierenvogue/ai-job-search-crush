@@ -37,15 +37,24 @@ The job portal CLIs (four Danish portals plus the country-agnostic LinkedIn tool
 curl -fsSL https://bun.sh/install | bash
 ```
 
-### LaTeX (for compiling CVs and cover letters)
+### Pandoc + Typst (for compiling CVs)
 
-Install a LaTeX distribution to compile the generated `.tex` files to PDF:
+CVs are written in Markdown and compiled to PDF through Pandoc and Typst. Install:
+
+- **Pandoc 3.5+** — [pandoc.org](https://pandoc.org/installing.html) (Windows: `winget install JohnMacFarlane.Pandoc`; macOS: `brew install pandoc`; Linux: package manager)
+- **Typst 0.12+** — [typst.app/docs/installation](https://typst.app/docs/installation/) (Windows: `winget install Typst.Typst`; macOS: `brew install typst`; Linux: package manager or GitHub releases)
+
+On first compile, Typst downloads the `modern-cv` package (and its dependencies) from the Typst registry and caches them. On a machine without network access at compile time, run `.scripts/sync-package.sh` once to install the pinned package sources that ship in `md-typst-templates/`.
+
+### LaTeX (for compiling cover letters)
+
+Install a LaTeX distribution to compile the cover letter `.tex` files to PDF:
 
 - **Windows:** [MiKTeX](https://miktex.org/download)
 - **macOS:** [MacTeX](https://tug.org/mactex/)
 - **Linux:** `sudo apt install texlive-full` or `sudo dnf install texlive-scheme-full`
 
-The CV compiles with `lualatex` (pdflatex often fails on modern MiKTeX installs with `fontawesome5` font-expansion errors). The cover letter compiles with `xelatex` because `cover.cls` requires `fontspec` for its custom Lato/Raleway fonts.
+The cover letter compiles with `xelatex` because `cover.cls` requires `fontspec` for its custom Lato/Raleway fonts. (A full LaTeX install with `lualatex` is only needed if you keep using custom LaTeX CV templates via `project:add-template`.)
 
 ### poppler-utils (for PDF verification)
 
@@ -158,17 +167,17 @@ Crush will:
 
 ## 7. Compile your documents
 
-After `project:apply` creates the LaTeX files (the workflow already compiles and verifies both PDFs):
+After `project:apply` creates the documents (the workflow already compiles and verifies both PDFs):
 
 ```bash
-# Compile CV
-cd cv && lualatex main_<company>.tex && cd ..
+# Compile CV (Markdown -> Pandoc -> Typst -> PDF)
+.scripts/compile-cv.sh cv/<YYMMDD>_<company>_<position-slug>.md
 
 # Compile cover letter
 cd cover_letters && xelatex cover_<company>_<role>.tex && cd ..
 ```
 
-These commands apply to the stock templates (moderncv CV, `cover.cls` cover letter). If you'd rather use your own LaTeX template, run `project:add-template` — it captures the template's compile engine, fonts, style rules, and page limit, test-compiles it, and wires it into `project:apply`. See the "LaTeX templates" section in the README.
+These commands apply to the stock templates (modern-cv Typst CV, `cover.cls` cover letter). If you'd rather use your own template, run `project:add-template` — it captures the template's compile engine, fonts, style rules, and page limit, test-compiles it, and wires it into `project:apply`. See the "CV and cover-letter templates" section in the README.
 
 ## Permissions
 
@@ -188,10 +197,14 @@ Invoke them as `project:<skill-name>` (e.g. `project:apply`, `project:job-scrape
 ### Job search CLI tools not working
 Make sure Bun is installed and you ran `bun install` in each CLI directory. The tools require network access to fetch job listings.
 
-### LaTeX compilation errors
-- CV: uses `lualatex` (pdflatex often fails on modern MiKTeX with `fontawesome5` font-expansion errors; lualatex handles the same sources cleanly)
+### CV compilation errors (Pandoc / Typst)
+- Run `.scripts/check-env.sh` to verify pandoc >= 3.5, typst >= 0.12, and the vendored template assets.
+- The CV compile is `pandoc` (template `md-typst-templates/cv.typ`) followed by `typst compile` with the bundled fonts; warnings about unknown font families mean the `--font-path` to `md-typst-templates/fonts` was dropped.
+- On an offline machine, run `.scripts/sync-package.sh` once so the `@preview/modern-cv` import resolves locally.
+
+### Cover letter compilation errors (LaTeX)
 - Cover letter: uses `xelatex` (for custom fonts in `OpenFonts/fonts/`)
-- Make sure your LaTeX distribution includes the `moderncv` package
+- Make sure your LaTeX distribution includes the `fontspec` package
 
 ### Fonts not found in cover letter
 The cover letter template expects fonts in `cover_letters/OpenFonts/fonts/`. Make sure this directory exists and contains the Lato and Raleway font files.

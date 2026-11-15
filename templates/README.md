@@ -1,6 +1,6 @@
 # Custom Templates
 
-This folder holds user-registered LaTeX templates, managed by the `project:add-template` command. The framework works out of the box with its stock templates (moderncv for CVs, `cover.cls` for cover letters) — this folder only gets content when you register your own.
+This folder holds user-registered custom templates, managed by the `project:add-template` command. The stock CV template (Markdown + Pandoc + Typst, modern-cv package) lives in `md-typst-templates/` and the stock cover-letter template in `cover_letters/cover.cls` — this folder only gets content when you register your own (typically LaTeX) template.
 
 ## Layout
 

@@ -6,7 +6,7 @@
 ## Role
 This repo is a job application workspace. The AI acts as a career advisor and application assistant for [YOUR_NAME], helping with:
 1. **Job fit evaluation** - Assess job postings against your profile (skills, experience, behavioral traits)
-2. **CV tailoring** - Adapt existing CV templates (LaTeX/moderncv) to target specific roles
+2. **CV tailoring** - Adapt the Markdown CV template (Pandoc + Typst / modern-cv) to target specific roles
 3. **Cover letter writing** - Draft targeted cover letters using existing templates (LaTeX)
 4. **Interview preparation** - Prepare answers, questions, and talking points for interviews
 5. **Career strategy** - Advise on positioning and personal branding
@@ -77,7 +77,9 @@ This repo is a job application workspace. The AI acts as a career advisor and ap
 - [DEALBREAKER_2]
 
 ## Repo Structure
-- `cv/` - LaTeX CV variants (moderncv template, banking style)
+- `cv/` - Markdown CVs (master reference `main_example.md`, per-application `<YYMMDD>_<company>_<position-slug>.md`)
+- `md-typst-templates/` - Stock CV template assets: Pandoc->Typst template, Markdown skeleton, bundled fonts, pinned modern-cv package source
+- `.scripts/` - Shared command library (compile-cv.sh, render-pdf.sh, check-env.sh, sync-package.sh)
 - `cover_letters/` - LaTeX cover letters (custom cover.cls template)
 - `.crush/skills/` - Workflow skills (setup, apply, expand, reset, add-template, add-portal), user-invocable
 - `.claude/skills/` - AI skill definitions for the application workflow (auto-discovered by Crush)
@@ -87,7 +89,7 @@ This repo is a job application workspace. The AI acts as a career advisor and ap
 ## Workflow for New Job Applications
 1. User provides a job posting (URL or text)
 2. **Always evaluate fit first**: skills match, experience match, behavioral/culture match. Present this assessment to the user before proceeding.
-3. If good fit: create targeted CV (`cv/main_<company>.tex`) and cover letter (`cover_letters/cover_<company>_<role>.tex`)
+3. If good fit: create targeted CV (`cv/<YYMMDD>_<company>_<position-slug>.md`) and cover letter (`cover_letters/cover_<company>_<role>.tex`)
 4. **Verify both documents** (see Verification Checklist below)
 5. Prepare interview talking points based on the role requirements and your strengths
 
@@ -109,13 +111,13 @@ After creating or updating a CV or cover letter, re-read the generated file and 
 - [ ] Nice-to-have requirements are highlighted where there is a match
 
 ### Consistency
-- [ ] CV follows the standard 2-page moderncv/banking format
+- [ ] CV follows the standard 2-page modern-cv (Typst) format
 - [ ] Cover letter uses cover.cls template and established structure
 - [ ] Tone is consistent across CV and cover letter
 - [ ] No contradictions between CV and cover letter content
 
 ### Quality
-- [ ] No LaTeX syntax errors (balanced braces, correct commands)
+- [ ] No syntax errors (balanced braces in the LaTeX cover letter; clean `typst compile` for the CV)
 - [ ] No spelling or grammar errors
 - [ ] Agentic coding / AI tooling references mention **Claude Code** by name
 - [ ] Cover letter is addressed to the correct person (or "Dear Hiring Manager" if unknown)
@@ -123,11 +125,13 @@ After creating or updating a CV or cover letter, re-read the generated file and 
 
 ### Compiled PDF verification (MANDATORY - never skip)
 Both documents MUST be compiled and visually inspected: render each PDF's pages to images (`pdftoppm -png`) and inspect them via the `view` tool (the tool cannot read PDFs directly). "Looks fine in the .tex" is not acceptable - LaTeX page-break decisions are unpredictable. Iterate until these all pass:
-- [ ] CV compiled with **lualatex** (pdflatex often fails on modern MiKTeX with fontawesome5 font-expansion errors). Cover letter compiled with **xelatex** (cover.cls requires fontspec).
+- [ ] CV compiled via `.scripts/compile-cv.sh` (Pandoc + Typst, zero compile warnings). Cover letter compiled with **xelatex** (cover.cls requires fontspec).
 - [ ] **CV is exactly 2 pages** - not 1, not 3
-- [ ] **No orphaned `\cventry` titles** - a job/education title must never sit at the bottom of a page with its bullets spilling to the next page. Use `\needspace{5\baselineskip}` before each `\cventry` to prevent this, and `\enlargethispage{2-3\baselineskip}` to rescue a trailing section that just barely spills
+- [ ] **No orphaned entry titles** - the modern-cv `resume-entry` blocks and section headings are natively sticky, so a title can never sit at the bottom of a page with its bullets on the next page; if a section would start with only one line left, add `#pagebreak(weak: true)` before it
+- [ ] **No page-stretch rescue exists in Typst** (no `\enlargethispage`): content on a third page is resolved by relevance-weighted content cutting, never by squeezing spacing
 - [ ] **Cover letter is exactly 1 page** - signature block must fit with the body, never overflow
 - [ ] **Cover letter bullet font matches body font** - `\lettercontent{}` must not wrap `\begin{itemize}...\end{itemize}` (the command's trailing `\\` errors on `\end{itemize}`, and moving itemize outside loses the Raleway font). Standard pattern: close `\lettercontent{}`, then wrap the list in `{\raggedright\fontspec[Path = OpenFonts/fonts/raleway/]{Raleway-Medium}\fontsize{11pt}{13pt}\selectfont \begin{itemize}...\end{itemize}\par}`
+- [ ] **CV text layer is ATS-clean** - `pdftotext <cv.pdf> - | grep -c $'\xc2\xad'` must print 0 (no U+00AD soft hyphens from line-break hyphenation) and no backslashes (leaked frontmatter escaping, e.g. in the email), and spot-check that hyphenated keywords ("end-to-end", "scikit-learn") and dates extract intact. `compile-cv.sh` warns if either is detected; do not present a CV with that warning
 
 ## Available Skills & Workflows
 

@@ -26,10 +26,11 @@ When the user provides a job posting (URL or text), follow this workflow:
 - Ask the user if they want to proceed with an application
 
 ### Step 2: Tailor CV
-- Read the most relevant existing CV variant from `cv/` with `view` as a starting point
+- Read the most relevant existing CV variant from `cv/` with `view` as a starting point (master reference: `cv/main_example.md`)
 - Follow the guidelines in `05-cv-templates.md`
-- Create `cv/main_<company>.tex` with tailored content
+- Create `cv/<YYMMDD>_<company>_<position-slug>.md` (date + role slug, see the skill guide) with tailored content
 - Adjust: profile statement, skills section, experience bullet emphasis, section order
+- Compile with `.scripts/compile-cv.sh cv/<YYMMDD>_<company>_<position-slug>.md` and run the compile-and-inspect loop until it is exactly 2 pages
 
 ### Step 3: Write Cover Letter
 - Follow the writing style rules in `03-writing-style.md` (critical: no em-dashes, no cliches)
@@ -53,7 +54,7 @@ When the user provides a job posting (URL or text), follow this workflow:
 | `02-behavioral-profile.md` | Behavioral assessment, strengths, ideal environments |
 | `03-writing-style.md` | Tone, structure, do's and don'ts |
 | `04-job-evaluation.md` | Scoring framework for job fit |
-| `05-cv-templates.md` | LaTeX CV structure and tailoring rules |
+| `05-cv-templates.md` | Markdown CV structure and tailoring rules (Pandoc + Typst / modern-cv) |
 | `06-cover-letter-templates.md` | LaTeX cover letter structure and tailoring rules |
 | `07-interview-prep.md` | STAR examples, tough questions, roleplay guidelines |
 

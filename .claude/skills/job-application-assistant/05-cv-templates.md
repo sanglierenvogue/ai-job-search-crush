@@ -2,106 +2,185 @@
 
 <!-- SETUP: Profile statements and section ordering are personalized by running project:setup -->
 
-## Template: LaTeX moderncv (Banking Style)
+## Template: Markdown + Pandoc + Typst (modern-cv)
 
-All CVs use the moderncv LaTeX package with the "banking" style and "blue" color scheme.
+All CVs are written in **Markdown**, converted by **Pandoc**, and typeset by
+**Typst** with the [modern-cv](https://typst.app/universe/package/modern-cv)
+package (an Awesome-CV port, blue accent). This replaces the former
+LaTeX/moderncv (banking style) + lualatex pipeline.
 
-**Output file:** `cv/main_<company>.tex`
-**Compile with:** **lualatex** on MiKTeX/TeX Live. pdflatex often fails on modern MiKTeX installs with `fontawesome5` font-expansion errors; lualatex handles the same sources cleanly.
-**Master reference:** `cv/main_example.tex` (comprehensive CV with all competencies, experience, and achievements - use as source when building targeted CVs)
+**Output files:** `cv/<YYMMDD>_<company>_<position-slug>.md` ->
+`cv/<YYMMDD>_<company>_<position-slug>.pdf`
+- `YYMMDD` is the date the CV is drafted.
+- The position slug is the role title lowercased and hyphenated
+  (e.g. `250714_braun_applied-data-scientist`).
+- `cv/main_example.md` is the only CV exempt from the scheme.
+
+**Compile with:** `.scripts/compile-cv.sh` (Pandoc -> Typst, bundled fonts).
+**Master reference:** `cv/main_example.md` (comprehensive CV with all
+competencies, experience, and achievements - use as source when building
+targeted CVs).
+**Template assets:** `md-typst-templates/` (see its README for the mapping
+table, package provenance, and gotchas).
 
 ### Compile command
 
 ```bash
-cd cv && lualatex -interaction=nonstopmode main_<company>.tex
+.scripts/compile-cv.sh cv/<YYMMDD>_<company>_<position-slug>.md
 ```
 
-Expected output: `Output written on main_<company>.pdf (2 pages, ...)`. Any page count other than 2 is a failure that must be fixed before presenting to the user.
+Expected output: `pdf: cv/<...>.pdf (2 pages)`. Any page count other than 2
+is a failure that must be fixed before presenting to the user.
 
 ## Document Structure
 
-```latex
-\documentclass[11pt,a4paper,sans]{moderncv}
-\moderncvstyle{banking}
-\moderncvcolor{blue}
+Each CV is a single Markdown file with YAML frontmatter plus body sections.
+The frontmatter feeds the modern-cv header; the body is the CV content.
 
-% Force both first and last name AND section headings to render in moderncv
-% blue (color1). Default banking on lualatex+MiKTeX leaves these black, which
-% looks inconsistent with the rest of the blue accent scheme.
-\renewcommand*{\firstnamestyle}[1]{{\fontsize{34}{36}\bfseries\upshape\color{color1}#1}}
-\renewcommand*{\lastnamestyle}[1]{{\fontsize{34}{36}\bfseries\upshape\color{color1}#1}}
-\renewcommand*{\sectionstyle}[1]{{\sectionfont\color{color1}#1}}
+````markdown
+---
+firstname: [FIRST_NAME]
+lastname: [LAST_NAME]
+address: Your Address, City, Country
+phone: [+XX XXXXXXXXXX]
+email: [your.email@example.com]
+linkedin: [your-profile-path]
+github: [your-username]
+positions:
+  - [Primary Role Title]
+  - [Secondary Role Title]
+---
 
-\usepackage[utf8]{inputenc}
-\usepackage{hyperref}
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    filecolor=magenta,
-    urlcolor=blue,
-    pdftitle={[YOUR_NAME] - CV},
-    pdfpagemode=FullScreen,
-}
-\usepackage[scale=0.77]{geometry}
-\usepackage{import}
-
-% Personal data
-\name{[FIRST_NAME]}{[LAST_NAME]}
-\address{[YOUR_ADDRESS]}{}{}
-\phone[mobile]{[YOUR_PHONE]}
-\email{[YOUR_EMAIL]}
-\extrainfo{\href{[YOUR_LINKEDIN_URL]}{LinkedIn}, \href{[YOUR_GITHUB_URL]}{GitHub}}
-
-\begin{document}
-\makecvtitle
-
-% 1. Profile statement (1-3 sentences, tailored per role)
-% 2. Skills section
-% 3. Education section
-% 4. Professional Experience section
-% 5. Selected Publications (if applicable)
-% 6. Honors and Awards (if applicable)
-% 7. References
-
-\end{document}
+```{=typst}
+#resume-item[
+[3-5 line profile statement tailored to the role]
+]
 ```
 
-### Color overrides
+# Core Competencies
 
-The three `\renewcommand*` lines in the preamble are required on lualatex+MiKTeX. Without them the firstname, lastname, and section headings render in black even though `\moderncvcolor{blue}` is set, which looks inconsistent with the rest of the blue accent scheme (links, bullet markers, contact icons). The override forces all three to use `color1` (moderncv's accent colour, which becomes blue under `\moderncvcolor{blue}`). Both names render bold; if you prefer the firstname in regular weight, change the firstnamestyle override from `\bfseries` to `\mdseries`. Don't drop the override - on most modern installs the defaults render visibly wrong.
-
-### Spacing inside itemize lists (important)
-
-**Do not place `\vspace{...}` between `\item` entries in an `itemize` list.** Even though the source looks symmetric, this pattern occasionally produces a noticeably oversized gap before a single item: the inter-item `\vspace` creates a paragraph break that interacts unpredictably with the list's internal `\itemsep`, so LaTeX renders one of the gaps wider than the rest. Remove the inter-item `\vspace` and let `itemize` use its native uniform spacing.
-
-```latex
-% WRONG - intermittently produces an oversized gap before one bullet
-\begin{itemize}
-\item \textbf{Foo}: ...
-\vspace{1pt}
-\item \textbf{Bar}: ...
-\vspace{1pt}
-\item \textbf{Baz}: ...
-\end{itemize}
-
-% RIGHT - uniform spacing using the list's native itemsep
-\begin{itemize}
-\item \textbf{Foo}: ...
-\item \textbf{Bar}: ...
-\item \textbf{Baz}: ...
-\end{itemize}
+```{=typst}
+#resume-skill-item("[Skill Category 1]", ("[Tool]", "[Framework]", strong("[Key differentiator]")))
 ```
 
-Two related patterns are fine and should be kept:
-- `\vspace{1pt}` immediately after `\section{...}` (between section heading and first item) - this is between the heading and the list, not between list items.
-- `\vspace{3pt}` between top-level `\cventry` blocks in Professional Experience or Education - this gives breathing room between roles and renders consistently.
+# Professional Experience
+
+```{=typst}
+#resume-entry(title: "[Job Title]", location: "[City, Country]", date: "[YYYY] - Present", description: "[Company]")
+#resume-item[
+  - [Achievement - specific, use numbers where possible]
+  - [Achievement 2]
+]
+```
+
+# Education
+
+```{=typst}
+#resume-entry(title: "[Degree] in [Field]", location: "[City, Country]", date: "[YYYY] - [YYYY]", description: "[Institution]")
+#resume-item[
+  Thesis: "[Thesis Title]. [Brief description.]"
+]
+```
+
+# Languages
+
+- [Language 1] (native), [Language 2] (fluent).
+
+# Publications
+
+- [Author(s)] ([Year]). [Title]. [Journal]. [DOI](https://doi.org/[DOI])
+
+# Honors and Awards
+
+- **[Award Name]** - [Event/Organization] ([Year]).
+
+# References
+
+- Available upon request.
+````
+
+### How the mapping works
+
+| CV element | In the Markdown |
+|---|---|
+| Name, address, phone, email, LinkedIn, GitHub, headline titles | YAML frontmatter |
+| Profile statement | first raw `typst` block: `#resume-item[ ... ]` |
+| Section headings | `# Section name` |
+| Experience / Education entries | one raw `typst` block per entry: `#resume-entry(...)` + `#resume-item[ - ... ]` |
+| Core Competencies | raw `typst` blocks: `#resume-skill-item("Category", ("a", "b"))` |
+| Languages, Publications, Awards, References | plain Markdown lists |
+
+Frontmatter value rules (the package prefixes URLs itself):
+- `address`: a plain string with your own commas ("12 Street, 1460 City, Country"). Never a YAML list (`[...]`) - list items are interpolated with no separator and extract as run-together text ("AddressCityCountry").
+- `linkedin`: profile path only, e.g. `jane-doe` (not the full URL).
+- `github`: username only, e.g. `janedoe`.
+- `positions`: headline role titles, joined with dots in the header.
+
+### Entry layout
+
+Each job or education entry is a `resume-entry` (title on the left, location
+on the right; the description/company on the next line with the date inline
+immediately after it, e.g. "Novo Analytics A/S 2021 - Present") followed by a
+`resume-item` bullet list. Write the whole entry - header plus
+bullets - inside a single raw `typst` block (fenced with ```` ```{=typst} ````
+- a plain ` ```typ ` fence would be rendered as displayed code) so it renders
+as one sticky unit.
 
 ## Section-by-Section Tailoring
 
-### Profile Statement / Elevator Pitch (Best Practice)
-This is the most important section to customize. It appears right after `\makecvtitle`.
+### ATS parseability (keep the PDF text layer clean)
 
-Write 5-7 lines that function as an "elevator pitch": a concise, compelling introduction explaining why you're qualified for *this specific role*. Focus on what the employer gains from hiring you.
+Applicant Tracking Systems read the PDF's text layer, not the visual layout:
+they extract text, split sections on headings, and map values to fixed fields
+by pattern matching (OCR is only a fallback for image-only files, which fail
+to parse outright - Greenhouse documents this, and files over 2.5 MB are
+skipped entirely). The Typst pipeline is safe on the fundamentals: fonts are
+subset-embedded with ToUnicode maps, the text is selectable, and the PDF is
+tagged and well under the size limit.
+
+The template (`md-typst-templates/cv.typ`) sets `set text(hyphenate: false)`
+for this reason: modern-cv justifies body text, and with hyphenation on,
+Typst breaks compound words at their hyphens across line boundaries and
+writes the break hyphen into the PDF as U+00AD (soft hyphen). Extractors
+(Tika/PDFBox, pypdf, pdfminer) then see "end-<U+00AD>" on one line and
+"to-end" on the next, which breaks keyword matching. Do not remove that
+setting or re-enable hyphenation.
+
+`compile-cv.sh` guards the text layer after every build:
+- it un-escapes pandoc's frontmatter over-escaping (`a@b.com` -> `a\@b.com`,
+  `some_user` -> `some\_user`, and similar for `$` `#` `*` `~`) inside the
+  `resume.with(...)` block, because in a Typst string literal those sequences
+  are not escapes and the backslash would be rendered literally into the
+  PDF (an unreadable email address);
+- it warns if the extracted text contains U+00AD soft hyphens (line-break
+  hyphenation) or backslashes (leaked escaping). Fix the cause before
+  presenting the CV.
+
+Spot-check manually after compiling:
+
+```bash
+pdftotext cv/<YYMMDD>_<company>_<position-slug>.pdf - | grep -c $'\xc2\xad'  # must print 0
+pdftotext cv/<YYMMDD>_<company>_<position-slug>.pdf - | grep -F "end-to-end" # spot-check keywords
+```
+
+Text-layer rules:
+- Keep hyphenated keywords ("end-to-end", "scikit-learn", "stakeholder-facing") as single hyphenated tokens - ATS parsers treat the hyphen as part of the keyword.
+- Dates in "YYYY - YYYY" / "YYYY - Present" form (ASCII hyphen with surrounding spaces), one format everywhere; never mix en-dash ranges or "Jan '22 - now" styles.
+- **Entry dates print inline after the company name** ("Novo Analytics A/S 2021 - Present") - this is a local patch to the vendored modern-cv package (see `md-typst-templates/README.md`). The stock layout right-aligned the date, which position-based extractors (pdfminer/xpdf family) split into a detached column, detaching dates from their jobs. Do not revert to the stock `secondary-justified-header(description, date)` rendering. The entry location is still right-aligned on the title line; a column-detecting extractor can only re-split it if several locations share an identical start position (identical-length placeholder text does this - real content does not). For strict-parser employers, still spot-check with https://rxresu.me/ats-checker.
+- The header contact line and `resume-skill-item` rows are two-column within a single line. That extracts as one line (label, then values) - do not restructure them into stacked multi-line cells, which would interleave in extraction.
+- Font Awesome contact icons appear in the extracted text as private-use glyphs between the contact values. This is harmless; do not try to strip them.
+- The LinkedIn URL exists only as a link annotation (the visible text is the candidate's name). Do not rely on the ATS extracting it; the GitHub username does appear as text.
+- Never ship unfilled template data. Parsers apply fake-resume heuristics and skip placeholder content - Greenhouse's own documentation names "First Last" (the repo's placeholder name) as an example.
+- Do not write bare `@username` in the Markdown body: pandoc's Typst writer turns it into a citation reference and breaks compilation. `@` is safe in frontmatter values (the script un-escapes it).
+- Company names with legal form (Inc./Co./ApS/A/S) and complete job titles parse better; avoid abbreviating titles ("Sr. DS").
+
+### Profile Statement / Elevator Pitch (Best Practice)
+This is the most important section to customize. It appears right after the
+header block.
+
+Write 5-7 lines that function as an "elevator pitch": a concise, compelling
+introduction explaining why you're qualified for *this specific role*. Focus
+on what the employer gains from hiring you.
 
 **Create 2-3 profile statement templates for your main role types:**
 
@@ -113,9 +192,11 @@ Write 5-7 lines that function as an "elevator pitch": a concise, compelling intr
 > [YOUR_PROFILE_STATEMENT_TEMPLATE_2]
 
 ### Core Competencies / Skills Section (Best Practice)
-Reorder and emphasize based on the role. Use bold category labels.
+Reorder and emphasize based on the role. Use `resume-skill-item` rows: a bold
+category label on the left, the skills on the right.
 
-List **5-7 key competencies** in bullet format, tailored to the specific job. For each competency, briefly explain how it adds value to the position.
+List **5-7 key competencies**, tailored to the specific job. Emphasize a key
+differentiator in each row with `strong("...")`.
 
 ### Education
 - Always include your highest degrees
@@ -142,41 +223,41 @@ If there is a gap in your employment history:
 - Keep format brief, one line each
 
 ### References
+- If no references are available in the source material, skip this section. Do not add a section that only says "Available upon request."
 - List 2-4 references with name, title, company, and contact
 - End with: "More references are available upon request."
 - **Do not attach reference letters** - employers typically contact references directly
 
 ## Compile-and-Inspect Loop (MANDATORY)
 
-After writing the CV and before presenting to the user, always compile and visually inspect the PDF. Iterate until the layout is clean. Workflow:
+After writing the CV and before presenting to the user, always compile and
+visually inspect the PDF. Iterate until the layout is clean. Workflow:
 
-1. Run `lualatex -interaction=nonstopmode main_<company>.tex`
+1. Run `.scripts/compile-cv.sh cv/<YYMMDD>_<company>_<position-slug>.md`
 2. Check the output page count: must be exactly 2
-3. Read the PDF via the Read tool and visually inspect both pages
-4. Check for **orphaned entries**: a `\cventry` title line must never sit alone at the bottom of page 1 with its bullets on page 2
+3. Render the pages: `.scripts/render-pdf.sh cv/<YYMMDD>_<company>_<position-slug>.pdf`
+4. View every produced PNG and check for layout problems (orphaned entries,
+   cramped spacing, content spill)
 
-### Fixing common page-break problems
+### Page-break behavior in Typst (differs from LaTeX)
 
-**Problem: entry title on page 1, bullets orphaned to page 2**
-Add `\needspace{5\baselineskip}` immediately before the problematic `\cventry`:
-```latex
-\needspace{5\baselineskip}
-\item{\cventry{YEAR--YEAR}{Role Title}{Organization}{Location}{}{...}}
-```
-Include `\usepackage{needspace}` in the preamble.
-
-**Problem: one trailing section spills to page 3 (e.g., References alone on page 3)**
-Add `\enlargethispage{2-3\baselineskip}` before a late section (e.g., before `\section{Honors and Awards}`) to stretch page 2 by a few lines. This is the standard LaTeX rescue for near-miss overflows.
-
-**Problem: 3 pages with significant content on page 3**
-Cut content — do not compress geometry or `\vspace`. See "Relevance-weighted cutting" below for the rule.
-
-**Problem: content finishes early on page 2 (feels thin)**
-Restore the highest-relevance item that was previously cut — a CV that ends mid-page 2 looks incomplete.
+- **No orphaned entries or headings.** `resume-entry` blocks and level-1
+  section headings are `sticky` in the modern-cv package, so an entry title
+  or section heading can never sit alone at the bottom of a page with its
+  bullets on the next page. There is no `\needspace` equivalent to add.
+- **No page-stretch rescue.** Typst has no `\enlargethispage`. If a few lines
+  spill onto a third page, you must cut content (see Relevance-weighted
+  cutting) or tighten spacing inside a raw block. Do not shrink fonts or
+  margins to force-fit.
+- **Forcing a section to the next page.** If a section would start with only
+  one line left on a page, add `#pagebreak(weak: true)` before the heading in
+  the Markdown. A weak break only takes effect where a page break is already
+  happening, so it cannot create a mostly-empty page on its own.
 
 ## Page Budget - Hard 2-Page Limit
 
-The CV **must** fit on exactly 2 pages when compiled. Use these content limits as a guide:
+The CV **must** fit on exactly 2 pages when compiled. Use these content limits
+as a guide:
 
 | Section | Max budget |
 |---------|-----------|
@@ -188,36 +269,63 @@ The CV **must** fit on exactly 2 pages when compiled. Use these content limits a
 | Education | 2-3 entries |
 | Publications | 2-3 entries |
 | Awards | 3 entries, single line each |
-| References | "Available upon request." (single line) |
+| References | 3 entries, single line each |
 
-**If in doubt, cut rather than squeeze.** Reducing `\vspace` or geometry scale to force-fit content makes the CV look cramped.
+**If in doubt, cut rather than squeeze.** Reducing spacing or margins to
+force-fit content makes the CV look cramped.
 
 ## Relevance-weighted cutting (the right way to shrink a CV)
 
-**Cut by signal, not by section.** Static priority lists ("remove oldest education first, then shorten the earliest role...") are wrong when a relevant "lower-priority" item is competing with an irrelevant "higher-priority" item. An older-role bullet that speaks directly to the posting is worth more than a recent-role bullet that does not.
+**Cut by signal, not by section.** Static priority lists ("remove oldest
+education first, then shorten the earliest role...") are wrong when a relevant
+"lower-priority" item is competing with an irrelevant "higher-priority" item.
+An older-role bullet that speaks directly to the posting is worth more than a
+recent-role bullet that does not.
 
 For every candidate line, score three things:
 
-1. **Relevance to THIS posting** — does the line hit a named tool, keyword, or stated responsibility in the job ad?
-2. **Uniqueness** — is it the only place this claim appears, or is it duplicated elsewhere in the CV?
-3. **Narrative load** — does the cover letter depend on it? If cutting the line would force you to rewrite a cover-letter paragraph, it is load-bearing.
+1. **Relevance to THIS posting** - does the line hit a named tool, keyword, or
+   stated responsibility in the job ad?
+2. **Uniqueness** - is it the only place this claim appears, or is it
+   duplicated elsewhere in the CV?
+3. **Narrative load** - does the cover letter depend on it? If cutting the
+   line would force you to rewrite a cover-letter paragraph, it is
+   load-bearing.
 
 Cut the lowest-total-score line first, regardless of which section it sits in.
 
-### Practical order of cuts (easiest → last resort)
+### Practical order of cuts (easiest - last resort)
 
-1. **Redundancy.** If an achievement appears in both Core Competencies AND a role bullet, the Core Competencies version is usually the cleaner cut (the experience bullet is more concrete evidence).
-2. **Profile-statement fluff.** A sentence that just restates what Publications or Skills will show. ("Peer-reviewed publications on X..." is already a Publications entry — profile can claim it once and stop.)
-3. **Low-relevance experience bullets.** A bullet about work that does not touch posting keywords, wherever it sits. This cuts across sections before touching the structural list.
-4. **Low-relevance supporting content.** An older-role bullet that does not speak to the target role. A certification that does not touch the posting's stack. A language entry that can be condensed to one line.
-5. **Low-relevance publications.** Keep 1-2 publications that best match the posting. Cut the rest before touching experience bullets.
-6. **Last-resort structural cuts.** Oldest education entry, tightening an older role to 2 bullets, collapsing Certifications into a single line. These only happen if the relevance-weighted cuts above have already been exhausted.
+1. **Redundancy.** If an achievement appears in both Core Competencies AND a
+   role bullet, the Core Competencies version is usually the cleaner cut (the
+   experience bullet is more concrete evidence).
+2. **Profile-statement fluff.** A sentence that just restates what
+   Publications or Skills will show. ("Peer-reviewed publications on X..." is
+   already a Publications entry - profile can claim it once and stop.)
+3. **Low-relevance experience bullets.** A bullet about work that does not
+   touch posting keywords, wherever it sits. This cuts across sections before
+   touching the structural list.
+4. **Low-relevance supporting content.** An older-role bullet that does not
+   speak to the target role. A certification that does not touch the posting's
+   stack. A language entry that can be condensed to one line.
+5. **Low-relevance publications.** Keep 1-2 publications that best match the
+   posting. Cut the rest before touching experience bullets.
+6. **Last-resort structural cuts.** Oldest education entry, tightening an
+   older role to 2 bullets, collapsing Certifications into a single line.
+   These only happen if the relevance-weighted cuts above have already been
+   exhausted.
 
 ### Pitfalls to avoid
 
-- Do not mechanically cut from the bottom of a static section list without checking relevance. "Cut the oldest role first" is wrong if that role is literally about the skill the posting asks for.
-- Do not cut the one concrete example the cover letter leans on. Relevance is measured against the cover letter you wrote, not just the job posting — interviewers will have read both.
-- Do not cut to fit if the fit is borderline (2.02 pages). Prefer `\enlargethispage{2-3\baselineskip}` on a late section for near-misses; reserve content cuts for genuine overflow (content on page 3 that is more than a single trailing section).
+- Do not mechanically cut from the bottom of a static section list without
+  checking relevance. "Cut the oldest role first" is wrong if that role is
+  literally about the skill the posting asks for.
+- Do not cut the one concrete example the cover letter leans on. Relevance is
+  measured against the cover letter you wrote, not just the job posting -
+  interviewers will have read both.
+- Do not cut to fit if the fit is borderline. Because Typst has no
+  page-stretch rescue, a near-miss (a few lines onto page 3) is resolved by
+  cutting the single lowest-score line, not by squeezing spacing.
 
 ## Recommended Section Order
 

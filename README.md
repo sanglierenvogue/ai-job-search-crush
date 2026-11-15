@@ -58,8 +58,10 @@ The framework encodes career guidance best practices, including structured evalu
 - [Crush](https://github.com/charmbracelet/crush) (CLI)
 - Python 3.10+
 - [Bun](https://bun.sh) (for Danish job search CLI tools)
-- LaTeX distribution with `lualatex` and `xelatex`: [TeX Live](https://tug.org/texlive/) or [MiKTeX](https://miktex.org/). The CV compiles with `lualatex` (pdflatex often fails on modern MiKTeX installs with `fontawesome5` font-expansion errors); the cover letter compiles with `xelatex` because `cover.cls` requires `fontspec`.
-- `poppler-utils` (provides `pdftoppm`, used to render PDFs for visual verification)
+- LaTeX distribution with `xelatex`: [TeX Live](https://tug.org/texlive/) or [MiKTeX](https://miktex.org/). The cover letter compiles with `xelatex` because `cover.cls` requires `fontspec`. (A full LaTeX install with `lualatex` is only needed if you keep using custom LaTeX CV templates via `project:add-template`.)
+- [Pandoc](https://pandoc.org) 3.5+ (its Typst writer converts the Markdown CV)
+- [Typst](https://typst.app) 0.12+ (compiles the CV; pulls the modern-cv package from the registry on first use, or works offline via `.scripts/sync-package.sh`)
+- `poppler-utils` (provides `pdftoppm` and `pdfinfo`, used to render PDFs for visual verification and to check page counts)
 
 ## Quick start
 
@@ -146,7 +148,7 @@ ai-job-search/
 │   │   ├── 02-behavioral-profile.md   # PI/DISC/personality assessment
 │   │   ├── 03-writing-style.md        # Tone, structure, do's and don'ts
 │   │   ├── 04-job-evaluation.md       # Scoring framework for job fit
-│   │   ├── 05-cv-templates.md         # LaTeX CV structure + tailoring rules
+│   │   ├── 05-cv-templates.md         # Markdown CV structure + tailoring rules
 │   │   ├── 06-cover-letter-templates.md # LaTeX cover letter templates
 │   │   └── 07-interview-prep.md       # STAR examples + interview framework
 │   ├── job-scraper/                   # project:job-scraper job search orchestration
@@ -158,7 +160,14 @@ ai-job-search/
 │   ├── jobnet-search/                 # Jobnet.dk (Denmark, government portal)
 │   └── linkedin-search/               # LinkedIn public job listings (country-agnostic)
 ├── cv/
-│   └── main_example.tex               # moderncv LaTeX template
+│   ├── main_example.md                # Markdown CV master reference
+│   └── <YYMMDD>_<company>_<slug>.md   # Per-application CVs (gitignored)
+├── md-typst-templates/                # Stock CV template: Pandoc + Typst (modern-cv)
+│   ├── cv.typ                         # Pandoc->Typst template mapping
+│   ├── template.md                    # Markdown CV skeleton
+│   ├── fonts/                         # Bundled fonts (Source Sans 3, Roboto, FA7)
+│   └── modern-cv/0.10.0/              # Pinned package source (offline installs)
+├── .scripts/                          # Shared compile/verify command library
 ├── cover_letters/
 │   ├── cover.cls                      # Custom cover letter LaTeX class
 │   └── OpenFonts/                     # Lato + Raleway fonts
@@ -187,17 +196,17 @@ The `project:apply` skill runs a **drafter-reviewer workflow** with mandatory PD
 
 1. **Parse** the job posting (URL or text)
 2. **Evaluate fit** against your profile (skills, experience, culture, location, career alignment)
-3. **Draft** a tailored CV and cover letter in LaTeX
+3. **Draft** a tailored CV in Markdown and a cover letter in LaTeX
 4. **Research the company** in the main session (web search + page fetches), then **dispatch a reviewer subagent** with a fresh context that critiques the drafts inline against the research
 5. **Revise** based on the reviewer's feedback
-6. **Compile and inspect** both PDFs: lualatex for the CV, xelatex for the cover letter. The rendered pages are converted to images and inspected with the `view` tool, iterating on the LaTeX until the CV is exactly 2 pages with no orphaned entry titles, and the cover letter is exactly 1 page with the signature visible and fonts consistent.
+6. **Compile and inspect** both PDFs: `pandoc` + `typst` (via `.scripts/compile-cv.sh`) for the CV, `xelatex` for the cover letter. The rendered pages are converted to images and inspected with the `view` tool, iterating until the CV is exactly 2 pages with no orphaned entries, and the cover letter is exactly 1 page with the signature visible and fonts consistent.
 7. **Present** the final output with a verification checklist
 
 All claims in the CV and cover letter are verified against your actual profile. The system never fabricates skills or experience.
 
 ### What makes this workflow different
 
-- **PDF verification loop.** Most LaTeX-resume templates produce "looks fine in the .tex" output that breaks in the PDF: job titles orphan to the next page, cover letters spill onto page 2, bullet fonts silently fall back to the body font. `project:apply` compiles, renders the pages to images, and visually inspects every PDF, applying targeted fixes (`\needspace`, `\enlargethispage`, font-matching wrappers for list items) until the layout is clean. This runs automatically on every application.
+- **PDF verification loop.** Resume templates routinely produce "looks fine in the source" output that breaks in the PDF: job titles orphan to the next page, cover letters spill onto page 2, fonts silently fall back. `project:apply` compiles, renders the pages to images, and visually inspects every PDF until the layout is clean. For the Typst CV, the modern-cv `resume-entry` blocks and section headings are natively sticky, so orphaned titles cannot occur; the loop focuses on the 2-page budget and the cover letter's LaTeX fixes (`\needspace`, `\enlargethispage`, font-matching wrappers for list items). This runs automatically on every application.
 - **Relevance-weighted CV cutting.** When a CV overflows 2 pages, the workflow does not cut mechanically from the "oldest" section. It scores each candidate line by (a) relevance to the target posting, (b) uniqueness in the document, and (c) whether the cover letter depends on it, and cuts the lowest-total-score line first. An older-role bullet that hits posting keywords survives ahead of a recent-role bullet that does not.
 - **Drafter-reviewer separation.** The drafter writes; company research happens in the main session; a reviewer subagent with a fresh context critiques the drafts (research and drafts passed inline, since Crush subagents are read-only). The drafter then revises. This catches missed keywords, weak framing, and generic language that a single pass often leaves in.
 - **Token-efficient reviewer dispatch.** The reviewer subagent receives drafts and research inline rather than re-reading them, and the verification checklist runs once at the end of the workflow rather than being duplicated by both agents. Note: the compile-and-inspect step spends some of those savings on PDF rendering and layout iteration — the workflow trades some end-to-end token cost for a real reduction in broken PDFs reaching the user.
@@ -228,9 +237,9 @@ project:setup --section search
 
 This re-runs the search configuration interview: which roles to target, which skills to search for, which locations, and which portals. It also suggests role types you may not have considered based on your profile.
 
-### LaTeX templates
+### CV and cover-letter templates
 
-The CV uses [moderncv](https://ctan.org/pkg/moderncv) (banking style). The cover letter uses a custom `cover.cls` with Lato/Raleway fonts.
+The CV is written in Markdown and typeset by Typst with the [modern-cv](https://typst.app/universe/package/modern-cv) package (assets in `md-typst-templates/`, see its README). The cover letter uses a custom `cover.cls` with Lato/Raleway fonts.
 
 To use your own template instead, run:
 
@@ -242,7 +251,7 @@ Point it at your `.tex` file (plus any `.cls`/`.sty` files or bundled fonts). Th
 
 - `project:add-template --list` shows registered templates
 - `project:add-template --use <name>` switches between them
-- `project:add-template --use default` reverts to the stock moderncv / cover.cls templates
+- `project:add-template --use default` reverts to the stock templates (modern-cv Typst CV, `cover.cls` cover letter)
 
 If you prefer doing it by hand, the manual route still works: update the guidance in `05-cv-templates.md` and `06-cover-letter-templates.md`.
 

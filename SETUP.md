@@ -144,7 +144,25 @@ If you have salary data (from a union, salary survey, Glassdoor, or personal res
 
 This creates `salary_data.json` which the `project:apply` workflow uses for salary benchmarking. If you skip this step, salary lookup is simply omitted.
 
-## 6. Test the workflow
+## 6. Optional: CV vision analysis
+
+`.scripts/analyze-cv-vision.py` sends rendered CV pages to a vision-capable LLM (an OpenAI-compatible chat-completions gateway serving `qwen3.8-27b`) for layout and content analysis. The core workflows do not need it.
+
+1. Get an API key for your OpenAI-compatible chat-completions gateway from your provider console.
+2. Configure it:
+   ```bash
+   cp .env.example .env   # set LLM_API_KEY (and LLM_BASE_URL if your
+                          # gateway is not the OpenAI default)
+   ```
+3. Render a CV PDF to page images, then analyze:
+   ```bash
+   .scripts/render-pdf.sh cv/<YYMMDD>_<company>_<position-slug>.pdf /tmp/cv
+   .scripts/analyze-cv-vision.py /tmp/cv-1.png /tmp/cv-2.png
+   ```
+
+`.env` is gitignored; never commit it. See `.dev/cv-vision/TEST-PLAN.md` for the test workflow.
+
+## 7. Test the workflow
 
 Find a job posting you're interested in, then:
 
@@ -165,7 +183,7 @@ Crush will:
 4. Research the company, then have a reviewer subagent (fresh context) critique the drafts
 5. Revise, compile both PDFs, inspect the rendered pages, and present the final output
 
-## 7. Compile your documents
+## 8. Compile your documents
 
 After `project:apply` creates the documents (the workflow already compiles and verifies both PDFs):
 

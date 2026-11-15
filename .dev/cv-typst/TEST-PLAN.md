@@ -132,6 +132,12 @@ size), `pdffonts` (font embedding), and raw-PDF color-stream extraction
 (accent color). The rendered PNGs (`baseline-*.png`, `typst-*.png`) are kept
 for a human or vision-model pass in an environment that has one.
 
+Update: the in-agent restriction still stands (the agent's model catalog
+declares no image input for these models), but the LLM gateway accepts
+images on `qwen3.8-27b` when queried directly — see
+`.dev/cv-vision/TEST-PLAN.md`, whose live run (Run 2) passed all steps,
+including two-page analysis of these rendered PNGs.
+
 ## Iteration log
 
 1. **Run 1.** LaTeX baseline failed to compile: `import.sty` not installed on

@@ -24,6 +24,11 @@ cv/system-package/
 cv/system-package.toml
 md-typst-templates/build/
 
+# Secrets (never commit) — template lives in .env.example
+.env
+.env.*
+!.env.example
+
 # Personal data (never commit these)
 salary_data.json
 job_scraper/seen_jobs.json

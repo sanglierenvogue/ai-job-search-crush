@@ -11,10 +11,10 @@ from your own salary data. See tools/README_SALARY_TOOL.md for
 instructions on the expected format and how to convert from Excel.
 
 Usage:
-    python salary_lookup.py "Company Name"
-    python salary_lookup.py "Company Name" --city "Berlin"
-    python salary_lookup.py "Company Name" --json
-    python salary_lookup.py --list-all
+    python .scripts/salary_lookup.py "Company Name"
+    python .scripts/salary_lookup.py "Company Name" --city "Berlin"
+    python .scripts/salary_lookup.py "Company Name" --json
+    python .scripts/salary_lookup.py --list-all
 """
 
 import json
@@ -24,7 +24,7 @@ import argparse
 import unicodedata
 from pathlib import Path
 
-DATA_FILE = Path(__file__).parent / "salary_data.json"
+DATA_FILE = Path(__file__).parent.parent / "salary_data.json"
 
 # Legal suffixes and noise to strip when matching company names
 STRIP_PATTERNS = [

@@ -162,6 +162,7 @@ ai-job-search/
 │   ├── fonts/                         # Bundled fonts (Source Sans 3, Roboto, FA7)
 │   └── modern-cv/0.10.0/              # Pinned package source (offline installs)
 ├── .scripts/                          # Shared compile/verify command library
+│   └── salary_lookup.py               # Salary benchmarking tool (BYO data)
 ├── cover_letters/
 │   └── cover_<company>_<role>.md      # Per-application cover letters (Markdown, gitignored)
 ├── templates/                         # Custom templates registered via project:add-template
@@ -173,7 +174,6 @@ ai-job-search/
 │   ├── diplomas/                      # Degree certificates and transcripts
 │   ├── references/                    # Reference letters
 │   └── applications/                  # Past application records (<company>_<role>/)
-├── salary_lookup.py                   # Salary benchmarking tool (BYO data)
 ├── tools/
 │   ├── convert_salary_excel.py        # Convert salary Excel to JSON
 │   └── README_SALARY_TOOL.md          # Salary tool setup instructions

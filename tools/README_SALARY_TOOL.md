@@ -107,10 +107,10 @@ Start with an empty template and add companies as you research them:
 ## Usage
 
 ```bash
-python salary_lookup.py "Example Corp"
-python salary_lookup.py "Widget Inc" --city "Springfield"
-python salary_lookup.py "Acme Corp" --json
-python salary_lookup.py --list-all
+python .scripts/salary_lookup.py "Example Corp"
+python .scripts/salary_lookup.py "Widget Inc" --city "Springfield"
+python .scripts/salary_lookup.py "Acme Corp" --json
+python .scripts/salary_lookup.py --list-all
 ```
 
 ## Important notes

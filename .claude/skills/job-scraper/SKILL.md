@@ -64,6 +64,8 @@ For each new job, do a rapid fit check (NOT the full evaluation from `04-job-eva
 - **Medium match**: Role is adjacent to your experience
 - **Low match**: Role requires significant skills you lack
 
+Record a one-line `fit_reason` for each job explaining the signal (e.g. "Core Python/ML stack matches; 2+ yrs experience listed" or "Requires on-site work outside commute range").
+
 ### Step 4: Deduplicate & Store
 
 1. Add ALL fetched jobs (new and skipped) to `seen_jobs.json` with structure:
@@ -76,7 +78,8 @@ For each new job, do a rapid fit check (NOT the full evaluation from `04-job-eva
       "url": "...",
       "first_seen": "YYYY-MM-DD",
       "fit": "high/medium/low",
-      "status": "new/skipped/evaluated"
+      "fit_reason": "...",
+      "status": "new/evaluated/skipped"
     }
   }
 }
@@ -106,7 +109,11 @@ For each high-match job, add 2-3 bullet points:
 After presenting, ask:
 > "Want me to evaluate any of these in detail? Just give me the number(s)."
 
-If the user picks a number, invoke the **job-application-assistant** skill workflow (fit evaluation first, then CV + cover letter if approved).
+When the user responds with the job(s) they want analyzed:
+1. Immediately update `seen_jobs.json` in the same step:
+   - Jobs the user picked (by number) → `status: "evaluated"`
+   - All other new jobs from this run → `status: "skipped"` (do this immediately, before any other work)
+2. For each evaluated job, invoke the **job-application-assistant** skill workflow (fit evaluation first, then CV + cover letter if approved).
 
 ### Step 6: Update Tracker (Optional)
 

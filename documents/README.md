@@ -113,9 +113,9 @@ applications/
 
 **`job_posting.md`** — Paste the full job posting text here. Used by `project:setup` to infer which skills and role types you have targeted, and to calibrate `04-job-evaluation.md`.
 
-**`cover_letter.md`** (or legacy `cover_letter.tex`) — The cover letter you actually submitted. Used to extract writing style patterns and structure for `06-cover-letter-templates.md`.
+**`cover_letter.md`** (or legacy `cover_letter.tex`) — The cover letter you actually submitted. Used to extract writing style patterns and structure for `07-cover-letter-templates.md`.
 
-**`cv_draft.md`** (or legacy `cv_draft.tex`) — The CV variant you submitted. Used to extract profile statement styles for `05-cv-templates.md`.
+**`cv_draft.md`** (or legacy `cv_draft.tex`) — The CV variant you submitted. Used to extract profile statement styles for `06-cv-templates.md`.
 
 **`outcome.md`** — Fill this in after the application resolves. Format:
 

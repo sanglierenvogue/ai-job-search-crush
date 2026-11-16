@@ -81,10 +81,9 @@ This repo is a job application workspace. The AI acts as a career advisor and ap
 - **Paper size:** [PAPER_SIZE]
 
 ## Repo Structure
-- `cv/` - Markdown CVs (master reference `main_example.md`, per-application `<YYMMDD>_<company>_<position-slug>.md`)
-- `md-typst-templates/` - Stock CV and cover-letter template assets: Pandoc->Typst templates (cv.typ, cover.typ), Markdown skeletons, bundled fonts, pinned modern-cv package source
-- `.scripts/` - Shared command library (compile-cv.sh, compile-cover-letter.sh, render-pdf.sh, check-env.sh, sync-package.sh)
-- `cover_letters/` - Markdown cover letters (compiled via Pandoc + Typst / modern-cv coverletter)
+- `job-applications/` - All application material: master CV reference `main_example.md`; per-company folders (`<company>/`, holding `<company>_research_<YYMMDD>.md`); per-application folders (`<company>/<YYMMDD>_<position-slug>/`, holding the evaluation doc, CV, and cover letter)
+- `md-typst-templates/` - Stock template assets: Pandoc->Typst templates (cv.typ, cover.typ, report.typ), Markdown skeletons, bundled fonts, pinned modern-cv package source
+- `.scripts/` - Shared command library (compile-cv.sh, compile-cover-letter.sh, compile-report.sh, render-pdf.sh, check-env.sh, sync-package.sh)
 - `.crush/skills/` - Workflow skills (setup, apply, expand, reset, add-template, add-portal), user-invocable
 - `.claude/skills/` - AI skill definitions for the application workflow (auto-discovered by Crush)
 - `.agents/skills/` - Job search CLI tools (auto-discovered by Crush)
@@ -92,10 +91,11 @@ This repo is a job application workspace. The AI acts as a career advisor and ap
 
 ## Workflow for New Job Applications
 1. User provides a job posting (URL or text)
-2. **Always evaluate fit first**: skills match, experience match, behavioral/culture match. Present this assessment to the user before proceeding.
-3. If good fit: create targeted CV (`cv/<YYMMDD>_<company>_<position-slug>.md`) and cover letter (`cover_letters/cover_<company>_<role>.md`)
-4. **Verify both documents** (see Verification Checklist below)
-5. Prepare interview talking points based on the role requirements and your strengths
+2. **Company research first**: run the company research sub-workflow (`03-company-research.md`); a research file less than 6 weeks old is reused
+3. **Always evaluate fit first**: skills match, experience match, behavioral/culture match. Present this assessment to the user before proceeding. Persist the evaluation document in the application folder (`job-applications/<company>/<YYMMDD>_<position-slug>/`)
+4. If good fit: create targeted CV and cover letter in the same application folder
+5. **Verify both documents** (see Verification Checklist below)
+6. Prepare interview talking points based on the role requirements and your strengths
 
 **Important:** When mentioning agentic coding or AI tooling in CVs/cover letters, explicitly reference **Claude Code** by name.
 

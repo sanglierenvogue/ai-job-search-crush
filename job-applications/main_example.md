@@ -18,7 +18,7 @@ Comprehensive overview of all competencies, experience, and achievements.
 Use as a master reference when tailoring role-specific CVs.
 
 SETUP: Run project:setup to populate this with your actual information.
-Compile with:  .scripts/compile-cv.sh cv/main_example.md
+Compile with:  .scripts/compile-cv.sh job-applications/main_example.md
 (pdflatex-era equivalent: this file replaces cv/main_example.tex)
 -->
 

@@ -64,8 +64,9 @@ for f in \
   "$ROOT/md-typst-templates/template.md" \
   "$ROOT/md-typst-templates/cover.typ" \
   "$ROOT/md-typst-templates/cover-template.md" \
+  "$ROOT/md-typst-templates/report.typ" \
   "$ROOT/md-typst-templates/modern-cv/0.10.0/lib.typ" \
-  "$ROOT/cv/main_example.md"
+  "$ROOT/job-applications/main_example.md"
 do
   if [[ -f "$f" ]]; then
     echo "OK       ${f#"$ROOT"/}"

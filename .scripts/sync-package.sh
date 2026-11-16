@@ -1,22 +1,25 @@
 #!/usr/bin/env bash
 #
 # sync-package.sh — Install the vendored Typst packages as a local system
-# package so `cv/` compiles without network access.
+# package so documents compile without network access.
 #
 # Usage:
 #   .scripts/sync-package.sh
 #
 # Copies modern-cv, fontawesome, and linguify from md-typst-templates/ into
-# cv/system-package/ and (re)writes cv/system-package.toml. Verified against
-# typst 0.15: with these in place, `@preview/modern-cv:0.10.0` resolves from
-# cv/system-package/ instead of the registry.
+# the repo root's system-package/ and (re)writes system-package.toml.
+# Verified against typst 0.15: with these in place, `@preview/modern-cv:0.10.0`
+# resolves from system-package/ instead of the registry. The root location is
+# intentional: Typst walks up from the main file's directory when resolving
+# system packages, and the repo root is the only ancestor shared by documents
+# in every subfolder (e.g. job-applications/<company>/<slug>/build/).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 
 SRC="$ROOT/md-typst-templates"
-DST="$ROOT/cv/system-package"
+DST="$ROOT/system-package"
 
 declare -a PKGS=(
   "modern-cv:0.10.0"
@@ -42,6 +45,6 @@ mkdir -p "$DST"
     cp -r "$sdir/." "$DST/preview/$name/$ver/"
     printf '\n[packages."preview/%s"]\nversion = "%s"\n' "$name" "$ver"
   done
-} > "$ROOT/cv/system-package.toml"
+} > "$ROOT/system-package.toml"
 
-echo "done: $DST + $ROOT/cv/system-package.toml"
+echo "done: $DST + $ROOT/system-package.toml"

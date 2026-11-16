@@ -1,9 +1,9 @@
 // cv.typ — Pandoc -> Typst template for the CV pipeline.
 //
 // Usage:
-//   pandoc cv/<YYMMDD>_<company>_<position-slug>.md \
+//   pandoc job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<initials>_CV_<position-slug>.md \
 //     --template=md-typst-templates/cv.typ \
-//     -o cv/build/<YYMMDD>_<company>_<position-slug>.typ
+//     -o job-applications/<company>/<YYMMDD>_<position-slug>/build/<YYMM>_<initials>_CV_<position-slug>.typ
 //
 // The Markdown source carries the identity data in its YAML frontmatter
 // (firstname, lastname, address, phone, email, linkedin, github, positions)

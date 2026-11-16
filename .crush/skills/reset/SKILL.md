@@ -49,8 +49,8 @@ Read the current state of these files with `view` and report whether each has co
 
 - `.claude/skills/job-application-assistant/01-candidate-profile.md`
 - `.claude/skills/job-application-assistant/02-behavioral-profile.md`
-- `.claude/skills/job-application-assistant/05-cv-templates.md` *(profile statements section only — framework structure is preserved)*
-- `.claude/skills/job-application-assistant/07-interview-prep.md` *(STAR examples and STAR candidates sections only — framework structure is preserved)*
+- `.claude/skills/job-application-assistant/06-cv-templates.md` *(profile statements section only — framework structure is preserved)*
+- `.claude/skills/job-application-assistant/08-interview-prep.md` *(STAR examples and STAR candidates sections only — framework structure is preserved)*
 
 Present as:
 
@@ -63,16 +63,16 @@ Present as:
 - 02-behavioral-profile.md — [has content / already empty]
   Full file will be replaced with a blank template.
 
-- 05-cv-templates.md — [has profile statements / already blank]
+- 06-cv-templates.md — [has profile statements / already blank]
   Profile statement templates will be cleared. LaTeX structure and tailoring guidelines are preserved.
 
-- 07-interview-prep.md — [has STAR examples / already blank]
+- 08-interview-prep.md — [has STAR examples / already blank]
   STAR examples and any STAR candidate stubs will be cleared. Framework, tough questions, and roleplay guidelines are preserved.
 
 The following files are NOT touched (they contain framework rules, not candidate data):
-  - 03-writing-style.md
+  - 05-writing-style.md
   - 04-job-evaluation.md
-  - 06-cover-letter-templates.md
+  - 07-cover-letter-templates.md
 ```
 
 ### If scope includes `documents`:
@@ -169,7 +169,7 @@ Wait for the user's response.
 ## Using This in Applications
 ```
 
-**For `05-cv-templates.md`**, locate the section that begins with `**Profile statement templates` and extends through the role-specific template blocks. Replace only that section with:
+**For `06-cv-templates.md`**, locate the section that begins with `**Profile statement templates` and extends through the role-specific template blocks. Replace only that section with:
 
 ```markdown
 **Profile statement templates:**
@@ -177,9 +177,9 @@ Wait for the user's response.
 <!-- Run project:setup to populate role-specific profile statements -->
 ```
 
-Leave all other content in `05-cv-templates.md` intact.
+Leave all other content in `06-cv-templates.md` intact.
 
-**For `07-interview-prep.md`**, locate and remove:
+**For `08-interview-prep.md`**, locate and remove:
 - The entire `## Ready-Made STAR Examples` section and all numbered STAR examples under it
 - Any `## STAR Candidates (Complete Manually)` section added by `project:setup` Path A
 
@@ -191,7 +191,7 @@ Replace with:
 <!-- Run project:setup to populate STAR examples from your actual experience -->
 ```
 
-Leave all other content in `07-interview-prep.md` intact (STAR format explanation, tough questions, questions to ask interviewers, phone/video tips, follow-up etiquette, roleplay guidelines).
+Leave all other content in `08-interview-prep.md` intact (STAR format explanation, tough questions, questions to ask interviewers, phone/video tips, follow-up etiquette, roleplay guidelines).
 
 ### Documents reset
 

@@ -9,28 +9,32 @@ All CVs are written in **Markdown**, converted by **Pandoc**, and typeset by
 package (an Awesome-CV port, blue accent). This replaces the former
 LaTeX/moderncv (banking style) + lualatex pipeline.
 
-**Output files:** `cv/<YYMMDD>_<company>_<position-slug>.md` ->
-`cv/<YYMMDD>_<company>_<position-slug>.pdf`
-- `YYMMDD` is the date the CV is drafted.
-- The position slug is the role title lowercased and hyphenated
-  (e.g. `250714_braun_applied-data-scientist`).
-- `cv/main_example.md` is the only CV exempt from the scheme.
+**Output files:** `job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_CV_<position-slug>.md`
+-> same-named `.pdf` in the same folder
+- `YYMMDD` is the date the application folder is created; `<YYMM>` in the
+  filename is its first 4 digits.
+- `<company>` is the company name lowercased and hyphenated; the folder name
+  is `<YYMMDD>_<position-slug>`.
+- `<user-initials>` is the candidate's lowercase first+last initial (e.g.
+  `jh`), derived from the identity frontmatter.
+- `job-applications/main_example.md` is the only CV exempt from the scheme.
 
 **Compile with:** `.scripts/compile-cv.sh` (Pandoc -> Typst, bundled fonts).
-**Master reference:** `cv/main_example.md` (comprehensive CV with all
-competencies, experience, and achievements - use as source when building
-targeted CVs).
+**Master reference:** `job-applications/main_example.md` (comprehensive CV
+with all competencies, experience, and achievements - use as source when
+building targeted CVs).
 **Template assets:** `md-typst-templates/` (see its README for the mapping
 table, package provenance, and gotchas).
 
 ### Compile command
 
 ```bash
-.scripts/compile-cv.sh cv/<YYMMDD>_<company>_<position-slug>.md
+.scripts/compile-cv.sh job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_CV_<position-slug>.md
 ```
 
-Expected output: `pdf: cv/<...>.pdf (2 pages)`. Any page count other than 2
-is a failure that must be fixed before presenting to the user.
+Expected output: `pdf: .../<...>_CV_<position-slug>.pdf (2 pages)`. Any page
+count other than 2 is a failure that must be fixed before presenting to the
+user.
 
 ## Document Structure
 
@@ -161,8 +165,9 @@ setting or re-enable hyphenation.
 Spot-check manually after compiling:
 
 ```bash
-pdftotext cv/<YYMMDD>_<company>_<position-slug>.pdf - | grep -c $'\xc2\xad'  # must print 0
-pdftotext cv/<YYMMDD>_<company>_<position-slug>.pdf - | grep -F "end-to-end" # spot-check keywords
+CV_PDF=job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_CV_<position-slug>.pdf
+pdftotext "$CV_PDF" - | grep -c $'\xc2\xad'  # must print 0
+pdftotext "$CV_PDF" - | grep -F "end-to-end"  # spot-check keywords
 ```
 
 Text-layer rules:
@@ -235,9 +240,9 @@ If there is a gap in your employment history:
 After writing the CV and before presenting to the user, always compile and
 visually inspect the PDF. Iterate until the layout is clean. Workflow:
 
-1. Run `.scripts/compile-cv.sh cv/<YYMMDD>_<company>_<position-slug>.md`
+1. Run `.scripts/compile-cv.sh job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_CV_<position-slug>.md`
 2. Check the output page count: must be exactly 2
-3. Render the pages: `.scripts/render-pdf.sh cv/<YYMMDD>_<company>_<position-slug>.pdf`
+3. Render the pages: `.scripts/render-pdf.sh job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_CV_<position-slug>.pdf`
 4. View every produced PNG and check for layout problems (orphaned entries,
    cramped spacing, content spill)
 

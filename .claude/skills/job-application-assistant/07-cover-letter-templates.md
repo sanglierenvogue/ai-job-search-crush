@@ -8,18 +8,21 @@ package (`coverletter` template - the same package and bundled fonts as the
 CV). This replaces the former LaTeX/`cover.cls` (Lato/Raleway) + xelatex
 pipeline. No LaTeX is needed.
 
-**Output files:** `cover_letters/cover_<company>_<role>.md` ->
-`cover_letters/cover_<company>_<role>.pdf`
+**Output files:** `job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_cover-letter_<position-slug>.md`
+-> same-named `.pdf` in the same folder
+- `<YYMM>` in the filename is the first 4 digits of the application folder
+  date; `<user-initials>` is the candidate's lowercase first+last initial
+  (e.g. `jh`), derived from the identity frontmatter.
 **Compile with:** `.scripts/compile-cover-letter.sh` (Pandoc -> Typst, bundled fonts).
 **Template assets:** `md-typst-templates/` (`cover.typ`, `cover-template.md`).
 
 ### Compile command
 
 ```bash
-.scripts/compile-cover-letter.sh cover_letters/cover_<company>_<role>.md
+.scripts/compile-cover-letter.sh job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_cover-letter_<position-slug>.md
 ```
 
-Expected output: `pdf: cover_letters/cover_<company>_<role>.pdf (1 pages)`.
+Expected output: `pdf: .../<...>_cover-letter_<position-slug>.pdf (1 pages)`.
 Any page count other than 1 is a failure that must be fixed before presenting
 to the user.
 
@@ -28,7 +31,7 @@ to the user.
 After writing the cover letter and before presenting to the user, always
 compile and visually inspect the PDF. Iterate until the layout is clean:
 
-1. Run `.scripts/compile-cover-letter.sh cover_letters/cover_<company>_<role>.md`
+1. Run `.scripts/compile-cover-letter.sh job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_cover-letter_<position-slug>.md`
 2. Confirm page count is exactly 1 and the compile printed no warnings
 3. Read the PDF via the Read tool (or render with `.scripts/render-pdf.sh` and
    inspect the PNGs) and visually check: the signature block fits at the
@@ -134,7 +137,7 @@ the `language` key. For a language the package does not localize:
 - Start each bullet with a bold label or action verb (`**Label:** ...`)
 - Bullets render in the same font/size as the body - no special handling
 
-### Writing rules (from 03-writing-style.md)
+### Writing rules (from 05-writing-style.md)
 - No em-dashes (use commas or periods instead)
 - No cliches or empty filler
 - Every claim backed by a specific example

@@ -27,6 +27,8 @@ Follow these steps **exactly in order**. Do not skip steps.
 - If the provided input looks like a URL, use `fetch` (markdown format) to retrieve the job posting content.
 - If it is pasted text, use it directly.
 - Extract: **company name**, **role title**, **department** (if mentioned), **location**, and **language** of the posting.
+- Normalize the **company folder name** (lowercase, hyphenated, e.g. `Example Corp` -> `example-corp`), the **position slug** (role title lowercased and hyphenated), and `<user-initials>` (lowercase first+last initial from the candidate's identity data).
+- Create the application folder `job-applications/<company>/<YYMMDD>_<position-slug>/` (`YYMMDD` = today). All artifacts for this application live there.
 - Store these for use throughout the workflow.
 
 ---
@@ -53,6 +55,8 @@ Present the evaluation to the user with:
 4. **Salary benchmark** - salary index for the company (if available)
 5. **Overall fit score** and recommendation (strong fit / moderate fit / weak fit)
 
+Persist the evaluation: write `<position-slug>.md` into the application folder (structure in `04-job-evaluation.md` → "Persisting the evaluation": job title, posting URL, the job-scraper `fit_reason` from `job_scraper/seen_jobs.json` or "n/a (manually provided)", the full evaluation output, and a verbatim copy of the job description), then compile it with `.scripts/compile-report.sh` to `<position-slug>.pdf`.
+
 After presenting the evaluation, ask the user:
 > "Should I proceed with drafting the CV and cover letter for this role?"
 
@@ -65,27 +69,27 @@ After presenting the evaluation, ask the user:
 You already have `01-candidate-profile.md` and `04-job-evaluation.md` in context from Step 1. **Do not re-read them.**
 
 Read with `view` only the reference files you do not yet have:
-- `.claude/skills/job-application-assistant/03-writing-style.md`
-- `.claude/skills/job-application-assistant/05-cv-templates.md`
-- `.claude/skills/job-application-assistant/06-cover-letter-templates.md`
+- `.claude/skills/job-application-assistant/05-writing-style.md`
+- `.claude/skills/job-application-assistant/06-cv-templates.md`
+- `.claude/skills/job-application-assistant/07-cover-letter-templates.md`
 
 Also read with `view` the structural references:
-- `cv/main_example.md` - the master Markdown CV (role-agnostic source of all competencies)
-- Any existing `cv/[0-9][0-9][0-9][0-9][0-9][0-9]_*.md` file as a concrete per-application example (one is enough)
-- Any existing `cover_letters/cover_*.md` file as a template reference
+- `job-applications/main_example.md` - the master Markdown CV (role-agnostic source of all competencies)
+- Any existing CV in `job-applications/<company>/<YYMMDD>_<position-slug>/` folders as a concrete per-application example (one is enough)
+- Any existing cover letter in the same folders as a template reference
 
 **Paper size (both documents):** set the `paper-size` frontmatter key to the **Paper size** value from the `## Document Preferences` section of `AGENTS.md` (`us-letter` if that section still holds a placeholder; e.g. `paper-size: a4`).
 
-### CV (`cv/<YYMMDD>_<company>_<position-slug>.md`)
+### CV (`job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_CV_<position-slug>.md`)
 - Always in **English**
-- Follow the Markdown structure (modern-cv Typst template) from `05-cv-templates.md`
+- Follow the Markdown structure (modern-cv Typst template) from `06-cv-templates.md`
 - Tailor the profile statement and experience bullets to the specific role
 - Reframe skills and achievements to match job requirements
 - Keep to 2 pages
 
-### Cover Letter (`cover_letters/cover_<company>_<role>.md`)
+### Cover Letter (`job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_cover-letter_<position-slug>.md`)
 - **Match the language of the job posting** (write the cover letter in the posting's language)
-- Follow the frontmatter + body structure from `06-cover-letter-templates.md` (the modern-cv `coverletter` template)
+- Follow the frontmatter + body structure from `07-cover-letter-templates.md` (the modern-cv `coverletter` template)
 - Tailor the opening paragraph to the specific role and company
 - Set `addressee:` to a named person if available in the posting, otherwise "hiring team" (or the equivalent in the posting language)
 - Body word budget 250-300 words; the letter must fit exactly one page
@@ -102,7 +106,9 @@ The reviewer subagent runs in a **fresh, read-only context**: it can only `glob`
 
 ### 3a. Research the Company (main session)
 
-Use `agentic_fetch` (web search, no URL) and `fetch` (specific URLs) to research:
+First apply the freshness gate from `.claude/skills/job-application-assistant/03-company-research.md`: `glob job-applications/<company>/<company>_research_*.md`. If the most recent file is less than 6 weeks (42 days) old, base the brief on it (read it with `view` and skip re-researching its sections). Otherwise, run the company research sub-workflow first, then use its output.
+
+Use `agentic_fetch` (web search, no URL) and `fetch` (specific URLs) to research anything the research file does not yet cover:
 - The company's website, mission, and recent news
 - The specific department or team (if mentioned in the posting)
 - Any recent projects, press releases, or strategic initiatives relevant to the role
@@ -130,19 +136,19 @@ You are a hiring manager proxy reviewing a job application. Your job is to make 
 Use `view` to read these four files — and only these — to ground your critique:
 - `.claude/skills/job-application-assistant/01-candidate-profile.md`
 - `.claude/skills/job-application-assistant/02-behavioral-profile.md` — use this specifically to check whether the cover letter's voice matches the candidate's natural register. A "Collaborator" PI profile, for example, should not be given a combative, solo-hero tone; a "Persuader" profile should not be given over-hedged, apologetic phrasing.
-- `.claude/skills/job-application-assistant/03-writing-style.md`
+- `.claude/skills/job-application-assistant/05-writing-style.md`
 - `.claude/skills/job-application-assistant/04-job-evaluation.md`
 
-Do NOT read `05-cv-templates.md` or `06-cover-letter-templates.md` — those govern document structure the drafter already applied and are not needed for content critique.
+Do NOT read `06-cv-templates.md` or `07-cover-letter-templates.md` — those govern document structure the drafter already applied and are not needed for content critique.
 
 ### 3. Drafts to Review
 Both drafts are provided inline below. Do NOT use the view tool on the draft files — use these exact texts.
 
-<CV_DRAFT file="cv/<YYMMDD>_<COMPANY>_<SLUG>.md">
+<CV_DRAFT file="job-applications/<COMPANY>/<YYMMDD>_<SLUG>/<YYMM>_<INITIALS>_CV_<SLUG>.md">
 <INSERT_CV_DRAFT_HERE>
 </CV_DRAFT>
 
-<COVER_LETTER_DRAFT file="cover_letters/cover_<COMPANY>_<ROLE>.md">
+<COVER_LETTER_DRAFT file="job-applications/<COMPANY>/<YYMMDD>_<SLUG>/<YYMM>_<INITIALS>_cover-letter_<SLUG>.md">
 <INSERT_COVER_LETTER_DRAFT_HERE>
 </COVER_LETTER_DRAFT>
 
@@ -159,7 +165,7 @@ Return your feedback in **two parts**:
 A JSON array of concrete edits the drafter can apply directly without re-reading the files. Each edit is an object:
 ```json
 {
-  "file": "cv/<YYMMDD>_<COMPANY>_<SLUG>.md" | "cover_letters/cover_<COMPANY>_<ROLE>.md",
+  "file": "job-applications/<COMPANY>/<YYMMDD>_<SLUG>/<YYMM>_<INITIALS>_CV_<SLUG>.md" | "job-applications/<COMPANY>/<YYMMDD>_<SLUG>/<YYMM>_<INITIALS>_cover-letter_<SLUG>.md",
   "old_string": "<exact text currently in the draft>",
   "new_string": "<replacement text>",
   "reason": "<one-line rationale: keyword match / company angle / reframing / style>"
@@ -172,7 +178,7 @@ Prose suggestions grouped by category. Produce each category even if your findin
 - **Missed keywords/requirements** — what to add and roughly where, if it cannot be expressed as a clean string replacement
 - **Company/department-specific angles** — connections between experience and the company's strategic priorities, based on the research brief above
 - **Action-oriented reframing** — identify passive, generic, or low-energy statements and suggest action-oriented rewrites. Use this category especially for structural weakness that doesn't fit a single-sentence swap (e.g., "the whole opening paragraph reads as passive — restructure around your single strongest match to the posting").
-- **Tone and style issues** — check against `03-writing-style.md` AND `02-behavioral-profile.md`. Flag any issues with tone, formality, or voice (cliches, hedging, over-humility, inconsistent register), and specifically flag any mismatch between the letter's voice and the candidate's natural register as described in the behavioral profile.
+- **Tone and style issues** — check against `05-writing-style.md` AND `02-behavioral-profile.md`. Flag any issues with tone, formality, or voice (cliches, hedging, over-humility, inconsistent register), and specifically flag any mismatch between the letter's voice and the candidate's natural register as described in the behavioral profile.
 
 **CRITICAL RULE:** All suggestions must be grounded in actual profile data. Do NOT suggest fabricating skills, experience, or achievements. If a requirement is a gap, say so honestly and suggest how to frame adjacent experience instead.
 
@@ -207,8 +213,8 @@ After all edits are applied, the two files on disk are the final drafts.
 ### 5a. Compile
 
 ```bash
-/scripts/compile-cv.sh cv/<YYMMDD>_<company>_<position-slug>.md
-/scripts/compile-cover-letter.sh cover_letters/cover_<company>_<role>.md
+.scripts/compile-cv.sh job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_CV_<position-slug>.md
+.scripts/compile-cover-letter.sh job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_cover-letter_<position-slug>.md
 ```
 
 Both scripts run Pandoc + Typst with the bundled fonts, print the page count, and run ATS text-layer checks (soft hyphens, stray backslashes). A page count other than 2 (CV) / 1 (cover letter), or any ATS warning, is a failure to fix before presenting.
@@ -219,23 +225,23 @@ If either compile fails, fix the error and re-compile until clean.
 
 `view` cannot read PDFs directly, so render each PDF's pages to images first: `pdftoppm -png -r 100 <file>.pdf page` (run in the folder containing the PDF). Then inspect every rendered page with `view` and verify:
 
-**CV (`cv/<YYMMDD>_<company>_<position-slug>.pdf`):**
+**CV (`job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_CV_<position-slug>.pdf`):**
 - [ ] Exactly 2 pages (not 1, not 3)
 - [ ] No orphaned entry titles — a job/education title line must never sit alone at the bottom of page 1 with its bullets on page 2. (The modern-cv `resume-entry` blocks are sticky, so this usually cannot happen; if a section would start with only one line left on a page, add `#pagebreak(weak: true)` in a raw `typst` block before it.)
 - [ ] Section headings are not isolated at the top of page 2 with only 1-2 lines below
 - [ ] No awkward whitespace gaps
 
-**Cover letter (`cover_letters/cover_<company>_<role>.pdf`):**
+**Cover letter (`job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_cover-letter_<position-slug>.pdf`):**
 - [ ] Exactly 1 page
 - [ ] Signature block visible, not cut off or pushed to a second page
 - [ ] Closing line and printed name present (rendered by the template, right-aligned)
 
 ### 5c. Iterate until clean
 
-If the layout has problems, edit the `.md` files and recompile. Common fixes (see `05-cv-templates.md` and `06-cover-letter-templates.md` for full details):
+If the layout has problems, edit the `.md` files and recompile. Common fixes (see `06-cv-templates.md` and `07-cover-letter-templates.md` for full details):
 
 - **CV section would start with only one line left on a page:** add `#pagebreak(weak: true)` in a raw `typst` block before that section
-- **CV spills to page 3:** there is no page-stretch rescue in Typst (no `\enlargethispage`). Cut content using **relevance-weighted cutting** (see `05-cv-templates.md` → "Relevance-weighted cutting"). Score each candidate line by (a) relevance to THIS posting's keywords and responsibilities, (b) uniqueness (is it duplicated elsewhere?), (c) narrative load (does the cover letter depend on it?). Cut the lowest-total-score line first, regardless of section. Do NOT mechanically apply a static section-based priority order — an older-role bullet that hits posting keywords is worth more than a recent-role bullet that does not.
+- **CV spills to page 3:** there is no page-stretch rescue in Typst (no `\enlargethispage`). Cut content using **relevance-weighted cutting** (see `06-cv-templates.md` → "Relevance-weighted cutting"). Score each candidate line by (a) relevance to THIS posting's keywords and responsibilities, (b) uniqueness (is it duplicated elsewhere?), (c) narrative load (does the cover letter depend on it?). Cut the lowest-total-score line first, regardless of section. Do NOT mechanically apply a static section-based priority order — an older-role bullet that hits posting keywords is worth more than a recent-role bullet that does not.
 - **Cover letter spills to 2 pages:** there is no page-stretch rescue in Typst. In order: (1) trim body content with the same relevance-weighted logic — first cut: sentences that restate what a bullet already said, second cut: a bullet that does not hit posting keywords, last resort: a bullet that does; (2) set `par-spacing: 1em` in the frontmatter; (3) cut a bullet or merge two paragraphs.
 - **ATS warning from the compile script:** a backslash warning means a frontmatter value (email, company, address) leaked over-escaping — check the value for unusual characters and recompile. A soft-hyphen warning means a hyphenated keyword wrapped at its own hyphen — rephrase slightly, or wrap the word in a raw block as `#no-break[the-word]`.
 
@@ -263,7 +269,9 @@ Summarize 3-5 key decisions made to tailor the application:
 
 ### Files Created
 List the files written:
-- `cv/<YYMMDD>_<company>_<position-slug>.md` (+ compiled `.pdf`)
-- `cover_letters/cover_<company>_<role>.md` (+ compiled `.pdf`)
+- `job-applications/<company>/<YYMMDD>_<position-slug>/<position-slug>.md` (+ compiled `.pdf`)
+- `job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_CV_<position-slug>.md` (+ compiled `.pdf`)
+- `job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_cover-letter_<position-slug>.md` (+ compiled `.pdf`)
+- `job-applications/<company>/<company>_research_<YYMMDD>.md` (+ compiled `.pdf`), if research was run or refreshed
 
 Tell the user: "Both documents are drafted, compiled, and verified. Open the PDFs to review the final output before submitting."

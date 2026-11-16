@@ -37,7 +37,7 @@ Use `glob` with pattern `templates/**/TEMPLATE.md` to find registered templates.
 | <name> | CV / Cover letter | lualatex/xelatex/pdflatex | <main font> | yes/no |
 ```
 
-A template is **active** if `05-cv-templates.md` (CV) or `06-cover-letter-templates.md` (cover letter) contains an `ACTIVE-TEMPLATE` managed block naming it. If no custom templates exist, say so and explain that `project:add-template` registers one. Stop here.
+A template is **active** if `06-cv-templates.md` (CV) or `07-cover-letter-templates.md` (cover letter) contains an `ACTIVE-TEMPLATE` managed block naming it. If no custom templates exist, say so and explain that `project:add-template` registers one. Stop here.
 
 ---
 
@@ -130,7 +130,7 @@ Do not proceed to Step 5 until the test compile passes.
 
 ## Step 5: Activate the Template
 
-Activation wires the template into `project:apply` by adding a **managed block** to the top of the relevant guidance file — `05-cv-templates.md` for CVs, `06-cover-letter-templates.md` for cover letters. The apply workflow reads these files in its drafting step, so the block is all it takes.
+Activation wires the template into `project:apply` by adding a **managed block** to the top of the relevant guidance file — `06-cv-templates.md` for CVs, `07-cover-letter-templates.md` for cover letters. The apply workflow reads these files in its drafting step, so the block is all it takes.
 
 Insert (or replace, if one exists) this block immediately after the file's H1 title:
 
@@ -145,7 +145,7 @@ Insert (or replace, if one exists) this block immediately after the file's H1 ti
 > - **Compile with:** `<engine>` (not the engine named in the stock guidance below)
 > - **Fonts:** <font summary, including any Path note for bundled fonts>
 > - **Page limit:** exactly <N> page(s)
-> - **Output file:** unchanged (`cv/<YYMMDD>_<company>_<slug>.md` / `cover_letters/cover_<company>_<role>.md`); copy any class/font files the template needs into the output directory, or reference them by relative path
+> - **Output file:** unchanged (`job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<initials>_CV_<position-slug>.md` / `..._<initials>_cover-letter_<position-slug>.md`); copy any class/font files the template needs into the output directory, or reference them by relative path
 <!-- END ACTIVE-TEMPLATE -->
 ```
 

@@ -1,9 +1,9 @@
 // cover.typ — Pandoc -> Typst template for the cover letter pipeline.
 //
 // Usage:
-//   pandoc cover_letters/cover_<company>_<role>.md \
+//   pandoc job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<initials>_cover-letter_<position-slug>.md \
 //     --template=md-typst-templates/cover.typ \
-//     -o cover_letters/build/cover_<company>_<role>.typ
+//     -o job-applications/<company>/<YYMMDD>_<position-slug>/build/<YYMM>_<initials>_cover-letter_<position-slug>.typ
 //
 // The Markdown source carries the identity and target data in its YAML
 // frontmatter (firstname, lastname, company, target, addressee,

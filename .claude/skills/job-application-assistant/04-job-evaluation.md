@@ -125,15 +125,62 @@ Present the evaluation as:
 - [bullet points]
 
 ### Recommendation
-[1-2 sentences: apply/skipproject:apply with caveats]
+[1-2 sentences: apply/skip project:apply with caveats]
 
-### Company Research Checklist
-- [ ] Checked company website (mission, values, recent news)
-- [ ] Checked review sites (Glassdoor, Indeed, etc.)
-- [ ] Checked LinkedIn for team size, recent hires, connections
-- [ ] Checked media for restructuring, growth, or workplace issues
-- [ ] Identified network contacts who may know the team/manager
+### Company Research
+- Research file: `job-applications/<company>/<company>_research_<YYMMDD>.md`
+- [ ] Network contacts who may know the team/manager
 ```
+
+## Persisting the Evaluation
+
+After presenting the evaluation, persist it in the application folder
+(`job-applications/<company>/<YYMMDD>_<position-slug>/`, created by the
+workflow). Write `<position-slug>.md` with this structure:
+
+````markdown
+# Job Fit Evaluation: <Job Title>
+
+**Company:** <Company Name>
+**Posting:** <URL to the job posting>
+**Evaluated:** YYYY-MM-DD
+**Fit reason (job-scraper):** <short fit_reason from job_scraper/seen_jobs.json,
+or "n/a (manually provided)">
+
+## Scores
+
+[paste the score table, overall score, and verdict from the Output Format above]
+
+## Key Strengths for This Role
+
+[bullets]
+
+## Gaps to Address
+
+[bullets]
+
+## Recommendation
+
+[1-2 sentences]
+
+## Salary Benchmark
+
+[the salary benchmark section, if configured]
+
+## Job Description
+
+[full copy of the job posting text, verbatim]
+````
+
+Then compile it:
+
+```bash
+.scripts/compile-report.sh job-applications/<company>/<YYMMDD>_<position-slug>/<position-slug>.md
+```
+
+A multi-page PDF is normal for this document. Do not truncate the job
+description: it is the verbatim source text for tailoring and for the
+reviewer subagent.
 
 ## Weighting
 - Technical Skills: 30%

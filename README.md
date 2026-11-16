@@ -142,29 +142,32 @@ ai-job-search/
 │   │   ├── SKILL.md                   # Skill definition
 │   │   ├── 01-candidate-profile.md    # Your education, experience, skills
 │   │   ├── 02-behavioral-profile.md   # PI/DISC/personality assessment
-│   │   ├── 03-writing-style.md        # Tone, structure, do's and don'ts
+│   │   ├── 03-company-research.md     # Company research sub-workflow (6-week freshness)
 │   │   ├── 04-job-evaluation.md       # Scoring framework for job fit
-│   │   ├── 05-cv-templates.md         # Markdown CV structure + tailoring rules
-│   │   ├── 06-cover-letter-templates.md # Markdown cover letter structure (Typst)
-│   │   └── 07-interview-prep.md       # STAR examples + interview framework
+│   │   ├── 05-writing-style.md        # Tone, structure, do's and don'ts
+│   │   ├── 06-cv-templates.md         # Markdown CV structure + tailoring rules
+│   │   ├── 07-cover-letter-templates.md # Markdown cover letter structure (Typst)
+│   │   └── 08-interview-prep.md       # STAR examples + interview framework
 │   ├── job-scraper/                   # project:job-scraper job search orchestration
 │   └── upskill/                       # project:upskill skill gap analysis and learning plan
 ├── .agents/skills/                    # Job portal CLI tools (auto-discovered by Crush)
 │   └── linkedin-search/               # LinkedIn public job listings (country-agnostic)
-├── cv/
+├── job-applications/                  # Application material (personal output, gitignored)
 │   ├── main_example.md                # Markdown CV master reference
-│   └── <YYMMDD>_<company>_<slug>.md   # Per-application CVs (gitignored)
-├── md-typst-templates/                # Stock CV + cover letter templates: Pandoc + Typst (modern-cv)
+│   └── <company>/                     # Per company (lowercase hyphenated)
+│       ├── <company>_research_<YYMMDD>.md  # Company research (MD + compiled PDF)
+│       └── <YYMMDD>_<position-slug>/  # Per application: evaluation doc, CV, cover letter
+├── md-typst-templates/                # Stock CV, cover letter, and report templates: Pandoc + Typst (modern-cv)
 │   ├── cv.typ                         # Pandoc->Typst template mapping (CV)
 │   ├── cover.typ                      # Pandoc->Typst template mapping (cover letter)
+│   ├── report.typ                     # Pandoc->Typst template (research + evaluation documents)
 │   ├── template.md                    # Markdown CV skeleton
 │   ├── cover-template.md              # Markdown cover letter skeleton
 │   ├── fonts/                         # Bundled fonts (Source Sans 3, Roboto, FA7)
 │   └── modern-cv/0.10.0/              # Pinned package source (offline installs)
 ├── .scripts/                          # Shared compile/verify command library
-│   └── salary_lookup.py               # Salary benchmarking tool (BYO data)
-├── cover_letters/
-│   └── cover_<company>_<role>.md      # Per-application cover letters (Markdown, gitignored)
+│   ├── salary_lookup.py               # Salary benchmarking tool (BYO data)
+│   └── compile-{cv,cover-letter,report}.sh  # Pandoc + Typst compile scripts
 ├── templates/                         # Custom templates registered via project:add-template
 │   └── README.md                      # Folder layout instructions
 ├── documents/                         # Career source materials for setup Path A and expand
@@ -216,8 +219,8 @@ If you prefer editing files directly instead of using `project:setup`:
 | `01-candidate-profile.md` | Structured version of your CV data |
 | `02-behavioral-profile.md` | Your behavioral assessment or self-assessment |
 | `04-job-evaluation.md` | Skill match areas, career goals, motivation filters |
-| `05-cv-templates.md` | Profile statement templates for different role types |
-| `07-interview-prep.md` | Your STAR examples from actual experience |
+| `06-cv-templates.md` | Profile statement templates for different role types |
+| `08-interview-prep.md` | Your STAR examples from actual experience |
 | `search-queries.md` | Job search queries for your skills and location |
 
 ### Updating your search queries
@@ -246,7 +249,7 @@ Point it at your `.tex` file (plus any `.cls`/`.sty` files or bundled fonts). Th
 - `project:add-template --use <name>` switches between them
 - `project:add-template --use default` reverts to the stock templates (modern-cv Typst CV, modern-cv Typst cover letter)
 
-If you prefer doing it by hand, the manual route still works: update the guidance in `05-cv-templates.md` and `06-cover-letter-templates.md`.
+If you prefer doing it by hand, the manual route still works: update the guidance in `06-cv-templates.md` and `07-cover-letter-templates.md`.
 
 ### Job search tools
 

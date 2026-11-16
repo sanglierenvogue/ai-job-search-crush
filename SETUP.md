@@ -106,9 +106,9 @@ All three paths produce the same result: fully populated profile files.
 | `01-candidate-profile.md` | Structured education, experience, skills |
 | `02-behavioral-profile.md` | Behavioral assessment |
 | `04-job-evaluation.md` | Personalized skill match areas and career goals |
-| `05-cv-templates.md` | Profile statement templates for your background |
-| `07-interview-prep.md` | STAR examples from your experience |
-| `cv/main_example.md` | Your master Markdown CV with actual details |
+| `06-cv-templates.md` | Profile statement templates for your background |
+| `08-interview-prep.md` | STAR examples from your experience |
+| `job-applications/main_example.md` | Your master Markdown CV with actual details |
 | `search-queries.md` | Job search queries for `project:job-scraper` |
 
 ### Re-running setup
@@ -148,7 +148,7 @@ This creates `salary_data.json` which the `project:apply` workflow uses for sala
    ```
 3. Render a CV PDF to page images, then analyze:
    ```bash
-   .scripts/render-pdf.sh cv/<YYMMDD>_<company>_<position-slug>.pdf /tmp/cv
+   .scripts/render-pdf.sh job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<initials>_CV_<position-slug>.pdf /tmp/cv
    .scripts/analyze-cv-vision.py /tmp/cv-1.png /tmp/cv-2.png
    ```
 
@@ -169,11 +169,11 @@ project:apply [paste job posting text here]
 ```
 
 Crush will:
-1. Evaluate the fit against your profile
-2. Ask if you want to proceed
-3. Draft a tailored CV and cover letter
-4. Research the company, then have a reviewer subagent (fresh context) critique the drafts
-5. Revise, compile both PDFs, inspect the rendered pages, and present the final output
+1. Research the company (reused if less than 6 weeks old), then evaluate the fit against your profile
+2. Persist the evaluation document and ask if you want to proceed
+3. Draft a tailored CV and cover letter in `job-applications/<company>/<YYMMDD>_<position-slug>/`
+4. Have a reviewer subagent (fresh context) critique the drafts using the research
+5. Revise, compile all PDFs, inspect the rendered pages, and present the final output
 
 ## 8. Compile your documents
 
@@ -181,10 +181,10 @@ After `project:apply` creates the documents (the workflow already compiles and v
 
 ```bash
 # Compile CV (Markdown -> Pandoc -> Typst -> PDF)
-.scripts/compile-cv.sh cv/<YYMMDD>_<company>_<position-slug>.md
+.scripts/compile-cv.sh job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<initials>_CV_<position-slug>.md
 
 # Compile cover letter (Markdown -> Pandoc -> Typst -> PDF)
-.scripts/compile-cover-letter.sh cover_letters/cover_<company>_<role>.md
+.scripts/compile-cover-letter.sh job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<initials>_cover-letter_<position-slug>.md
 ```
 
 These commands apply to the stock templates (modern-cv Typst CV, modern-cv Typst cover letter). If you'd rather use your own template, run `project:add-template` — it captures the template's compile engine, fonts, style rules, and page limit, test-compiles it, and wires it into `project:apply`. See the "CV and cover-letter templates" section in the README.

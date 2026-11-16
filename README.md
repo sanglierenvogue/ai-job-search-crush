@@ -6,7 +6,7 @@
 
 > ## Crush Edition
 >
-> This fork adapts the original [ai-job-search](https://github.com/MadsLorentzen/ai-job-search) framework for [Crush](https://github.com/charmbracelet/crush) (Charm's agentic coding CLI).
+> This fork adapts the original [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) framework for [Crush](https://github.com/charmbracelet/crush) (Charm's agentic coding CLI).
 >
 > **How it works with Crush:**
 > - `AGENTS.md` — project context file (candidate profile + workflow rules), auto-discovered by Crush
@@ -67,10 +67,29 @@ The framework encodes career guidance best practices, including structured evalu
 
 ### 1. Fork and clone
 
+**For your own job search**, start from a private copy:
+
 ```bash
-gh repo fork MadsLorentzen/ai-job-search --clone
-cd ai-job-search
+gh repo clone sanglierenvogue/ai-job-search-crush
+cd ai-job-search-crush
+git remote rename origin upstream
+gh repo create ai-job-search-crush --private --source=. --remote=origin --push
+gh repo set-default <your-github-username>/ai-job-search-crush
 ```
+
+**To contribute changes back**, fork the upstream project instead:
+
+```bash
+gh repo fork sanglierenvogue/ai-job-search-crush --clone
+cd ai-job-search-crush
+```
+
+> [!IMPORTANT]
+> **A fork of this repo is always public** — GitHub does not allow private forks of
+> public repositories — and `project:setup` (step 3 below) writes your personal
+> data (name, contact details, employment history, salary expectations) into
+> **tracked** files. Fork only to contribute; use the private-copy route for
+> your own job search.
 
 ### 2. Install job search tools
 

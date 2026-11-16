@@ -57,12 +57,24 @@ The `project:apply` workflow renders compiled PDFs to images for visual layout v
 
 ## 2. Fork and clone
 
+**For your own job search**, start from a private copy:
+
 ```bash
-gh repo fork MadsLorentzen/ai-job-search --clone
-cd ai-job-search
+gh repo clone sanglierenvogue/ai-job-search-crush
+cd ai-job-search-crush
+git remote rename origin upstream
+gh repo create ai-job-search-crush --private --source=. --remote=origin --push
+gh repo set-default <your-github-username>/ai-job-search-crush
 ```
 
-Or manually: fork on GitHub, then clone your fork.
+**To contribute changes back**, fork the upstream project instead:
+
+```bash
+gh repo fork sanglierenvogue/ai-job-search-crush --clone
+cd ai-job-search-crush
+```
+
+Or manually: clone/fork on GitHub, then work from the local copy.
 
 ## 3. Install job search CLI dependencies
 

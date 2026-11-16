@@ -23,12 +23,6 @@
 
 An AI-powered job application framework built for [Crush](https://github.com/charmbracelet/crush). Fork it, fill in your profile, and let the AI evaluate job postings, tailor your CV, write cover letters, and prepare you for interviews.
 
-<p align="center">
-  <a href="https://ko-fi.com/madslorentzen">
-    <img src="https://storage.ko-fi.com/cdn/kofi3.png?v=6" alt="Buy me a coffee at ko-fi.com" height="40">
-  </a>
-</p>
-
 ## What this is
 
 A structured workflow that turns an AI coding agent into a full-stack job application assistant, built for [Crush](https://github.com/charmbracelet/crush). The core workflow (self-profiling, fit evaluation, and the drafter-reviewer application pipeline) is **language- and country-agnostic**. The repo ships the country-agnostic `linkedin-search` skill; local job boards can be added as first-class CLI skills with `project:add-portal`.

@@ -225,7 +225,7 @@ Make sure Bun is installed and you ran `bun install` in each CLI directory. The 
 - On an offline machine, run `.scripts/sync-package.sh` once so the `@preview/modern-cv` import resolves locally.
 
 ### Fonts not found in CV or cover letter
-Both templates resolve fonts from `md-typst-templates/fonts/`. Make sure that directory exists and contains the Source Sans 3, Roboto, and Font Awesome 7 font files.
+Both templates resolve fonts from `md-typst-templates/fonts/`. Make sure that directory exists and contains the Lato, Raleway, and Font Awesome 7 font files.
 
 ### PDFs can't be inspected
 The `project:apply` workflow renders PDF pages to images with `pdftoppm` before inspecting them. If the command is missing, install `poppler-utils` (see Prerequisites).

@@ -158,16 +158,21 @@ the package sources under `system-package/preview/<name>/<version>/`.
 
 ## Fonts
 
-The package asks for "Source Sans 3" (body), "Roboto" (name/header), and
-Font Awesome 7 (contact icons). None are guaranteed to be installed, so they
-are bundled in `fonts/` and every compile passes `--font-path
-md-typst-templates/fonts`:
+The templates set body text to "Lato" and name/header (and, in `report.typ`,
+heading) text to "Raleway", overriding the modern-cv package's Source Sans 3
+/ Roboto defaults, plus Font Awesome 7 for contact icons. None are
+guaranteed to be installed, so they are bundled in `fonts/` and every
+compile passes `--font-path md-typst-templates/fonts`:
 
-| Font | Source | License |
-|---|---|---|
-| Source Sans 3 (variable, regular + italic) | google/fonts, `ofl/sourcesans3/` | SIL OFL |
-| Roboto (Regular, Medium, Bold, Light, Italic) | googlefonts/roboto-2 release v2.138 (unhinted) | Apache 2.0 |
-| Font Awesome 7 Free (Regular, Solid) + Brands | FortAwesome/Font-Awesome release 7.3.1 (desktop OTF) | SIL OFL |
+| Font | Weights | Source | License |
+|---|---|---|---|
+| Lato (`fonts/lato/`) | Hairline, Light, Regular, Bold, Black + italics | Recovered from this repo's original `cover_letters/OpenFonts` bundle (commit `c66d599`) | SIL OFL 1.1 (`fonts/lato/OFL.txt`) |
+| Raleway (`fonts/raleway/`) | Thin, ExtraLight, Light, Regular, Medium, SemiBold, Bold, ExtraBold, Heavy (no italics) | Recovered from this repo's original `cover_letters/OpenFonts` bundle (commit `c66d599`) | SIL OFL 1.1 (`fonts/raleway/OFL.txt`) |
+| Font Awesome 7 Free (Regular, Solid) + Brands | - | FortAwesome/Font-Awesome release 7.3.1 (desktop OTF) | SIL OFL |
+
+Raleway ships no italic styles (same as the original bundle); any italic
+display text falls back to the body face. Lato has no Medium/Semibold
+weights; Typst substitutes the nearest weight.
 
 If you add a font family, put its license file next to it.
 

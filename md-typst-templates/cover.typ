@@ -54,8 +54,8 @@ $endif$
   // application package is visually consistent. Override per letter via the
   // accent-color frontmatter key.
   accent-color: "$if(accent-color)$$accent-color/nowrap$$else$#3873B3$endif$",
-  font: ("Source Sans 3",),
-  header-font: "Roboto",
+  font: ("Lato",),
+  header-font: "Raleway",
   paper-size: "$if(paper-size)$$paper-size/nowrap$$else$us-letter$endif$",
   language: "$if(language)$$language/nowrap$$else$en$endif$",
   show-footer: false,

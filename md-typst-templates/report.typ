@@ -7,7 +7,7 @@
 //     -o job-applications/<company>/build/<company>_research_<YYMMDD>.typ
 //
 // Plain document body with the same look and feel as the CV pipeline:
-// Source Sans 3 11pt body, #3873B3 accent on level-1 headings with a bottom
+// Lato 11pt body, Raleway level-1 headings with a #3873B3 accent and bottom
 // rule, 12pt bold level-2 headings, 15/15/10/10mm margins, us-letter default
 // (override with the `paper-size` frontmatter key). No letterhead, no
 // frontmatter block: any Markdown (headings, tables, bullets) compiles as-is.
@@ -24,7 +24,7 @@
 #set text(hyphenate: false)
 
 #set text(
-  font: ("Source Sans 3",),
+  font: ("Lato",),
   size: 11pt,
   fill: rgb("#333333"),
   lang: "en",
@@ -40,7 +40,7 @@
 #set heading(numbering: none, outlined: false)
 
 #show heading.where(level: 1): it => block(sticky: true)[
-  #set text(size: 16pt, weight: "regular")
+  #set text(font: ("Raleway",), size: 16pt, weight: "regular")
   #set align(left)
   #set block(above: 1em)
   #text[#strong[#text(rgb("#3873B3"))[#it.body]]]
@@ -48,12 +48,12 @@
 ]
 
 #show heading.where(level: 2): it => {
-  set text(rgb("#333333"), size: 12pt, weight: "bold")
+  set text(font: ("Raleway",), rgb("#333333"), size: 12pt, weight: "bold")
   it.body
 }
 
 #show heading.where(level: 3): it => {
-  set text(rgb("#333333"), size: 10pt, weight: "regular")
+  set text(font: ("Raleway",), rgb("#333333"), size: 10pt, weight: "regular")
   it.body
 }
 

@@ -182,7 +182,7 @@ ai-job-search/
 │   ├── report.typ                     # Pandoc->Typst template (research + evaluation documents)
 │   ├── template.md                    # Markdown CV skeleton
 │   ├── cover-template.md              # Markdown cover letter skeleton
-│   ├── fonts/                         # Bundled fonts (Source Sans 3, Roboto, FA7)
+│   ├── fonts/                         # Bundled fonts (Lato, Raleway, FA7)
 │   └── modern-cv/0.10.0/              # Pinned package source (offline installs)
 ├── .scripts/                          # Shared compile/verify command library
 │   ├── salary_lookup.py               # Salary benchmarking tool (BYO data)

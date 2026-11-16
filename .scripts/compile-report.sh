@@ -6,13 +6,14 @@
 # Usage:
 #   .scripts/compile-report.sh <report.md> [out.pdf]
 #
-# The Markdown source is plain Markdown (headings, tables, bullets, optional
-# `paper-size` frontmatter key). The Typst intermediate is written to a
-# build/ directory next to the source; the PDF is written next to it (or to
-# out.pdf when given).
+# The Markdown source is plain Markdown (headings, tables, bullets) with
+# optional `paper-size` and `accent-color` frontmatter keys. The Typst
+# intermediate is written to a build/ directory next to the source; the PDF
+# is written next to it (or to out.pdf when given).
 #
-# No frontmatter de-escaping pass is needed: the template interpolates only
-# `paper-size` (values like `us-letter`/`a4` carry no escapable characters).
+# Pandoc over-escapes the interpolated `accent-color` value (a HEX code
+# arrives as \#7B3FA0); inside a Typst string literal the backslash would
+# break rgb(), so a small awk pass un-escapes it on rgb("...") lines only.
 # The page count is printed; reports have no fixed page expectation.
 set -euo pipefail
 
@@ -44,6 +45,14 @@ command -v typst  >/dev/null 2>&1 || { echo "error: typst not found" >&2; exit 6
 
 echo "pandoc: $SRC -> $TYP"
 pandoc "$SRC" --template="$TEMPLATE" -o "$TYP"
+
+# Undo Pandoc's over-escaping of the interpolated accent-color value
+# (\#7B3FA0 -> #7B3FA0). Only lines with a rgb("...") call are touched;
+# \X escapes inside the Markdown body are left alone on purpose.
+awk '
+  /rgb\("/ { gsub(/\\#/, "#") }
+  { print }
+' "$TYP" > "$TYP.tmp" && mv "$TYP.tmp" "$TYP"
 
 FONT_ARGS=()
 if [[ -d "$FONTS" ]]; then

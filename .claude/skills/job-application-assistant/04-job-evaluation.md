@@ -136,7 +136,11 @@ Present the evaluation as:
 
 After presenting the evaluation, persist it in the application folder
 (`job-applications/<company>/<YYMMDD>_<position-slug>/`, created by the
-workflow). Write `<position-slug>.md` with this structure:
+workflow). Write `<position-slug>.md` with this structure. Add a YAML
+frontmatter line with `paper-size` and `accent-color` set to the **Paper
+size** and **Accent color** values from the Document Preferences section of
+`AGENTS.md` (defaults `us-letter` / `#3873B3` if that section still holds
+placeholders).
 
 ````markdown
 # Job Fit Evaluation: <Job Title>

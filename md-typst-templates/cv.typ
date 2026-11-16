@@ -55,7 +55,7 @@ $endif$
   profile-picture: none,
   // #3873B3 = moderncv's "blue" accent (rgb 0.22/0.45/0.70), matching the
   // legacy banking CVs. Override per CV via the accent-color frontmatter key.
-  accent-color: $if(accent-color)$$accent-color$$else$"#3873B3"$endif$,
+  accent-color: "$if(accent-color)$$accent-color/nowrap$$else$#3873B3$endif$",
   font: ("Lato",),
   header-font: "Raleway",
   paper-size: "$if(paper-size)$$paper-size/nowrap$$else$us-letter$endif$",

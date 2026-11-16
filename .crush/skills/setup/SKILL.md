@@ -339,7 +339,7 @@ This proactive suggestion step helps users discover career paths they might not 
 Once data collection is complete, generate or finish populating the following files. **For Path A**, the seven skill files are already populated by Step A7; check each before writing and skip if its content is no longer placeholder text.
 
 ### 1. Update `AGENTS.md`
-Replace all `[PLACEHOLDER]` tokens with the user's actual information. Keep the structure, workflow, and verification checklist intact. If the `## Document Preferences` section still contains `[PAPER_SIZE]`, ask: "Which paper size should the CV and cover letter use - US Letter (the default) or A4?" and write `us-letter` or `a4`.
+Replace all `[PLACEHOLDER]` tokens with the user's actual information. Keep the structure, workflow, and verification checklist intact. If the `## Document Preferences` section still contains `[PAPER_SIZE]`, ask: "Which paper size should the CV and cover letter use - US Letter (the default) or A4?" and write `us-letter` or `a4`. If it still contains `[ACCENT_COLOR]`, ask: "Which accent color (HEX code, e.g. `#3873B3`) should generated documents use? The default is `#3873B3`." Write the user's HEX value, or `#3873B3` on empty input.
 
 ### 2. Populate `01-candidate-profile.md` *(Path B and C; skip if Path A populated it)*
 Write the full candidate profile with structured sections: Identity, Education, Professional Experience, Independent Projects, Technical Skills, Publications, Awards, References.

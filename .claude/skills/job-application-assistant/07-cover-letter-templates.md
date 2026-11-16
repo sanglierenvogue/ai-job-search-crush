@@ -94,7 +94,8 @@ Frontmatter value rules:
 - `positions`: required by the package - always include it (the headline role titles).
 - `linkedin`: profile path only, e.g. `jane-doe` (not the full URL); `github`: username only.
 - `company-street` / `company-city`: optional (the block renders without them).
-- `accent-color` (e.g. `#3873B3`, the stock default), `paper-size` (default `us-letter`;
+- `accent-color` (HEX, e.g. `#3873B3`, the default; use the **Accent color** value
+  from the Document Preferences section of `AGENTS.md`), `paper-size` (default `us-letter`;
   use the **Paper size** value from the Document Preferences section of `AGENTS.md`),
   `par-spacing` (e.g. `1em` to tighten), `language` (default `en`), `dear`,
   `signature-line`: optional overrides.

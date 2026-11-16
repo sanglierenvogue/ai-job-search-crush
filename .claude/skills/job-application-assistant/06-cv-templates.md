@@ -121,6 +121,7 @@ Frontmatter value rules (the package prefixes URLs itself):
 - `github`: username only, e.g. `janedoe`.
 - `positions`: headline role titles, joined with dots in the header.
 - `paper-size`: paper size of the PDF - use the **Paper size** value from the Document Preferences section of `AGENTS.md` (`us-letter` default, `a4` for European standard size).
+- `accent-color`: accent HEX code (e.g. `#3873B3`, the default) - use the **Accent color** value from the Document Preferences section of `AGENTS.md`.
 
 ### Entry layout
 

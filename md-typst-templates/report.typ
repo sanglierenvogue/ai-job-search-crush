@@ -7,10 +7,11 @@
 //     -o job-applications/<company>/build/<company>_research_<YYMMDD>.typ
 //
 // Plain document body with the same look and feel as the CV pipeline:
-// Lato 11pt body, Raleway level-1 headings with a #3873B3 accent and bottom
-// rule, 12pt bold level-2 headings, 15/15/10/10mm margins, us-letter default
-// (override with the `paper-size` frontmatter key). No letterhead, no
-// frontmatter block: any Markdown (headings, tables, bullets) compiles as-is.
+// Lato 11pt body, Raleway level-1 headings with an accent and bottom
+// rule, 12pt bold level-2 headings, 15/15/10/10mm margins, us-letter default.
+// Override with frontmatter keys: `paper-size` and `accent-color` (HEX,
+// e.g. `#3873B3`, the default). No letterhead: any Markdown (headings,
+// tables, bullets) compiles as-is.
 //
 // The heading style mirrors the modern-cv resume template's level-1/2 rules,
 // so these documents read as part of the same application package.
@@ -43,7 +44,7 @@
   #set text(font: ("Raleway",), size: 16pt, weight: "regular")
   #set align(left)
   #set block(above: 1em)
-  #text[#strong[#text(rgb("#3873B3"))[#it.body]]]
+  #text[#strong[#text(rgb("$if(accent-color)$$accent-color/nowrap$$else$#3873B3$endif$"))[#it.body]]]
   #box(width: 1fr, line(length: 100%))
 ]
 

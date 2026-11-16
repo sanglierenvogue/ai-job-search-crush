@@ -9,7 +9,7 @@ location, so it works from any working directory.
 | `check-env.sh` | Verify the toolchain (pandoc >= 3.5, typst >= 0.12, pdftoppm/pdfinfo) and the vendored template assets. lualatex/xelatex are reported as optional (only needed for user-registered LaTeX templates under `templates/`) | none |
 | `compile-cv.sh` | Markdown CV -> PDF via `pandoc` (template `md-typst-templates/cv.typ`) then `typst compile` (bundled fonts). Prints the page count; warns if it is not 2 | `<cv.md> [out.pdf]` |
 | `compile-cover-letter.sh` | Markdown cover letter -> PDF via `pandoc` (template `md-typst-templates/cover.typ`, modern-cv `coverletter`) then `typst compile` (bundled fonts). Prints the page count; warns if it is not 1 | `<letter.md> [out.pdf]` |
-| `compile-report.sh` | Generic multi-section Markdown (company research, job fit evaluation) -> PDF via `pandoc` (template `md-typst-templates/report.typ`) then `typst compile` (bundled fonts). Prints the page count; no fixed page expectation | `<report.md> [out.pdf]` |
+| `compile-report.sh` | Generic multi-section Markdown (company research, job fit evaluation) -> PDF via `pandoc` (template `md-typst-templates/report.typ`) then `typst compile` (bundled fonts). Optional `paper-size` and `accent-color` frontmatter keys. Prints the page count; no fixed page expectation | `<report.md> [out.pdf]` |
 | `render-pdf.sh` | Render a PDF's pages to PNG (for visual inspection). Prints the produced files | `<in.pdf> [out-prefix] [dpi=100]` |
 | `analyze-cv-vision.py` | Analyze rendered CV page images with a vision-capable LLM via an OpenAI-compatible chat-completions gateway; prints the model's analysis (text-only smoke mode when given no images) | `[image.png ...] [--prompt P] [--model M] [--base-url U] [--detail D] [--max-tokens N] [--reasoning-effort E] [--save FILE] [--json]` |
 | `sync-package.sh` | Install the vendored Typst packages into the repo-root `system-package/` for offline compiles | none |
@@ -32,9 +32,9 @@ location, so it works from any working directory.
   `<src dir>/build/<name>.typ` and the PDF next to the Markdown (or to
   `out.pdf` when given). Both run ATS text-layer checks on the result (U+00AD
   soft hyphens, stray backslashes) and warn on findings. `compile-report.sh`
-  does the same chain without the frontmatter de-escaping pass (the report
-  template interpolates no frontmatter values) and without the ATS soft-hyphen
-  check.
+  does the same chain with a narrower de-escaping pass (only the interpolated
+  `accent-color` HEX value, on `rgb("...")` lines) and without the ATS
+  soft-hyphen check.
 - `render-pdf.sh` outputs `<prefix>-1.png`, `<prefix>-2.png`, ... The default
   prefix is the PDF basename without extension.
 - `analyze-cv-vision.py` is stdlib-only Python (3.10+) and needs `LLM_API_KEY`

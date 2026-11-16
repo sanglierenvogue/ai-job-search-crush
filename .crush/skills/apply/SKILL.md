@@ -78,7 +78,7 @@ Also read with `view` the structural references:
 - Any existing CV in `job-applications/<company>/<YYMMDD>_<position-slug>/` folders as a concrete per-application example (one is enough)
 - Any existing cover letter in the same folders as a template reference
 
-**Paper size (both documents):** set the `paper-size` frontmatter key to the **Paper size** value from the `## Document Preferences` section of `AGENTS.md` (`us-letter` if that section still holds a placeholder; e.g. `paper-size: a4`).
+**Paper size and accent color (both documents):** set the `paper-size` frontmatter key to the **Paper size** value from the `## Document Preferences` section of `AGENTS.md` (`us-letter` if that section still holds a placeholder; e.g. `paper-size: a4`), and the `accent-color` key to the **Accent color** value (e.g. `accent-color: "#B35A00"`); omit the key when it still holds a placeholder, so the template default `#3873B3` applies.
 
 ### CV (`job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<user-initials>_CV_<position-slug>.md`)
 - Always in **English**

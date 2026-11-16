@@ -77,8 +77,11 @@ This repo is a job application workspace. The AI acts as a career advisor and ap
 - [DEALBREAKER_2]
 
 ## Document Preferences
-<!-- Paper size for generated CVs and cover letters: `us-letter` (US Letter, default) or `a4` -->
+<!-- Preferences for all generated PDFs (CV, cover letter, company research, fit evaluation).
+     Paper size: `us-letter` (US Letter, default) or `a4`.
+     Accent color: HEX code (e.g. #3873B3); #3873B3 is the default when unset. -->
 - **Paper size:** [PAPER_SIZE]
+- **Accent color:** [ACCENT_COLOR]
 
 ## Repo Structure
 - `job-applications/` - All application material: master CV reference `main_example.md`; per-company folders (`<company>/`, holding `<company>_research_<YYMMDD>.md`); per-application folders (`<company>/<YYMMDD>_<position-slug>/`, holding the evaluation doc, CV, and cover letter)

@@ -12,6 +12,13 @@ LaTeX/moderncv (banking) pipeline, using the same content.
   banking format (structure copied from `cv/main_example.tex`).
 - `samples/sample_typst.md` — the same content in the new Markdown format
   (structure copied from `cv/main_example.md`).
+- `samples/sample_typst_single-pos.md` — regression guard:
+  `sample_typst.md` with a single `positions:` entry. Exercises the
+  template's trailing-comma list expansion
+  (`positions: ("Data Scientist",)`); without the trailing comma a one-entry
+  YAML list expands to `("Data Scientist")`, which Typst parses as a
+  grouped string, and `author.positions.join` in the package fails to
+  compile.
 
 The two CVs MUST stay content-identical: every bullet, entry, and section in
 one must appear in the other. Edit both together when iterating.

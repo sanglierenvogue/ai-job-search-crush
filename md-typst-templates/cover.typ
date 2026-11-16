@@ -47,7 +47,7 @@ $endif$
 $if(github)$
     github: "$github/nowrap$",
 $endif$
-    positions: ($for(positions)$"$positions/nowrap$"$sep$,$endfor$),
+    positions: ($for(positions)$"$positions/nowrap$",$endfor$),
   ),
   profile-picture: none,
   // #3873B3 = moderncv's "blue" accent, matching the CV pipeline so the

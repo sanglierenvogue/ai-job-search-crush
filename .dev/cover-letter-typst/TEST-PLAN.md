@@ -18,6 +18,12 @@ the same content. On success, the repo can drop its last hard LaTeX dependency.
   `\lettercontent{}`+`itemize`+Raleway-Medium-fontspec workaround).
 - `samples/sample_cover.md` - the same content in the new Markdown format
   (structure copied from `md-typst-templates/cover-template.md`).
+- `samples/sample_cover_single-pos.md` - regression guard: `sample_cover.md`
+  with a single `positions:` entry. Exercises the template's trailing-comma
+  list expansion (`positions: ("Data Scientist",)`); without the trailing
+  comma a one-entry YAML list expands to `("Data Scientist")`, which Typst
+  parses as a grouped string, and `author.positions.join` in the package
+  fails to compile.
 
 The two English letters MUST stay content-identical: every paragraph and
 bullet in one must appear in the other. Edit both together when iterating.

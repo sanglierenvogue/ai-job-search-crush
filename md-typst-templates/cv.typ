@@ -50,7 +50,7 @@ $endif$
 $if(homepage)$
     homepage: "$homepage$",
 $endif$
-    positions: ($for(positions)$"$positions/nowrap$"$sep$,$endfor$),
+    positions: ($for(positions)$"$positions/nowrap$",$endfor$),
   ),
   profile-picture: none,
   // #3873B3 = moderncv's "blue" accent (rgb 0.22/0.45/0.70), matching the

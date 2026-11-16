@@ -41,6 +41,7 @@ linkedin_Profile.pdf
 *.jpg
 *.jpeg
 *.png
+!ai-job-search_crush.jpg
 
 # OS files
 .DS_Store

@@ -60,7 +60,7 @@ one must appear in the other. Edit both together when iterating.
 | # | Check | How |
 |---|---|---|
 | 1 | Exactly 2 pages | `pdfinfo` Pages |
-| 2 | Same page size (A4) | `pdfinfo` Page size |
+| 2 | Same page size (US Letter, the pipeline default) | `pdfinfo` Page size |
 | 3 | Header present: full name, position titles, address, phone, email, LinkedIn, GitHub | text layer of page 1 |
 | 4 | Profile statement directly after header, 3-5 lines | text layer of page 1 |
 | 5 | All 7 sections present, same relative order: Core Competencies, Professional Experience, Education, Languages, Publications, Honors and Awards, References | text layer, section heading y-positions |
@@ -82,7 +82,7 @@ required. Parity means:
 - identical **content** (check 8),
 - identical **structure** (checks 3-7, 12-13: same sections, same entry
   anatomy, same order),
-- identical **page discipline** (checks 1, 2, 9: two A4 pages, no orphans),
+- identical **page discipline** (checks 1, 2, 9: two Letter pages, no orphans),
 - a consistent **professional finish** (checks 10-11: colored headings,
   working icons, no rendering artifacts).
 

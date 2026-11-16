@@ -76,6 +76,10 @@ This repo is a job application workspace. The AI acts as a career advisor and ap
 - [DEALBREAKER_1]
 - [DEALBREAKER_2]
 
+## Document Preferences
+<!-- Paper size for generated CVs and cover letters: `us-letter` (US Letter, default) or `a4` -->
+- **Paper size:** [PAPER_SIZE]
+
 ## Repo Structure
 - `cv/` - Markdown CVs (master reference `main_example.md`, per-application `<YYMMDD>_<company>_<position-slug>.md`)
 - `md-typst-templates/` - Stock CV and cover-letter template assets: Pandoc->Typst templates (cv.typ, cover.typ), Markdown skeletons, bundled fonts, pinned modern-cv package source

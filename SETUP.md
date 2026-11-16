@@ -102,7 +102,7 @@ All three paths produce the same result: fully populated profile files.
 
 | File | Content |
 |------|---------|
-| `AGENTS.md` | Your full candidate profile |
+| `AGENTS.md` | Your full candidate profile + document preferences (paper size) |
 | `01-candidate-profile.md` | Structured education, experience, skills |
 | `02-behavioral-profile.md` | Behavioral assessment |
 | `04-job-evaluation.md` | Personalized skill match areas and career goals |

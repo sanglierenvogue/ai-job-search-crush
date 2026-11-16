@@ -56,7 +56,7 @@ $endif$
   accent-color: "$if(accent-color)$$accent-color/nowrap$$else$#3873B3$endif$",
   font: ("Source Sans 3",),
   header-font: "Roboto",
-  paper-size: "$if(paper-size)$$paper-size/nowrap$$else$a4$endif$",
+  paper-size: "$if(paper-size)$$paper-size/nowrap$$else$us-letter$endif$",
   language: "$if(language)$$language/nowrap$$else$en$endif$",
   show-footer: false,
   signature-alignment: right,

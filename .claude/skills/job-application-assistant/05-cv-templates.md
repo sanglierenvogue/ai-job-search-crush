@@ -49,6 +49,7 @@ github: [your-username]
 positions:
   - [Primary Role Title]
   - [Secondary Role Title]
+paper-size: us-letter
 ---
 
 ```{=typst}
@@ -115,6 +116,7 @@ Frontmatter value rules (the package prefixes URLs itself):
 - `linkedin`: profile path only, e.g. `jane-doe` (not the full URL).
 - `github`: username only, e.g. `janedoe`.
 - `positions`: headline role titles, joined with dots in the header.
+- `paper-size`: paper size of the PDF - use the **Paper size** value from the Document Preferences section of `AGENTS.md` (`us-letter` default, `a4` for European standard size).
 
 ### Entry layout
 

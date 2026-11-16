@@ -15,6 +15,7 @@ company-street: [Street and number]
 company-city: [Postal Code, City]
 addressee: [Name or "hiring team"]
 job-position: [Role Title]
+paper-size: us-letter
 ---
 
 [Opening paragraph - the role, the connection to your background, 2-3 sentences.]

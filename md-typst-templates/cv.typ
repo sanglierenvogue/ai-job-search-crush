@@ -58,7 +58,7 @@ $endif$
   accent-color: $if(accent-color)$$accent-color$$else$"#3873B3"$endif$,
   font: ("Source Sans 3",),
   header-font: "Roboto",
-  paper-size: $if(paper-size)$$paper-size$$else$"a4"$endif$,
+  paper-size: "$if(paper-size)$$paper-size/nowrap$$else$us-letter$endif$",
   show-footer: false,
 )
 

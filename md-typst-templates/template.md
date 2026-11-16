@@ -9,6 +9,7 @@ github: [your-username]
 positions:
   - [Primary Role Title]
   - [Secondary Role Title]
+paper-size: us-letter
 ---
 
 ```{=typst}

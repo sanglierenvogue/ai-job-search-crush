@@ -139,7 +139,8 @@ Properties of the two designs, not pipeline defects:
 
 - **Paper size.** `cover.cls` never pins a paper size, so the baseline renders
   on the TeX distro default (US Letter here: 612x792). The new pipeline
-  defaults to A4 (`paper-size` frontmatter key overrides).
+  defaults to US Letter, matching the baseline (`paper-size` frontmatter key
+  overrides).
 - **Closing alignment.** The stock template documents a flushright
   closing, but `cover.cls`'s `\closing`/`\signature` macros internally use
   `\raggedright`, which overrides the `flushright` environment - the baseline

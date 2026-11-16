@@ -74,6 +74,8 @@ Also read with `view` the structural references:
 - Any existing `cv/[0-9][0-9][0-9][0-9][0-9][0-9]_*.md` file as a concrete per-application example (one is enough)
 - Any existing `cover_letters/cover_*.md` file as a template reference
 
+**Paper size (both documents):** set the `paper-size` frontmatter key to the **Paper size** value from the `## Document Preferences` section of `AGENTS.md` (`us-letter` if that section still holds a placeholder; e.g. `paper-size: a4`).
+
 ### CV (`cv/<YYMMDD>_<company>_<position-slug>.md`)
 - Always in **English**
 - Follow the Markdown structure (modern-cv Typst template) from `05-cv-templates.md`

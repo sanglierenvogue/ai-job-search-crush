@@ -4,27 +4,27 @@
 
 ## Search Sites
 
-Primary (Danish job market):
-- **jobindex.dk** - largest Danish job board
-- **linkedin.com/jobs** - LinkedIn job listings (filter: Denmark / your city)
-- **karriere.dk** - IDA's job board (engineering/science roles)
-- **jobfinder.dk** - another major Danish job board
-- **akademikernes.dk** - academic union job board
+Primary (your local job market - fill in with your main job boards):
+- **[YOUR_LOCAL_JOB_BOARD_1]** - your primary local job board
+- **linkedin.com/jobs** - LinkedIn job listings (filter: your country / your city)
+- **[YOUR_LOCAL_JOB_BOARD_2]** - another job board in your market
 
 Secondary (company career pages via Google):
 - Direct Google searches with `site:` filters for known target companies
 
+Tip: for any local job board you search often, run `project:add-portal` to generate a CLI skill for it.
+
 ## Query Categories
 
-Queries are grouped by priority. Each query should be combined with your location terms (e.g. "Copenhagen", "Sjælland", "Hovedstaden") where the site supports it.
+Queries are grouped by priority. Each query should be combined with your location terms (e.g. `[YOUR_CITY]`, `[YOUR_REGION]`) where the site supports it.
 
 ### Priority 1: [YOUR_PRIMARY_ROLE_TYPE]
 
 These match your strongest and most desired career direction.
 
 ```
-site:jobindex.dk "[YOUR_PRIMARY_JOB_TITLE]" [YOUR_CITY]
-site:jobindex.dk "[YOUR_KEY_SKILL]" [YOUR_CITY]
+site:[YOUR_LOCAL_JOB_BOARD_1] "[YOUR_PRIMARY_JOB_TITLE]" [YOUR_CITY]
+site:[YOUR_LOCAL_JOB_BOARD_1] "[YOUR_KEY_SKILL]" [YOUR_CITY]
 site:linkedin.com/jobs "[YOUR_PRIMARY_JOB_TITLE]" [YOUR_COUNTRY]
 ```
 
@@ -33,8 +33,8 @@ site:linkedin.com/jobs "[YOUR_PRIMARY_JOB_TITLE]" [YOUR_COUNTRY]
 These match your domain expertise.
 
 ```
-site:jobindex.dk [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] OR [YOUR_REGION]
-site:jobindex.dk [YOUR_DOMAIN_KEYWORD_2] [YOUR_COUNTRY]
+site:[YOUR_LOCAL_JOB_BOARD_1] [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] OR [YOUR_REGION]
+site:[YOUR_LOCAL_JOB_BOARD_1] [YOUR_DOMAIN_KEYWORD_2] [YOUR_COUNTRY]
 site:linkedin.com/jobs [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] [YOUR_COUNTRY]
 ```
 
@@ -43,8 +43,8 @@ site:linkedin.com/jobs [YOUR_DOMAIN_KEYWORD_1] [YOUR_CITY] [YOUR_COUNTRY]
 Adjacent roles you could pivot into.
 
 ```
-site:jobindex.dk "[YOUR_ADJACENT_TITLE_1]" [YOUR_KEY_SKILL] [YOUR_CITY]
-site:jobindex.dk "[YOUR_ADJACENT_TITLE_2]" [YOUR_KEY_SKILL] [YOUR_CITY]
+site:[YOUR_LOCAL_JOB_BOARD_1] "[YOUR_ADJACENT_TITLE_1]" [YOUR_KEY_SKILL] [YOUR_CITY]
+site:[YOUR_LOCAL_JOB_BOARD_1] "[YOUR_ADJACENT_TITLE_2]" [YOUR_KEY_SKILL] [YOUR_CITY]
 ```
 
 ### Priority 4: Broader Technical / Consulting
@@ -52,9 +52,9 @@ site:jobindex.dk "[YOUR_ADJACENT_TITLE_2]" [YOUR_KEY_SKILL] [YOUR_CITY]
 Wider net for general technical roles.
 
 ```
-site:jobindex.dk [YOUR_KEY_SKILL] developer [YOUR_CITY]
+site:[YOUR_LOCAL_JOB_BOARD_1] [YOUR_KEY_SKILL] developer [YOUR_CITY]
 site:linkedin.com/jobs "[YOUR_KEY_SKILL] developer" [YOUR_CITY]
-site:jobindex.dk "technical consultant" [YOUR_DOMAIN] [YOUR_CITY]
+site:[YOUR_LOCAL_JOB_BOARD_1] "technical consultant" [YOUR_DOMAIN] [YOUR_CITY]
 ```
 
 ## Location Filter

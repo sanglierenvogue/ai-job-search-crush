@@ -61,7 +61,7 @@ Run from the repo root.
    ```bash
    .scripts/analyze-cv-vision.py .dev/cv-typst/samples/typst-1.png
    ```
-   Expect exit 0 and an answer that names **Alex Andersen**, both
+   Expect exit 0 and an answer that names **Alex Carter**, both
    position titles (Data Scientist, Machine Learning Engineer), the
    contact details, and the page-1 section headings in order.
 
@@ -110,7 +110,7 @@ Run from the repo root.
        -H "Content-Type: application/json" \
        --data-binary @/tmp/body.json )
    ```
-   Expect a 200 JSON response naming Alex Andersen, with
+   Expect a 200 JSON response naming Alex Carter, with
    `usage.completion_tokens_details.reasoning_tokens == 0` and a
    non-zero `usage.prompt_tokens_details.multimodal_tokens.image`
    (proof the image was actually ingested).
@@ -177,8 +177,8 @@ columns. Say 'none found' if the page is clean."
      original inline `-d` variant failed with E2BIG on this machine;
      the step now uses the body-file approach.
    - **Known minor weakness (not a failure):** in Run 2's single-page
-     pass the 2019-2021 employer was misread as "PHARMASIGHT APS"
-     (source and PDF text layer both say "PharmaInsight ApS"); the
+     pass the 2019-2021 employer was misread as "PHARMASIGHT"
+     (source and PDF text layer both say "PharmaInsight"); the
      two-page pass read it correctly. Single-letter OCR slips on small
      uppercase text are possible; verify any fact the model reports
      against the Markdown source before acting on it.

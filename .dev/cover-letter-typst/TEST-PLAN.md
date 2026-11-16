@@ -8,9 +8,9 @@ the same content. On success, the repo can drop its last hard LaTeX dependency.
 ## Samples
 
 - `samples/sample-content.md` - the single source of truth: one consistent
-  fictional persona (Alex Andersen, Data Scientist - same persona as
-  `.dev/cv-typst/samples/sample_typst.md`) writing to fictional Astra Biotech
-  ApS, Copenhagen, for Senior Data Scientist. Body is ~215 words, inside the
+  fictional persona (Alex Carter, Data Scientist - same persona as
+  `.dev/cv-typst/samples/sample_typst.md`) writing to fictional Astra Biotech,
+  Springfield, for Senior Data Scientist. Body is ~215 words, inside the
   250-300 hard limit.
 - `samples/baseline_cover.tex` - the same content in the legacy
   LaTeX/`cover.cls` format (structure copied from the stock template in
@@ -18,9 +18,6 @@ the same content. On success, the repo can drop its last hard LaTeX dependency.
   `\lettercontent{}`+`itemize`+Raleway-Medium-fontspec workaround).
 - `samples/sample_cover.md` - the same content in the new Markdown format
   (structure copied from `md-typst-templates/cover-template.md`).
-- `samples/sample_cover_da.md` - a Danish variant exercising the
-  non-English mechanism (`language: da`, `dear: Kære`, `signature-line:
-  Med venlig hilsen,`), since the package `lang.toml` has no `da` entry.
 
 The two English letters MUST stay content-identical: every paragraph and
 bullet in one must appear in the other. Edit both together when iterating.
@@ -92,7 +89,7 @@ fixture, stock file untouched):
 |---|---|---|
 | 1 | Exactly 1 page, signature block fully on the page | `pdfinfo` Pages + PNG/vision |
 | 2 | Name in header, contact items present (email, phone, LinkedIn, GitHub) | text layer |
-| 3 | Salutation present ("Dear hiring team," / "Kære ...") | text layer |
+| 3 | Salutation present ("Dear hiring team," or the localized equivalent) | text layer |
 | 4 | All body paragraphs present, same order (opening, lead-in, company-fit, closing line) | diff of text layers |
 | 5 | Bullet content parity: every bullet in the baseline appears in the Typst letter (modulo hyphenation/spacing) | diff of bullet text |
 | 6 | Company block (target, date, name, street, city) - Typst letter | text layer |
@@ -104,7 +101,6 @@ fixture, stock file untouched):
 | 12 | No orphaned lines / layout defects (overlaps, misaligned blocks) | PNG / vision pass |
 | 13 | No missing glyphs / tofu boxes; compile with zero warnings | compile output |
 | 14 | ATS text layer: no U+00AD soft hyphens, no backslashes (`compile-cover-letter.sh` warns on both) | script output / `pdftotext` grep |
-| 15 | Danish variant: `language: da` + `dear:` + `signature-line:` overrides render the localized salutation and custom closing without errors | `sample_cover_da.md` text layer |
 
 ## Parity criterion (what "same content and structure" means here)
 
@@ -160,7 +156,7 @@ Properties of the two designs, not pipeline defects:
   letter overflows - Typst has no `\enlargethispage`).
 - **Closing wording.** Baseline: "Kind regards," (English). modern-cv
   default: localized "Sincerely," (or a custom line via the `signature-line`
-  frontmatter key, e.g. "Med venlig hilsen," for Danish).
+  frontmatter key).
 - **Added elements (Typst letter).** "Job Application for [role]" underlined
   line, the company/date block, and a bottom-aligned "Attached: Curriculum
   Vitae" - none of which the stock template had.
@@ -185,10 +181,10 @@ latent behavior (its "end-to-end" instances simply never wrapped).
 Mitigation if a critical keyword wraps badly: rephrase slightly, or wrap the
 word in a raw block as `#no-break[domain-heavy]`.
 
-## Non-English mechanism (verified with sample_cover_da.md)
+## Non-English mechanism
 
 The package `lang.toml` localizes Dear/Sincerely/Attached for en, de, gr,
-pt, sp, fr, ru, zh, it, nl - **not Danish**. For a language that is missing:
+pt, sp, fr, ru, zh, it, nl. For a language that is missing:
 
 - `dear: <localized salutation>` - overrides "Dear" in `letter-heading`
   (the package appends a comma).
@@ -197,8 +193,8 @@ pt, sp, fr, ru, zh, it, nl - **not Danish**. For a language that is missing:
   below it, right-aligned.
 - `language: <bcp47>` - sets the text language for hyphenation/spell data.
 
-All three compose; the Danish sample compiles to 1 page with "Kære
-data-teamet," and "Med venlig hilsen," + name.
+All three compose; the verification sample compiled to 1 page with the
+localized salutation and custom closing + name.
 
 ## Iteration log
 
@@ -230,7 +226,7 @@ data-teamet," and "Med venlig hilsen," + name.
    "domainheavy". Documented as the known Typst quirk above (position-based
    extractors keep the hyphen; the CV pipeline shares the behavior).
 4. **Run 4.** Non-English: added `language` and `signature-line`
-   frontmatter keys to `cover.typ`; verified with the Danish sample
+   frontmatter keys to `cover.typ`; verified with a non-English sample
    (check 15). Two more template bugs fixed: (a) pandoc re-wraps
    frontmatter values to the column width when the generated line is long -
    long street/city/target values would have split a Typst string literal -

@@ -23,7 +23,7 @@
 
 The subject line / headline of the application should be engaging and specific, not generic.
 
-**Bad:** "Application for Sales Engineer Position" / "Ansogning til stilling som ingeniør"
+**Bad:** "Application for Sales Engineer Position"
 **Good:** "[Your specialty] specializing in [relevant keyword from posting]"
 
 Formula: **[Title/education] + [relevant keyword from the job posting]**

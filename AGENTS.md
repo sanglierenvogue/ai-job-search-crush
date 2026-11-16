@@ -140,7 +140,7 @@ Skills are auto-discovered by Crush from `.crush/skills/`, `.claude/skills/`, an
 ### Core Workflow Skills
 - `project:setup` — Profile onboarding (documents folder, CV import, or interview mode)
 - `project:apply` — Full application workflow (evaluate fit → draft CV + cover letter → company research + fresh-context reviewer subagent → revise → compile PDFs)
-- `project:job-scraper` — Search Danish job portals for matching positions (job-scraper skill)
+- `project:job-scraper` — Search job portals for matching positions (job-scraper skill)
 - `project:upskill` — Skill gap analysis and learning plan from tracked jobs (upskill skill)
 - `project:job-application-assistant` — Evaluate job postings, tailor CVs, write cover letters, interview prep
 - `project:expand` — Competency expansion from documents and online presence
@@ -149,10 +149,6 @@ Skills are auto-discovered by Crush from `.crush/skills/`, `.claude/skills/`, an
 - `project:add-portal` — Generate a job-portal search skill for your local market
 
 ### Job Portal CLI Tools (also user-invocable)
-- `project:jobbank-search` — Akademikernes Jobbank (Denmark)
-- `project:jobdanmark-search` — Jobdanmark.dk (Denmark)
-- `project:jobindex-search` — Jobindex.dk (Denmark)
-- `project:jobnet-search` — Jobnet.dk (Denmark, government portal)
 - `project:linkedin-search` — LinkedIn public job listings (country-agnostic, zero runtime deps)
 
 ### Usage Examples
@@ -162,14 +158,14 @@ project:job-scraper
 project:job-scraper data science
 
 # Apply to a job
-project:apply https://jobindex.dk/job/1234567
+project:apply https://www.linkedin.com/jobs/view/1234567
 
 # Update search queries
 project:setup --section search
 
 # Analyze skill gaps
 project:upskill
-project:upskill https://jobindex.dk/job/1234567
+project:upskill https://www.linkedin.com/jobs/view/1234567
 
 # Register custom template
 project:add-template

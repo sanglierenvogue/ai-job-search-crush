@@ -9,7 +9,7 @@ github: [your-username]
 positions:
   - [Primary Role Title]
   - [Secondary Role Title]
-company: [Company Name ApS]
+company: [Company Name]
 target: [Hiring contact or team, e.g. "Jane Smith, Head of Data" or "Hiring Team"]
 company-street: [Street and number]
 company-city: [Postal Code, City]

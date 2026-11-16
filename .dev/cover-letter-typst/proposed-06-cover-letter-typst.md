@@ -53,7 +53,7 @@ github: [your-username]
 positions:
   - [Primary Role Title]
   - [Secondary Role Title]
-company: [Company Name ApS]
+company: [Company Name]
 target: [Hiring contact or team, e.g. "Jane Smith, Head of Data" or "Hiring Team"]
 company-street: [Street and number]
 company-city: [Postal Code, City]
@@ -106,12 +106,11 @@ Typst has no `\enlargethispage`: there is no page-stretch rescue. In order:
 
 Same structure, write the body in the posting's language. The package
 localizes salutation/closing for en, de, gr, pt, sp, fr, ru, zh, it, nl via
-the `language` key. For languages the package does not localize (e.g.
-**Danish**):
+the `language` key. For a language the package does not localize:
 
-- `dear: Kære` (or the local salutation) - the template appends a comma.
-- `signature-line: Med venlig hilsen,` (closing line, comma included).
-- `language: da` for correct text language data.
+- `dear: <local salutation>` - the template appends a comma.
+- `signature-line: <local closing line, comma included>`.
+- `language: <locale>` for correct text language data.
 
 ## Tailoring Guidelines
 

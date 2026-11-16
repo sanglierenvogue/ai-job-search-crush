@@ -1,7 +1,7 @@
 ---
 name: job-scraper
 description: >
-  Scrapes Danish job sites for new positions matching your profile. Deduplicates across
+  Scrapes job sites and portals for new positions matching your profile. Deduplicates across
   runs. Triggers on: job scrape, find jobs, search jobs, new jobs, job search, scrape
   jobs. User-invocable as project:job-scraper, optionally with a focus area or "broad".
 user-invocable: true
@@ -13,7 +13,7 @@ user-invocable: true
 
 ## How It Works
 
-This skill searches multiple Danish job sites using targeted queries based on your profile, deduplicates against previously seen jobs and the application tracker, and presents new matches with a quick fit assessment.
+This skill searches multiple job sites using targeted queries based on your profile, deduplicates against previously seen jobs and the application tracker, and presents new matches with a quick fit assessment.
 
 ## Invocation
 
@@ -44,7 +44,7 @@ Run **`agentic_fetch`** (web search) queries from `search-queries.md`. By defaul
 If the user specified a focus area (e.g. "data science"), prioritize queries from that category.
 
 For each search:
-- Use `agentic_fetch` (web search, no URL) with site-specific queries (jobindex.dk, linkedin.com/jobs, karriere.dk, etc.)
+- Use `agentic_fetch` (web search, no URL) with site-specific queries (linkedin.com/jobs, your local job boards, company career pages, etc.)
 - Target your configured geographic area
 - Look for postings from the last 14 days
 

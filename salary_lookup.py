@@ -12,7 +12,7 @@ instructions on the expected format and how to convert from Excel.
 
 Usage:
     python salary_lookup.py "Company Name"
-    python salary_lookup.py "Company Name" --city "København"
+    python salary_lookup.py "Company Name" --city "Berlin"
     python salary_lookup.py "Company Name" --json
     python salary_lookup.py --list-all
 """
@@ -26,18 +26,11 @@ from pathlib import Path
 
 DATA_FILE = Path(__file__).parent / "salary_data.json"
 
-# Common Danish <-> anglicized spelling variants
-SPELLING_VARIANTS = {
-    "ø": "o", "æ": "ae", "å": "aa",
-    "ö": "o", "ä": "ae", "ü": "u",
-}
-
 # Legal suffixes and noise to strip when matching company names
 STRIP_PATTERNS = [
-    r"\ba/s\b", r"\baps\b", r"\bi/s\b", r"\bp/s\b", r"\bk/s\b",
+    r"\bi/s\b", r"\bp/s\b", r"\bk/s\b",
     r"\bivs\b", r"\bamba\b", r"\ba\.m\.b\.a\.\b",
     r"\(vg\)", r"\(.*?\)",  # (VG) and other parentheticals
-    r"\bdanmark\b", r"\bdenmark\b", r"\bscandinavia\b", r"\bnordic\b",
     r"\bgroup\b", r"\bholding\b",
     r",\s*.*$",  # everything after comma (sub-entities)
 ]
@@ -62,16 +55,8 @@ def normalize(s):
     s = s.lower().strip()
     for pat in STRIP_PATTERNS:
         s = re.sub(pat, "", s)
-    s = re.sub(r"[^a-zæøåöäü0-9]", "", s)
+    s = re.sub(r"[^a-z0-9]", "", s)
     return s.strip()
-
-
-def anglicize(s):
-    """Convert Danish/Nordic characters to anglicized equivalents."""
-    s = s.lower()
-    for danish, english in SPELLING_VARIANTS.items():
-        s = s.replace(danish, english)
-    return s
 
 
 def extract_core_words(s):
@@ -79,7 +64,7 @@ def extract_core_words(s):
     s = s.lower()
     for pat in STRIP_PATTERNS:
         s = re.sub(pat, "", s)
-    words = re.findall(r"[a-zæøåöäü0-9]+", s)
+    words = re.findall(r"[a-z0-9]+", s)
     return [w for w in words if len(w) > 1]
 
 
@@ -112,36 +97,17 @@ def match_score(query, entry_name):
         else:
             return 80 + int(ratio * 10)
 
-    q_ang = anglicize(q_norm)
-    n_ang = anglicize(n_norm)
-    if q_ang == n_ang:
-        return 85
-    if q_ang in n_ang or n_ang in q_ang:
-        shorter = min(len(q_ang), len(n_ang))
-        longer = max(len(q_ang), len(n_ang))
-        if shorter <= 4 and shorter / longer < 0.5:
-            q_words_ang = {anglicize(w) for w in extract_core_words(query)}
-            n_words_ang = {anglicize(w) for w in extract_core_words(entry_name)}
-            if q_words_ang & n_words_ang:
-                return 75
-        else:
-            return 75
-
     q_words = set(extract_core_words(query))
     n_words = set(extract_core_words(entry_name))
     if not q_words or not n_words:
         return 0
 
     overlap = q_words & n_words
-    if not overlap:
-        q_words_ang = {anglicize(w) for w in q_words}
-        n_words_ang = {anglicize(w) for w in n_words}
-        overlap = q_words_ang & n_words_ang
 
     if overlap:
         if len(q_words) == 1:
             q_word = list(q_words)[0]
-            if q_word in n_words or anglicize(q_word) in {anglicize(w) for w in n_words}:
+            if q_word in n_words:
                 return 70
             else:
                 return 0
@@ -161,7 +127,7 @@ def search_company(data, query, city=None):
         if city:
             city_lower = city.lower()
             entry_city = entry.get("city", "").lower()
-            if city_lower not in entry_city and anglicize(city_lower) not in anglicize(entry_city):
+            if city_lower not in entry_city:
                 continue
 
         score = match_score(query, entry["company"])
@@ -261,7 +227,7 @@ def main():
         if args.city:
             print(f"  (filtered by city: {args.city})")
         print("\nTry a shorter or different name. Company names in the dataset")
-        print("may include legal suffixes like 'A/S' or 'ApS'.")
+        print("may include legal suffixes like 'Inc.' or 'Corp.'.")
         sys.exit(1)
 
     if args.json:

@@ -38,10 +38,10 @@ except ImportError:
 
 
 # Column name patterns for auto-detection
-COMPANY_PATTERNS = {"firma", "company", "virksomhed", "employer", "arbejdsgiver"}
-CITY_PATTERNS = {"by", "city", "kommune", "location", "lokation", "sted"}
-COUNT_PATTERNS = {"antal", "count", "number", "n", "employees", "medarbejdere"}
-INDEX_PATTERNS = {"indeks", "index", "idx", "salary", "løn", "median", "average", "gennemsnit"}
+COMPANY_PATTERNS = {"company", "employer"}
+CITY_PATTERNS = {"by", "city", "location"}
+COUNT_PATTERNS = {"count", "number", "n", "employees"}
+INDEX_PATTERNS = {"index", "idx", "salary", "median", "average"}
 
 
 def detect_column_type(header):

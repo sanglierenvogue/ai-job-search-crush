@@ -7,7 +7,7 @@ LaTeX/moderncv (banking) pipeline, using the same content.
 ## Samples
 
 - `samples/sample-content.md` — the single source of truth: one consistent
-  fictional persona (Alex Andersen, Data Scientist).
+  fictional persona (Alex Carter, Data Scientist).
 - `samples/baseline_cv.tex` — the same content in the legacy LaTeX/moderncv
   banking format (structure copied from `cv/main_example.tex`).
 - `samples/sample_typst.md` — the same content in the new Markdown format
@@ -119,7 +119,7 @@ the modern-cv Typst package, not pipeline defects, and are accepted:
   with the system math/symbol fallback font, here DejaVu Sans Mono). Banking
   draws a small circle. Both are plain round bullets.
 - **PDF text-layer quirks.** The email link text extracts as
-  `alex.andersen\@example.com` (Typst escapes `@` in link text); this is a
+  `alex.carter\@example.com` (Typst escapes `@` in link text); this is a
   text-layer artifact, not a rendering difference.
 
 ## Comparison notes (no vision model in this environment)

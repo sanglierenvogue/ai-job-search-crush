@@ -26,7 +26,7 @@ Follow these steps **exactly in order**. Do not skip steps.
 
 - If the provided input looks like a URL, use `fetch` (markdown format) to retrieve the job posting content.
 - If it is pasted text, use it directly.
-- Extract: **company name**, **role title**, **department** (if mentioned), **location**, and **language** of the posting (Danish or English).
+- Extract: **company name**, **role title**, **department** (if mentioned), **location**, and **language** of the posting.
 - Store these for use throughout the workflow.
 
 ---
@@ -82,7 +82,7 @@ Also read with `view` the structural references:
 - Keep to 2 pages
 
 ### Cover Letter (`cover_letters/cover_<company>_<role>.md`)
-- **Match the language of the job posting** (Danish posting -> Danish cover letter, English posting -> English cover letter)
+- **Match the language of the job posting** (write the cover letter in the posting's language)
 - Follow the frontmatter + body structure from `06-cover-letter-templates.md` (the modern-cv `coverletter` template)
 - Tailor the opening paragraph to the specific role and company
 - Set `addressee:` to a named person if available in the posting, otherwise "hiring team" (or the equivalent in the posting language)

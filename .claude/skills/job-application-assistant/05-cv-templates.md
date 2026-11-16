@@ -120,7 +120,7 @@ Frontmatter value rules (the package prefixes URLs itself):
 
 Each job or education entry is a `resume-entry` (title on the left, location
 on the right; the description/company on the next line with the date inline
-immediately after it, e.g. "Novo Analytics A/S 2021 - Present") followed by a
+immediately after it, e.g. "Nova Analytics 2021 - Present") followed by a
 `resume-item` bullet list. Write the whole entry - header plus
 bullets - inside a single raw `typst` block (fenced with ```` ```{=typst} ````
 - a plain ` ```typ ` fence would be rendered as displayed code) so it renders
@@ -166,13 +166,13 @@ pdftotext cv/<YYMMDD>_<company>_<position-slug>.pdf - | grep -F "end-to-end" # s
 Text-layer rules:
 - Keep hyphenated keywords ("end-to-end", "scikit-learn", "stakeholder-facing") as single hyphenated tokens - ATS parsers treat the hyphen as part of the keyword.
 - Dates in "YYYY - YYYY" / "YYYY - Present" form (ASCII hyphen with surrounding spaces), one format everywhere; never mix en-dash ranges or "Jan '22 - now" styles.
-- **Entry dates print inline after the company name** ("Novo Analytics A/S 2021 - Present") - this is a local patch to the vendored modern-cv package (see `md-typst-templates/README.md`). The stock layout right-aligned the date, which position-based extractors (pdfminer/xpdf family) split into a detached column, detaching dates from their jobs. Do not revert to the stock `secondary-justified-header(description, date)` rendering. The entry location is still right-aligned on the title line; a column-detecting extractor can only re-split it if several locations share an identical start position (identical-length placeholder text does this - real content does not). For strict-parser employers, still spot-check with https://rxresu.me/ats-checker.
+- **Entry dates print inline after the company name** ("Nova Analytics 2021 - Present") - this is a local patch to the vendored modern-cv package (see `md-typst-templates/README.md`). The stock layout right-aligned the date, which position-based extractors (pdfminer/xpdf family) split into a detached column, detaching dates from their jobs. Do not revert to the stock `secondary-justified-header(description, date)` rendering. The entry location is still right-aligned on the title line; a column-detecting extractor can only re-split it if several locations share an identical start position (identical-length placeholder text does this - real content does not). For strict-parser employers, still spot-check with https://rxresu.me/ats-checker.
 - The header contact line and `resume-skill-item` rows are two-column within a single line. That extracts as one line (label, then values) - do not restructure them into stacked multi-line cells, which would interleave in extraction.
 - Font Awesome contact icons appear in the extracted text as private-use glyphs between the contact values. This is harmless; do not try to strip them.
 - The LinkedIn URL exists only as a link annotation (the visible text is the candidate's name). Do not rely on the ATS extracting it; the GitHub username does appear as text.
 - Never ship unfilled template data. Parsers apply fake-resume heuristics and skip placeholder content - Greenhouse's own documentation names "First Last" (the repo's placeholder name) as an example.
 - Do not write bare `@username` in the Markdown body: pandoc's Typst writer turns it into a citation reference and breaks compilation. `@` is safe in frontmatter values (the script un-escapes it).
-- Company names with legal form (Inc./Co./ApS/A/S) and complete job titles parse better; avoid abbreviating titles ("Sr. DS").
+- Company names with legal form (Inc./Co./Ltd./Corp.) and complete job titles parse better; avoid abbreviating titles ("Sr. DS").
 
 ### Profile Statement / Elevator Pitch (Best Practice)
 This is the most important section to customize. It appears right after the

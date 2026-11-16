@@ -63,8 +63,8 @@ $endif$
   // Tighten to 1em (via the par-spacing frontmatter key) when a letter is
   // close to the 1-page limit.
   par-spacing: $if(par-spacing)$$par-spacing/nowrap$$else$1.5em$endif$,
-// Optional custom closing line (e.g. "Med venlig hilsen," for Danish, which
-// the package lang.toml does not localize, or "Kind regards," for English
+// Optional custom closing line (e.g. a closing for a language the package
+// lang.toml does not localize, or "Kind regards," for English
 // letters following the former stock template). Rendered right-aligned with
 // the bold name below, matching the package's default signature layout.
 $if(signature-line)$

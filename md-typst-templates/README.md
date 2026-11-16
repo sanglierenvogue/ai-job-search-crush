@@ -102,7 +102,7 @@ Notes on the frontmatter values (the package prefixes URLs itself):
 
 `modern-cv/0.10.0/lib.typ` carries one local modification, marked in the
 source with `// LOCAL PATCH (ATS)`: `resume-entry` prints the entry date
-**inline after the description/company name** (e.g. "Novo Analytics A/S
+**inline after the description/company name** (e.g. "Nova Analytics
 2021 - Present") instead of in a right-aligned box, as stock 0.10.0 does.
 
 Why: the stock `secondary-justified-header(description, date)` puts the date
@@ -181,8 +181,8 @@ optional `dear`, `signature-line`, `language`, `accent-color`, `paper-size`,
 `.claude/skills/job-application-assistant/06-cover-letter-templates.md`.
 
 Non-English letters: the package `lang.toml` localizes salutation/closing for
-en, de, gr, pt, sp, fr, ru, zh, it, nl. For languages without an entry (e.g.
-Danish), set `dear:` (salutation override), `signature-line:` (closing line,
+en, de, gr, pt, sp, fr, ru, zh, it, nl. For languages without an entry, set
+`dear:` (salutation override), `signature-line:` (closing line,
 comma included), and `language:`.
 
 ## Gotchas

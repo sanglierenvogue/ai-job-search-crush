@@ -37,24 +37,16 @@ The job portal CLIs (four Danish portals plus the country-agnostic LinkedIn tool
 curl -fsSL https://bun.sh/install | bash
 ```
 
-### Pandoc + Typst (for compiling CVs)
+### Pandoc + Typst (for compiling CVs and cover letters)
 
-CVs are written in Markdown and compiled to PDF through Pandoc and Typst. Install:
+CVs and cover letters are written in Markdown and compiled to PDF through Pandoc and Typst. Install:
 
 - **Pandoc 3.5+** — [pandoc.org](https://pandoc.org/installing.html) (Windows: `winget install JohnMacFarlane.Pandoc`; macOS: `brew install pandoc`; Linux: package manager)
 - **Typst 0.12+** — [typst.app/docs/installation](https://typst.app/docs/installation/) (Windows: `winget install Typst.Typst`; macOS: `brew install typst`; Linux: package manager or GitHub releases)
 
 On first compile, Typst downloads the `modern-cv` package (and its dependencies) from the Typst registry and caches them. On a machine without network access at compile time, run `.scripts/sync-package.sh` once to install the pinned package sources that ship in `md-typst-templates/`.
 
-### LaTeX (for compiling cover letters)
-
-Install a LaTeX distribution to compile the cover letter `.tex` files to PDF:
-
-- **Windows:** [MiKTeX](https://miktex.org/download)
-- **macOS:** [MacTeX](https://tug.org/mactex/)
-- **Linux:** `sudo apt install texlive-full` or `sudo dnf install texlive-scheme-full`
-
-The cover letter compiles with `xelatex` because `cover.cls` requires `fontspec` for its custom Lato/Raleway fonts. (A full LaTeX install with `lualatex` is only needed if you keep using custom LaTeX CV templates via `project:add-template`.)
+No LaTeX distribution is needed for the stock workflow. A LaTeX install (TeX Live or MiKTeX, with `xelatex`) is only required if you register your own LaTeX template via `project:add-template`.
 
 ### poppler-utils (for PDF verification)
 
@@ -116,7 +108,7 @@ All three paths produce the same result: fully populated profile files.
 | `04-job-evaluation.md` | Personalized skill match areas and career goals |
 | `05-cv-templates.md` | Profile statement templates for your background |
 | `07-interview-prep.md` | STAR examples from your experience |
-| `cv/main_example.tex` | Your LaTeX CV with actual details |
+| `cv/main_example.md` | Your master Markdown CV with actual details |
 | `search-queries.md` | Job search queries for `project:job-scraper` |
 
 ### Re-running setup
@@ -191,11 +183,11 @@ After `project:apply` creates the documents (the workflow already compiles and v
 # Compile CV (Markdown -> Pandoc -> Typst -> PDF)
 .scripts/compile-cv.sh cv/<YYMMDD>_<company>_<position-slug>.md
 
-# Compile cover letter
-cd cover_letters && xelatex cover_<company>_<role>.tex && cd ..
+# Compile cover letter (Markdown -> Pandoc -> Typst -> PDF)
+.scripts/compile-cover-letter.sh cover_letters/cover_<company>_<role>.md
 ```
 
-These commands apply to the stock templates (modern-cv Typst CV, `cover.cls` cover letter). If you'd rather use your own template, run `project:add-template` — it captures the template's compile engine, fonts, style rules, and page limit, test-compiles it, and wires it into `project:apply`. See the "CV and cover-letter templates" section in the README.
+These commands apply to the stock templates (modern-cv Typst CV, modern-cv Typst cover letter). If you'd rather use your own template, run `project:add-template` — it captures the template's compile engine, fonts, style rules, and page limit, test-compiles it, and wires it into `project:apply`. See the "CV and cover-letter templates" section in the README.
 
 ## Permissions
 
@@ -215,17 +207,13 @@ Invoke them as `project:<skill-name>` (e.g. `project:apply`, `project:job-scrape
 ### Job search CLI tools not working
 Make sure Bun is installed and you ran `bun install` in each CLI directory. The tools require network access to fetch job listings.
 
-### CV compilation errors (Pandoc / Typst)
+### CV / cover letter compilation errors (Pandoc / Typst)
 - Run `.scripts/check-env.sh` to verify pandoc >= 3.5, typst >= 0.12, and the vendored template assets.
-- The CV compile is `pandoc` (template `md-typst-templates/cv.typ`) followed by `typst compile` with the bundled fonts; warnings about unknown font families mean the `--font-path` to `md-typst-templates/fonts` was dropped.
+- The compiles are `pandoc` (template `md-typst-templates/cv.typ` or `cover.typ`) followed by `typst compile` with the bundled fonts; warnings about unknown font families mean the `--font-path` to `md-typst-templates/fonts` was dropped.
 - On an offline machine, run `.scripts/sync-package.sh` once so the `@preview/modern-cv` import resolves locally.
 
-### Cover letter compilation errors (LaTeX)
-- Cover letter: uses `xelatex` (for custom fonts in `OpenFonts/fonts/`)
-- Make sure your LaTeX distribution includes the `fontspec` package
-
-### Fonts not found in cover letter
-The cover letter template expects fonts in `cover_letters/OpenFonts/fonts/`. Make sure this directory exists and contains the Lato and Raleway font files.
+### Fonts not found in CV or cover letter
+Both templates resolve fonts from `md-typst-templates/fonts/`. Make sure that directory exists and contains the Source Sans 3, Roboto, and Font Awesome 7 font files.
 
 ### PDFs can't be inspected
 The `project:apply` workflow renders PDF pages to images with `pdftoppm` before inspecting them. If the command is missing, install `poppler-utils` (see Prerequisites).

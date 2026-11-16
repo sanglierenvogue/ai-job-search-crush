@@ -1,153 +1,144 @@
 # Cover Letter Templates and Tailoring Guide
 
-## Template: Custom cover.cls (XeLaTeX)
+## Template: Markdown + Pandoc + Typst (modern-cv coverletter)
 
-Cover letters use a custom LaTeX document class (`cover.cls`) with Lato/Raleway fonts.
+All cover letters are written in **Markdown**, converted by **Pandoc**, and
+typeset by **Typst** with the [modern-cv](https://typst.app/universe/package/modern-cv)
+package (`coverletter` template - the same package and bundled fonts as the
+CV). This replaces the former LaTeX/`cover.cls` (Lato/Raleway) + xelatex
+pipeline. No LaTeX is needed.
 
-**Output file:** `cover_letters/cover_<company>_<role>.tex`
-**Compile with:** XeLaTeX (cover.cls requires fontspec)
-**Font directory:** `cover_letters/OpenFonts/fonts/`
+**Output files:** `cover_letters/cover_<company>_<role>.md` ->
+`cover_letters/cover_<company>_<role>.pdf`
+**Compile with:** `.scripts/compile-cover-letter.sh` (Pandoc -> Typst, bundled fonts).
+**Template assets:** `md-typst-templates/` (`cover.typ`, `cover-template.md`).
 
 ### Compile command
 
 ```bash
-cd cover_letters && xelatex -interaction=nonstopmode cover_<company>_<role>.tex
+.scripts/compile-cover-letter.sh cover_letters/cover_<company>_<role>.md
 ```
 
-Expected output: `Output written on cover_<company>_<role>.pdf (1 page, ...)`. Any page count other than 1 is a failure that must be fixed before presenting to the user.
+Expected output: `pdf: cover_letters/cover_<company>_<role>.pdf (1 pages)`.
+Any page count other than 1 is a failure that must be fixed before presenting
+to the user.
 
 ## Compile-and-Inspect Loop (MANDATORY)
 
-After writing the cover letter and before presenting to the user, always compile and visually inspect the PDF. Iterate until the layout is clean:
+After writing the cover letter and before presenting to the user, always
+compile and visually inspect the PDF. Iterate until the layout is clean:
 
-1. Run `xelatex -interaction=nonstopmode cover_<company>_<role>.tex`
-2. Confirm page count is exactly 1 and compile succeeded
-3. Read the PDF via the Read tool and visually check: signature fits at the bottom, no text cut off, bullet font matches body
-
-### Known template pitfall: itemize inside `\lettercontent{}`
-
-The `\lettercontent{}` macro appends `\\` to its argument. This breaks when the argument ends in `\end{itemize}` because `\\` has no line to break after the environment closes, producing `! LaTeX Error: There's no line here to end.` and no PDF output.
-
-**Wrong (breaks compile):**
-```latex
-\lettercontent{Here is how my experience maps:
-\begin{itemize}
-    \item ...
-\end{itemize}}
-```
-
-**Correct — close `\lettercontent{}` before the list and wrap the list in the matching Raleway-Medium font so typography stays consistent:**
-```latex
-\lettercontent{Here is how my experience maps:}
-
-{\raggedright\fontspec[Path = OpenFonts/fonts/raleway/]{Raleway-Medium}\fontsize{11pt}{13pt}\selectfont
-\begin{itemize}
-    \item ...
-\end{itemize}\par}
-\vspace{6pt}
-
-\lettercontent{[next paragraph]}
-```
-
-The font wrapper is mandatory — if you just move `\begin{itemize}` outside `\lettercontent{}` without the `\fontspec` block, bullets render in the default body font (Lato) and visually mismatch the rest of the letter.
+1. Run `.scripts/compile-cover-letter.sh cover_letters/cover_<company>_<role>.md`
+2. Confirm page count is exactly 1 and the compile printed no warnings
+3. Read the PDF via the Read tool (or render with `.scripts/render-pdf.sh` and
+   inspect the PNGs) and visually check: the signature block fits at the
+   bottom, nothing is cut off, no overlapping blocks
 
 ## Document Structure
 
-```latex
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Cover Letter - [Company], [Role]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Each letter is a single Markdown file. The YAML frontmatter feeds the
+modern-cv header, the company block, and the letter heading; the body is the
+letter text (plain paragraphs and Markdown lists). The closing line and the
+printed name are rendered by the template - do **not** write them in the body.
 
-\documentclass[]{cover}
-\usepackage{fancyhdr}
+````markdown
+---
+firstname: [FIRST_NAME]
+lastname: [LAST_NAME]
+address: Your Address, City, Country
+phone: [+XX XXXXXXXXXX]
+email: [your.email@example.com]
+linkedin: [your-profile-path]
+github: [your-username]
+positions:
+  - [Primary Role Title]
+  - [Secondary Role Title]
+company: [Company Name ApS]
+target: [Hiring contact or team, e.g. "Jane Smith, Head of Data" or "Hiring Team"]
+company-street: [Street and number]
+company-city: [Postal Code, City]
+addressee: [Name or "hiring team"]
+job-position: [Role Title]
+---
 
-\pagestyle{fancy}
-\fancyhf{}
+[Opening paragraph - the role, the connection to your background, 2-3 sentences.]
 
-\rfoot{Page \thepage \hspace{0pt}}
-\thispagestyle{empty}
-\renewcommand{\headrulewidth}{0pt}
-\begin{document}
+[Body paragraph - your most relevant experience, then a bullet list:]
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     TITLE NAME
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\namesection{}{\Huge{[YOUR_NAME]}}{  \href{mailto:[YOUR_EMAIL]}{[YOUR_EMAIL]} | [YOUR_PHONE] |  \urlstyle{same}\href{[YOUR_LINKEDIN_URL]}{LinkedIn}
-}
+- [Concrete achievement/skill 1 - be specific, use numbers where possible]
+- [Concrete achievement/skill 2]
+- [Concrete achievement/skill 3]
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     MAIN COVER LETTER CONTENT
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[Connection to company - why this role, why this company specifically.]
 
-\currentdate{\today}
-\lettercontent{Dear [Name/Team],}
+[Personal fit paragraph - behavioral strengths, team contribution, 2-3 sentences.]
 
-\lettercontent{[Opening paragraph - role, connection to background, 2-3 sentences]}
+I look forward to hearing from you.
+````
 
-\lettercontent{[Body paragraph - most relevant experience, then bullet list]
+### How the mapping works
 
-\begin{itemize}
-    \item [Concrete achievement/skill 1]
-    \item [Concrete achievement/skill 2]
-    \item [Concrete achievement/skill 3]
-\end{itemize}
+| Letter element | In the Markdown |
+|---|---|
+| Name, address, phone, email, LinkedIn, GitHub, headline titles | YAML frontmatter (the modern-cv header) |
+| Company block (attention line, date, name, street, city) | `company`, `target`, `company-street`, `company-city` |
+| "Job Application for [role]" line + salutation | `job-position`, `addressee` (plus optional `dear`) |
+| Body paragraphs and bullets | plain Markdown (paragraphs, `-` lists) |
+| Closing line + printed name | rendered by the template (localized "Sincerely," + bold name, right-aligned); override the closing with `signature-line` |
+| "Attached: Curriculum Vitae" | rendered by the template (package default) |
 
-[Connection to company - why this role, why this company specifically]}
+Frontmatter value rules:
+- `positions`: required by the package - always include it (the headline role titles).
+- `linkedin`: profile path only, e.g. `jane-doe` (not the full URL); `github`: username only.
+- `company-street` / `company-city`: optional (the block renders without them).
+- `accent-color` (e.g. `#3873B3`, the stock default), `paper-size` (default `a4`),
+  `par-spacing` (e.g. `1em` to tighten), `language` (default `en`), `dear`,
+  `signature-line`: optional overrides.
 
-\lettercontent{[Personal fit paragraph - behavioral strengths, team contribution, 2-3 sentences]}
+### If the letter overflows one page
 
-\lettercontent{I look forward to hearing from you.}
+Typst has no `\enlargethispage`: there is no page-stretch rescue. In order:
+1. trim body content (relevance-weighted, as for the CV),
+2. set `par-spacing: 1em` in the frontmatter,
+3. cut a bullet or merge two paragraphs.
 
-\begin{flushright}
-\closing{Kind regards,\\}
+### Non-English letters
 
-\signature{[YOUR_NAME]}
-\end{flushright}
-\end{document}
-```
+Same structure, write the body in the posting's language. The package
+localizes salutation/closing for en, de, gr, pt, sp, fr, ru, zh, it, nl via
+the `language` key. For languages the package does not localize (e.g.
+**Danish**):
 
-## Key Commands Reference
-
-| Command | Purpose |
-|---------|---------|
-| `\namesection{}{Name}{contact info}` | Header with name and contact |
-| `\currentdate{date}` | Date field (use `\today` or explicit date) |
-| `\lettercontent{text}` | Body paragraph (adds spacing after) |
-| `\closing{text}` | Closing line |
-| `\signature{name}` | Printed name below signature |
+- `dear: Kære` (or the local salutation) - the template appends a comma.
+- `signature-line: Med venlig hilsen,` (closing line, comma included).
+- `language: da` for correct text language data.
 
 ## Tailoring Guidelines
 
 ### Salutation
-- If you know the hiring manager's name: "Dear [First Last],"
-- If you know the team: "Dear [Company] hiring team,"
-- Generic: "Dear [Company]," (avoid "To whom it may concern")
+- If you know the hiring manager's name: `addressee: Jane Smith` -> "Dear Jane Smith,"
+- If you know the team: `addressee: the Astra Biotech data team`
+- Generic: `addressee: hiring team` (avoid "To whom it may concern")
 
 ### Length - Hard 1-Page Limit
-- Target: 1 page including signature block
+- Target: 1 page including the signature block
 - Maximum: **never exceed 1 page**
-- **Word budget: 250-300 words** of body text (not counting LaTeX markup). This is the safe maximum. 350 words will overflow.
-- **Always count**: opening paragraph + bullet list paragraph + closing paragraph = 3 blocks. Add a 4th only if the others are short.
-- When adding company-specific content, trim other content to compensate rather than adding net length
-
-### Line Spacing
-- Add `\usepackage{setspace}` and `\setstretch{1.0}` if the letter is long and needs to fit on one page
-- Use `\vspace{.5cm}` between major sections for readability (only if space permits)
+- **Word budget: 250-300 words** of body text. This is the safe maximum.
+- **Always count**: opening paragraph + bullet list paragraph + closing
+  paragraph = 3 blocks. Add a 4th only if the others are short.
+- When adding company-specific content, trim other content to compensate
+  rather than adding net length
 
 ### Bullet Lists
-- Place `\begin{itemize}...\end{itemize}` **outside** a `\lettercontent{}` block (see "Known template pitfall" above), wrapped in the matching Raleway-Medium `\fontspec` so the bullet font matches the body
-- 3-5 bullets is ideal
-- Start each bullet with bold label or action verb
-- Use `\textbf{Label:}` for category-style bullets
+- Plain Markdown `-` lists in the body (3-5 bullets is ideal)
+- Start each bullet with a bold label or action verb (`**Label:** ...`)
+- Bullets render in the same font/size as the body - no special handling
 
-### LaTeX Special Characters
-- Underscore: `\_`
-- Ampersand: `\&`
-
-### Non-English Cover Letters
-- Same template structure, just write content in the posting's language
-- Adjust date format to local convention
-- Adjust closing to local convention (e.g. "Med venlig hilsen," for Danish)
+### Writing rules (from 03-writing-style.md)
+- No em-dashes (use commas or periods instead)
+- No cliches or empty filler
+- Every claim backed by a specific example
+- Forward-looking framing: focus on tasks you'll solve, not just past duties
 
 ## Checklist Before Finalizing
 - [ ] No em-dashes (use commas or periods instead)
@@ -156,11 +147,12 @@ The font wrapper is mandatory — if you just move `\begin{itemize}` outside `\l
 - [ ] Forward-looking framing: focuses on tasks you'll solve, not just past duties
 - [ ] Motivation section references this specific company's mission/values
 - [ ] Company name and role are correct throughout
-- [ ] Date is current
-- [ ] Fits on one page
+- [ ] Date is current (the template renders today's date automatically)
+- [ ] Fits on one page (compile output says `(1 pages)`)
 - [ ] Language matches the job posting language
 - [ ] Salutation is appropriate (named person if possible)
-- [ ] Headline is engaging and specific, not generic
+- [ ] No syntax errors (clean compile, zero warnings)
+- [ ] ATS text layer clean (script prints no soft-hyphen/backslash warnings)
 
 ## Submission Guidelines (Best Practice)
 - Submit only the documents the employer requests

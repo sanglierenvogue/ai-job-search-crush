@@ -1,22 +1,27 @@
-# Markdown + Pandoc + Typst CV Templates
+# Markdown + Pandoc + Typst Templates
 
-Stock CV template assets for the application workflow. CVs are written in
+Stock CV and cover-letter template assets for the application workflow. CVs and cover letters are written in
 Markdown, converted by Pandoc, and typeset by Typst using the
 [modern-cv](https://typst.app/universe/package/modern-cv) package (an
 Awesome-CV port). This replaces the former LaTeX/moderncv (banking style)
-pipeline.
+CV pipeline and the former LaTeX/`cover.cls` cover letter pipeline: the
+whole application workflow runs on Pandoc + Typst, no LaTeX needed.
 
 ## Layout
 
 ```
 md-typst-templates/
 ├── README.md              # this file
-├── cv.typ                 # the Pandoc template: imports modern-cv, maps
+├── cv.typ                 # Pandoc template for CVs: imports modern-cv, maps
 │                          #   frontmatter -> resume header, emits the body
+├── cover.typ              # Pandoc template for cover letters: imports
+│                          #   modern-cv, maps frontmatter -> coverletter /
+│                          #   hiring-entity-info / letter-heading, emits body
 ├── pandoc.typ             # reference dump of Pandoc's stock Typst template
 │                          #   (shows the template-variable syntax)
 ├── template.md            # profile-agnostic Markdown CV skeleton
 │                          #   ([PLACEHOLDER] tokens, safe to commit)
+├── cover-template.md      # profile-agnostic Markdown cover letter skeleton
 ├── fonts/                 # bundled fonts (see below)
 ├── modern-cv/0.10.0/      # vendored package source (pinned, for offline use)
 │   ├── lib.typ            #   the template: resume, resume-entry, resume-item,
@@ -41,8 +46,23 @@ cv/build/<YYMMDD>_<company>_<position-slug>.typ
 cv/<YYMMDD>_<company>_<position-slug>.pdf
 ```
 
-Use `.scripts/compile-cv.sh <cv.md>` (see `.scripts/README.md`) instead of
-running the two commands by hand.
+Cover letters follow the same chain with `cover.typ`:
+
+```
+cover_letters/cover_<company>_<role>.md
+        |  pandoc --template=md-typst-templates/cover.typ
+        v
+cover_letters/build/cover_<company>_<role>.typ
+        |  typst compile --font-path md-typst-templates/fonts
+        v
+cover_letters/cover_<company>_<role>.pdf
+```
+
+Use `.scripts/compile-cv.sh <cv.md>` and
+`.scripts/compile-cover-letter.sh <letter.md>` (see `.scripts/README.md`)
+instead of running the two commands by hand. Both scripts undo Pandoc's
+over-escaping of frontmatter values and run ATS text-layer checks
+(soft hyphens, stray backslashes).
 
 **Output naming.** `YYMMDD` is the date the CV is drafted; the position slug
 is the role title lowercased and hyphenated (e.g.
@@ -145,10 +165,40 @@ pandoc --print-default-template=typst > md-typst-templates/pandoc.typ
 Record the pandoc version used (at the time of this writing: pandoc 3.12.1,
 typst 0.15.1).
 
+## Cover letters
+
+`cover.typ` emits `coverletter(...)` (modern-cv's Awesome-CV-port cover
+letter) plus `hiring-entity-info(...)` and `letter-heading(...)` from the
+frontmatter, then the Markdown body. The template renders the closing line
+and the printed name itself (localized "Sincerely," + bold name,
+right-aligned; "Attached: Curriculum Vitae" at the bottom) - the letter body
+never writes them. Frontmatter keys: the identity keys shared with the CV
+(`firstname`, `lastname`, `address`, `phone`, `email`, `linkedin`, `github`,
+`positions` - `positions` is required by the package), plus `company`,
+`target`, `company-street`, `company-city`, `addressee`, `job-position`, and
+optional `dear`, `signature-line`, `language`, `accent-color`, `paper-size`,
+`par-spacing`. The full structure and tailoring rules live in
+`.claude/skills/job-application-assistant/06-cover-letter-templates.md`.
+
+Non-English letters: the package `lang.toml` localizes salutation/closing for
+en, de, gr, pt, sp, fr, ru, zh, it, nl. For languages without an entry (e.g.
+Danish), set `dear:` (salutation override), `signature-line:` (closing line,
+comma included), and `language:`.
+
 ## Gotchas
 
-- **Never write a `$...$` sequence in a `cv.typ` comment.** Pandoc treats it
+- **Never write a `$...$` sequence in a `cv.typ`/`cover.typ` comment.** Pandoc treats it
   as a template variable and will splice content into the file.
+- **Pandoc variable tokens run from one `$` to the next.** A literal quote
+  must never sit between the variable name and its closing `$` (the pattern
+  is `"$var/nowrap$"`, quote *after* the closing `$`). A quoted value with a
+  default must put the quotes outside the block: `"$if(key)$$key/nowrap$$else$default$endif$"`.
+- **Long frontmatter values are re-wrapped by Pandoc** to the column width
+  when the generated line is long, which would split a Typst string literal.
+  All string variables in the templates use the `/nowrap` modifier.
+- **A bare string literal inside Typst content renders with smart quotes.**
+  Interpolated values that land in content (e.g. the custom signature) need
+  `#` string conversion: `[#"$signature-line/nowrap$"]`.
 - Executable Typst in the Markdown uses Pandoc raw blocks: the fence is
   ```` ```{=typst} ```` (not a plain ` ```typ ` fence, which Typst would
   render as a displayed code block instead of executing).

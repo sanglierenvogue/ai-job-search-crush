@@ -2,9 +2,9 @@
 name: apply
 description: >
   Full job application workflow: evaluate fit, draft a tailored CV and cover letter in
-  LaTeX, company research plus fresh-context reviewer subagent critique, revise, compile,
-  and visually verify the PDFs. User-invocable as project:apply followed by a job posting
-  URL or pasted posting text.
+  Markdown (Pandoc + Typst), company research plus fresh-context reviewer subagent
+  critique, revise, compile, and visually verify the PDFs. User-invocable as project:apply
+  followed by a job posting URL or pasted posting text.
 user-invocable: true
 ---
 
@@ -18,7 +18,7 @@ Follow these steps **exactly in order**. Do not skip steps.
 - Never re-read a file whose contents are already in your context from an earlier step. If you read it in Step 1, it is still available in Step 2.
 - When dispatching the reviewer subagent, pass the drafts and the company research brief **inline in the agent prompt** rather than asking the subagent to read files you already have in memory.
 - Run the full verification checklist exactly once, at the end (Step 6). The reviewer focuses on content critique, not verification.
-- Step 5 (compile and inspect PDFs) is mandatory and non-skippable — LaTeX page-break decisions are unpredictable, and `.tex` files that look fine often produce broken PDFs (orphaned entry titles, cover letters spilling to page 2, bullet fonts mismatching).
+- Step 5 (compile and inspect PDFs) is mandatory and non-skippable — page-break decisions are unpredictable, and `.md` files that look fine often produce broken PDFs (CV content spilling to a third page, cover letters spilling to page 2 with a clipped signature).
 
 ---
 
@@ -69,24 +69,25 @@ Read with `view` only the reference files you do not yet have:
 - `.claude/skills/job-application-assistant/05-cv-templates.md`
 - `.claude/skills/job-application-assistant/06-cover-letter-templates.md`
 
-Also read with `view` the most recent existing CV and cover letter files for concrete structural reference (one of each is enough):
-- Any existing `cv/main_*.tex` file as a LaTeX template reference
-- Any existing `cover_letters/cover_*.tex` or `cover_letters/Cover_*.tex` file as a template reference
+Also read with `view` the structural references:
+- `cv/main_example.md` - the master Markdown CV (role-agnostic source of all competencies)
+- Any existing `cv/[0-9][0-9][0-9][0-9][0-9][0-9]_*.md` file as a concrete per-application example (one is enough)
+- Any existing `cover_letters/cover_*.md` file as a template reference
 
-### CV (`cv/main_<company>.tex`)
+### CV (`cv/<YYMMDD>_<company>_<position-slug>.md`)
 - Always in **English**
-- Follow the moderncv/banking format from `05-cv-templates.md`
+- Follow the Markdown structure (modern-cv Typst template) from `05-cv-templates.md`
 - Tailor the profile statement and experience bullets to the specific role
 - Reframe skills and achievements to match job requirements
 - Keep to 2 pages
 
-### Cover Letter (`cover_letters/cover_<company>_<role>.tex`)
+### Cover Letter (`cover_letters/cover_<company>_<role>.md`)
 - **Match the language of the job posting** (Danish posting -> Danish cover letter, English posting -> English cover letter)
-- Follow the structure from `06-cover-letter-templates.md`
-- Use the `cover.cls` template
+- Follow the frontmatter + body structure from `06-cover-letter-templates.md` (the modern-cv `coverletter` template)
 - Tailor the opening paragraph to the specific role and company
-- Address to a named person if available in the posting, otherwise "Dear Hiring Manager" (or equivalent in posting language)
-- Keep to approximately one page
+- Set `addressee:` to a named person if available in the posting, otherwise "hiring team" (or the equivalent in the posting language)
+- Body word budget 250-300 words; the letter must fit exactly one page
+- Do not write the closing line or signature in the body (the template renders both)
 - Any mention of agentic coding or AI tooling must reference **Claude Code** by name
 
 Write both files to disk. Keep the exact text of both drafts in working memory — you will pass them inline to the reviewer in Step 3 and revise them in Step 4 without re-reading.
@@ -109,7 +110,7 @@ Distill the findings into a concise **research brief**: bullets of verified fact
 
 ### 3b. Dispatch the Reviewer Subagent
 
-Use the `agent` tool to spawn a reviewer with a fresh context. Pass the research brief and both drafts **inline in the prompt** below (do not make the reviewer view the draft files). Scope the reviewer's file reads to content-critique essentials only — the reviewer does not need the LaTeX template files (`05`, `06`) to critique content, since those govern structural/LaTeX concerns the drafter already applied.
+Use the `agent` tool to spawn a reviewer with a fresh context. Pass the research brief and both drafts **inline in the prompt** below (do not make the reviewer view the draft files). Scope the reviewer's file reads to content-critique essentials only — the reviewer does not need the template files (`05`, `06`) to critique content, since those govern document structure the drafter already applied.
 
 Replace `<COMPANY>`, `<ROLE>`, `<INSERT_JOB_POSTING_TEXT_HERE>`, `<INSERT_RESEARCH_BRIEF_HERE>`, `<INSERT_CV_DRAFT_HERE>`, and `<INSERT_COVER_LETTER_DRAFT_HERE>` with actual values before dispatching.
 
@@ -130,16 +131,16 @@ Use `view` to read these four files — and only these — to ground your critiq
 - `.claude/skills/job-application-assistant/03-writing-style.md`
 - `.claude/skills/job-application-assistant/04-job-evaluation.md`
 
-Do NOT read `05-cv-templates.md` or `06-cover-letter-templates.md` — those govern LaTeX structure the drafter already applied and are not needed for content critique.
+Do NOT read `05-cv-templates.md` or `06-cover-letter-templates.md` — those govern document structure the drafter already applied and are not needed for content critique.
 
 ### 3. Drafts to Review
 Both drafts are provided inline below. Do NOT use the view tool on the draft files — use these exact texts.
 
-<CV_DRAFT file="cv/main_<COMPANY>.tex">
+<CV_DRAFT file="cv/<YYMMDD>_<COMPANY>_<SLUG>.md">
 <INSERT_CV_DRAFT_HERE>
 </CV_DRAFT>
 
-<COVER_LETTER_DRAFT file="cover_letters/cover_<COMPANY>_<ROLE>.tex">
+<COVER_LETTER_DRAFT file="cover_letters/cover_<COMPANY>_<ROLE>.md">
 <INSERT_COVER_LETTER_DRAFT_HERE>
 </COVER_LETTER_DRAFT>
 
@@ -156,7 +157,7 @@ Return your feedback in **two parts**:
 A JSON array of concrete edits the drafter can apply directly without re-reading the files. Each edit is an object:
 ```json
 {
-  "file": "cv/main_<COMPANY>.tex" | "cover_letters/cover_<COMPANY>_<ROLE>.tex",
+  "file": "cv/<YYMMDD>_<COMPANY>_<SLUG>.md" | "cover_letters/cover_<COMPANY>_<ROLE>.md",
   "old_string": "<exact text currently in the draft>",
   "new_string": "<replacement text>",
   "reason": "<one-line rationale: keyword match / company angle / reframing / style>"
@@ -199,17 +200,16 @@ After all edits are applied, the two files on disk are the final drafts.
 
 ## Step 5: DRAFTER - Compile & Inspect PDFs (MANDATORY)
 
-**Never skip this step.** The `.tex` files looking fine is not sufficient — LaTeX page-break decisions are unpredictable and commonly produce broken layouts (orphaned job titles separated from their bullets, cover letters spilling to 2 pages, bullet fonts not matching body text). Compile both documents and visually verify the PDFs before presenting.
+**Never skip this step.** The `.md` files looking fine is not sufficient — page-break decisions are unpredictable and commonly produce broken layouts (CV content spilling to a third page, cover letters spilling to page 2 with a clipped signature). Compile both documents and visually verify the PDFs before presenting.
 
 ### 5a. Compile
 
 ```bash
-cd cv && lualatex -interaction=nonstopmode main_<company>.tex
-cd ../cover_letters && xelatex -interaction=nonstopmode cover_<company>_<role>.tex
+/scripts/compile-cv.sh cv/<YYMMDD>_<company>_<position-slug>.md
+/scripts/compile-cover-letter.sh cover_letters/cover_<company>_<role>.md
 ```
 
-- CV uses **lualatex** — pdflatex fails on modern MiKTeX with fontawesome5 font-expansion errors. lualatex handles the same sources cleanly.
-- Cover letter uses **xelatex** — cover.cls requires fontspec.
+Both scripts run Pandoc + Typst with the bundled fonts, print the page count, and run ATS text-layer checks (soft hyphens, stray backslashes). A page count other than 2 (CV) / 1 (cover letter), or any ATS warning, is a failure to fix before presenting.
 
 If either compile fails, fix the error and re-compile until clean.
 
@@ -217,32 +217,31 @@ If either compile fails, fix the error and re-compile until clean.
 
 `view` cannot read PDFs directly, so render each PDF's pages to images first: `pdftoppm -png -r 100 <file>.pdf page` (run in the folder containing the PDF). Then inspect every rendered page with `view` and verify:
 
-**CV (`cv/main_<company>.pdf`):**
+**CV (`cv/<YYMMDD>_<company>_<position-slug>.pdf`):**
 - [ ] Exactly 2 pages (not 1, not 3)
-- [ ] No orphaned `\cventry` titles — a job/education title line must never sit alone at the bottom of page 1 with its bullets on page 2. This is the most common failure.
+- [ ] No orphaned entry titles — a job/education title line must never sit alone at the bottom of page 1 with its bullets on page 2. (The modern-cv `resume-entry` blocks are sticky, so this usually cannot happen; if a section would start with only one line left on a page, add `#pagebreak(weak: true)` in a raw `typst` block before it.)
 - [ ] Section headings are not isolated at the top of page 2 with only 1-2 lines below
 - [ ] No awkward whitespace gaps
 
 **Cover letter (`cover_letters/cover_<company>_<role>.pdf`):**
 - [ ] Exactly 1 page
 - [ ] Signature block visible, not cut off or pushed to a second page
-- [ ] Bullet list font matches surrounding body text (both should be Raleway-Medium)
+- [ ] Closing line and printed name present (rendered by the template, right-aligned)
 
 ### 5c. Iterate until clean
 
-If the layout has problems, edit the `.tex` files and recompile. Common fixes (see `05-cv-templates.md` and `06-cover-letter-templates.md` for full details):
+If the layout has problems, edit the `.md` files and recompile. Common fixes (see `05-cv-templates.md` and `06-cover-letter-templates.md` for full details):
 
-- **Orphaned CV entry title:** `\usepackage{needspace}` in preamble, then `\needspace{5\baselineskip}` immediately before the problematic `\cventry`
-- **CV spills to page 3 with only a trailing section:** `\enlargethispage{2-3\baselineskip}` before a late section
-- **Substantial content on page 3:** cut content using **relevance-weighted cutting** (see `05-cv-templates.md` → "Relevance-weighted cutting"). Score each candidate line by (a) relevance to THIS posting's keywords and responsibilities, (b) uniqueness (is it duplicated elsewhere?), (c) narrative load (does the cover letter depend on it?). Cut the lowest-total-score line first, regardless of section. Do NOT mechanically apply a static section-based priority order — an older-role bullet that hits posting keywords is worth more than a recent-role bullet that does not.
-- **Cover letter itemize breaks compile or uses wrong font:** close `\lettercontent{}` before the list, wrap the list in `{\raggedright\fontspec[Path = OpenFonts/fonts/raleway/]{Raleway-Medium}\fontsize{11pt}{13pt}\selectfont \begin{itemize}...\end{itemize}\par}`
-- **Cover letter spills to 2 pages:** trim using the same relevance-weighted logic. First cut: sentences that restate what a bullet already said. Second cut: a bullet that does not hit posting keywords. Last resort: a bullet that does hit posting keywords. Never reduce geometry or line spacing.
+- **CV section would start with only one line left on a page:** add `#pagebreak(weak: true)` in a raw `typst` block before that section
+- **CV spills to page 3:** there is no page-stretch rescue in Typst (no `\enlargethispage`). Cut content using **relevance-weighted cutting** (see `05-cv-templates.md` → "Relevance-weighted cutting"). Score each candidate line by (a) relevance to THIS posting's keywords and responsibilities, (b) uniqueness (is it duplicated elsewhere?), (c) narrative load (does the cover letter depend on it?). Cut the lowest-total-score line first, regardless of section. Do NOT mechanically apply a static section-based priority order — an older-role bullet that hits posting keywords is worth more than a recent-role bullet that does not.
+- **Cover letter spills to 2 pages:** there is no page-stretch rescue in Typst. In order: (1) trim body content with the same relevance-weighted logic — first cut: sentences that restate what a bullet already said, second cut: a bullet that does not hit posting keywords, last resort: a bullet that does; (2) set `par-spacing: 1em` in the frontmatter; (3) cut a bullet or merge two paragraphs.
+- **ATS warning from the compile script:** a backslash warning means a frontmatter value (email, company, address) leaked over-escaping — check the value for unusual characters and recompile. A soft-hyphen warning means a hyphenated keyword wrapped at its own hyphen — rephrase slightly, or wrap the word in a raw block as `#no-break[the-word]`.
 
 Do not proceed to Step 6 until both PDFs pass inspection.
 
-### 5d. Clean up build artifacts
+### 5d. Build artifacts
 
-After the final clean compile, delete the `.aux`, `.log`, `.out` files (keep the `.tex` and `.pdf`).
+The generated Typst intermediate lives in `build/` next to each source (gitignored, regenerable) — leave it in place. Keep the `.md` and `.pdf` files.
 
 ---
 
@@ -262,7 +261,7 @@ Summarize 3-5 key decisions made to tailor the application:
 
 ### Files Created
 List the files written:
-- `cv/main_<company>.tex`
-- `cover_letters/cover_<company>_<role>.tex`
+- `cv/<YYMMDD>_<company>_<position-slug>.md` (+ compiled `.pdf`)
+- `cover_letters/cover_<company>_<role>.md` (+ compiled `.pdf`)
 
-Tell the user: "Both files are ready for your review. Open them to check the final output before compiling."
+Tell the user: "Both documents are drafted, compiled, and verified. Open the PDFs to review the final output before submitting."

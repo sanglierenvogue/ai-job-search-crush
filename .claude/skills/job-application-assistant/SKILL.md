@@ -35,7 +35,8 @@ When the user provides a job posting (URL or text), follow this workflow:
 ### Step 3: Write Cover Letter
 - Follow the writing style rules in `03-writing-style.md` (critical: no em-dashes, no cliches)
 - Follow the template structure in `06-cover-letter-templates.md`
-- Create `cover_letters/cover_<company>_<role>.tex`
+- Create `cover_letters/cover_<company>_<role>.md` (Markdown with identity + target frontmatter; the closing and signature are rendered by the template)
+- Compile with `.scripts/compile-cover-letter.sh cover_letters/cover_<company>_<role>.md` and run the compile-and-inspect loop until it is exactly 1 page
 - Ensure the letter connects specific experience to the role requirements
 
 ### Step 4: Interview Preparation
@@ -55,7 +56,7 @@ When the user provides a job posting (URL or text), follow this workflow:
 | `03-writing-style.md` | Tone, structure, do's and don'ts |
 | `04-job-evaluation.md` | Scoring framework for job fit |
 | `05-cv-templates.md` | Markdown CV structure and tailoring rules (Pandoc + Typst / modern-cv) |
-| `06-cover-letter-templates.md` | LaTeX cover letter structure and tailoring rules |
+| `06-cover-letter-templates.md` | Markdown cover letter structure and tailoring rules (Pandoc + Typst / modern-cv coverletter) |
 | `07-interview-prep.md` | STAR examples, tough questions, roleplay guidelines |
 
 ---

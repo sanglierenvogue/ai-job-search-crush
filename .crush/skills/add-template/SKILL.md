@@ -1,16 +1,16 @@
 ---
 name: add-template
 description: >
-  Register a custom LaTeX CV or cover letter template: store the template files, capture
-  compile instructions, run a mandatory test compile, and wire the template into the apply
-  workflow. User-invocable as project:add-template, optionally with --list, --use <name>,
-  or a path to a .tex template file.
+  Register a custom CV or cover letter template (typically LaTeX): store the template
+  files, capture compile instructions, run a mandatory test compile, and wire the template
+  into the apply workflow. User-invocable as project:add-template, optionally with --list,
+  --use <name>, or a path to a .tex template file.
 user-invocable: true
 ---
 
 # Add-Template: Register a Custom CV or Cover Letter Template
 
-You are helping the user register their own LaTeX template with the AI Job Search framework. The framework ships with moderncv (banking style) for CVs and a custom `cover.cls` for cover letters. This command lets the user swap in their own template: store the template files, capture usage instructions (compile engine, fonts, style rules, page limits), verify the template compiles, and wire it into the `project:apply` workflow so every future application uses it.
+You are helping the user register their own CV or cover letter template (typically LaTeX) with the AI Job Search framework. The framework ships with stock Markdown + Pandoc + Typst templates (modern-cv package) for both CVs and cover letters. This command lets the user swap in their own template: store the template files, capture usage instructions (compile engine, fonts, style rules, page limits), verify the template compiles, and wire it into the `project:apply` workflow so every future application uses it.
 
 The user's invocation message may contain a subcommand, a file path, or nothing.
 
@@ -68,7 +68,7 @@ Collect:
    - **System / TeX-distribution fonts**: record the font name and note that the user's machine must have it installed.
 4. **Style rules** - anything the drafter must preserve when filling the template: color scheme, section order, heading style, spacing conventions, bullet formatting, date format.
 5. **Page limit** - hard page count for the compiled PDF. Default: **2 pages** for a CV, **1 page** for a cover letter. The `project:apply` compile-and-inspect loop enforces this.
-6. **Known pitfalls** (optional) - macros that break with certain content (like the stock template's `\lettercontent{}`/`itemize` interaction), characters that need escaping, sections that must not be reordered.
+6. **Known pitfalls** (optional) - macros or constructs that break with certain content, characters that need escaping, sections that must not be reordered.
 
 ---
 
@@ -145,14 +145,14 @@ Insert (or replace, if one exists) this block immediately after the file's H1 ti
 > - **Compile with:** `<engine>` (not the engine named in the stock guidance below)
 > - **Fonts:** <font summary, including any Path note for bundled fonts>
 > - **Page limit:** exactly <N> page(s)
-> - **Output file:** unchanged (`cv/main_<company>.tex` / `cover_letters/cover_<company>_<role>.tex`); copy any class/font files the template needs into the output directory, or reference them by relative path
+> - **Output file:** unchanged (`cv/<YYMMDD>_<company>_<slug>.md` / `cover_letters/cover_<company>_<role>.md`); copy any class/font files the template needs into the output directory, or reference them by relative path
 <!-- END ACTIVE-TEMPLATE -->
 ```
 
 Rules:
 
 - Exactly **one** managed block per guidance file. Replace the whole block between the `BEGIN`/`END` markers when switching templates; never stack blocks.
-- **`--use default`**: remove the managed block entirely. The stock moderncv / cover.cls guidance below it is untouched and takes over again.
+- **`--use default`**: remove the managed block entirely. The stock Markdown/Typst guidance below it is untouched and takes over again.
 - Do not modify anything outside the markers.
 
 ---
@@ -170,7 +170,7 @@ Present a summary:
 > Useful follow-ups:
 > - `project:add-template --list` — see all registered templates
 > - `project:add-template --use <other-name>` — switch templates
-> - `project:add-template --use default` — go back to the stock <moderncv | cover.cls> template
+> - `project:add-template --use default` — go back to the stock Markdown + Typst template
 
 ---
 

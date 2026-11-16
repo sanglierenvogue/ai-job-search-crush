@@ -1,6 +1,6 @@
 # Custom Templates
 
-This folder holds user-registered custom templates, managed by the `project:add-template` command. The stock CV template (Markdown + Pandoc + Typst, modern-cv package) lives in `md-typst-templates/` and the stock cover-letter template in `cover_letters/cover.cls` — this folder only gets content when you register your own (typically LaTeX) template.
+This folder holds user-registered custom templates, managed by the `project:add-template` command. The stock CV template and the stock cover-letter template (both Markdown + Pandoc + Typst, modern-cv package) live in `md-typst-templates/` — this folder only gets content when you register your own (typically LaTeX) template.
 
 ## Layout
 

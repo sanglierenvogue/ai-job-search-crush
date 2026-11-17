@@ -55,6 +55,10 @@
 - [AWARD] - [EVENT] ([YEAR])
 
 ## References
+<!-- SETUP: Optional section. If the user provides no reference material (no files in
+     documents/references/), delete this section entirely instead of leaving the
+     placeholders - the CV skill only renders a References section when this section
+     is populated. -->
 - [NAME], [TITLE], [COMPANY] ([EMAIL], [PHONE])
 
 More references available upon request.

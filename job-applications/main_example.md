@@ -99,7 +99,3 @@ data ingestion to stakeholder-facing dashboards."]
 # Honors and Awards
 
 - **[Award Name]** - [Event/Organization] ([Year]).
-
-# References
-
-- Available upon request.

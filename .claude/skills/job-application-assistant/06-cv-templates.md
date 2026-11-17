@@ -98,10 +98,6 @@ paper-size: us-letter
 # Honors and Awards
 
 - **[Award Name]** - [Event/Organization] ([Year]).
-
-# References
-
-- Available upon request.
 ````
 
 ### How the mapping works
@@ -113,7 +109,7 @@ paper-size: us-letter
 | Section headings | `# Section name` |
 | Experience / Education entries | one raw `typst` block per entry: `#resume-entry(...)` + `#resume-item[ - ... ]` |
 | Core Competencies | raw `typst` blocks: `#resume-skill-item("Category", ("a", "b"))` |
-| Languages, Publications, Awards, References | plain Markdown lists |
+| Languages, Publications, Awards, References | plain Markdown lists (References only when provided at setup) |
 
 Frontmatter value rules (the package prefixes URLs itself):
 - `address`: a plain string with your own commas ("12 Street, 1460 City, Country"). Never a YAML list (`[...]`) - list items are interpolated with no separator and extract as run-together text ("AddressCityCountry").
@@ -231,9 +227,10 @@ If there is a gap in your employment history:
 - Keep format brief, one line each
 
 ### References
-- If no references are available in the source material, skip this section. Do not add a section that only says "Available upon request."
-- List 2-4 references with name, title, company, and contact
-- End with: "More references are available upon request."
+- **Omit this section by default.** Include a `# References` heading and its entries only when references were actually provided as part of `project:setup` (the References section of `01-candidate-profile.md`, sourced from `documents/references/`).
+- Never add a References section that only says "Available upon request."
+- When references exist, list 2-4 of them with name, title, company, and contact
+- End the section with: "More references are available upon request."
 - **Do not attach reference letters** - employers typically contact references directly
 
 ## Compile-and-Inspect Loop (MANDATORY)
@@ -277,7 +274,7 @@ as a guide:
 | Education | 2-3 entries |
 | Publications | 2-3 entries |
 | Awards | 3 entries, single line each |
-| References | 3 entries, single line each |
+| References (only if provided at setup) | 3 entries, single line each |
 
 **If in doubt, cut rather than squeeze.** Reducing spacing or margins to
 force-fit content makes the CV look cramped.
@@ -346,7 +343,7 @@ The section order varies by role type:
 4. Education (reverse chronological)
 5. Languages
 6. Publications & Awards
-7. References
+7. References (only if provided at setup)
 
 **For domain-specific / specialist roles:**
 1. Profile statement / elevator pitch
@@ -354,4 +351,4 @@ The section order varies by role type:
 3. Education (reverse chronological) - credentials are a key qualifier
 4. Professional Experience (reverse chronological)
 5. Publications & Awards
-6. References
+6. References (only if provided at setup)

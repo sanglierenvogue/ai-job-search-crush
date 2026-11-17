@@ -83,7 +83,8 @@ fixture, stock file untouched):
       pipeline's moderncv blue).
    d. **Vision pass (optional, when `.env` has LLM_API_KEY):**
       ```bash
-      python3 .scripts/analyze-cv-vision.py samples/baseline-1.png \
+      python3 .scripts/analyze-vision.py samples/baseline-1.png \
+          --kind cover \
           --prompt "<describe the letter, ask for page/clipping/defects>"
       ```
       (one image per call - the gateway model reliably takes one).
@@ -225,7 +226,7 @@ localized salutation and custom closing + name.
    accepted difference. Baseline closing renders left-aligned despite the
    documented flushright (`\raggedright` inside the class macros) - recorded
    as a stock-template bug and an accepted difference. Vision pass
-   (`.scripts/analyze-cv-vision.py`, gateway accepts images on this model):
+   (`.scripts/analyze-vision.py`, gateway accepts images on this model):
    Typst letter "clean and modern, no overlaps/collisions/orphans, bullet
    font matches body, signature fully visible"; baseline "exactly one page,
    nothing clipped, signature fully visible, no font mismatches".

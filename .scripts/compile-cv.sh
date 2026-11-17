@@ -47,8 +47,9 @@ pandoc "$SRC" --template="$TEMPLATE" -o "$TYP"
 # template (a@b.com -> a\@b.com, some_user -> some\_user, and similar for
 # $ # * ~). Inside a Typst string literal those sequences are not escapes, so
 # the backslash is rendered literally into the PDF (an unreadable email).
-# Undo the over-escaping inside the resume.with(...) frontmatter block only;
-# \X escapes inside raw content blocks are left alone on purpose.
+# Undo the over-escaping from resume.with( through the font-override block
+# (which also re-renders $firstname$); \X escapes inside raw content blocks
+# are left alone on purpose.
 awk '
   /resume\.with\(/ { inblk = 1 }
   inblk {
@@ -56,7 +57,7 @@ awk '
     gsub(/\\#/, "#"); gsub(/\\\*/, "*"); gsub(/\\~/, "~")
   }
   { print }
-  inblk && /^\)/ { inblk = 0 }
+  inblk && /^#let cv-body\(\)/ { inblk = 0 }
 ' "$TYP" > "$TYP.tmp" && mv "$TYP.tmp" "$TYP"
 
 FONT_ARGS=()

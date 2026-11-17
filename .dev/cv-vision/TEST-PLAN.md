@@ -5,7 +5,8 @@ rendered CV PNGs through the OpenAI-compatible chat-completions gateway
 and returns a useful layout/content analysis, using a **direct API call**.
 The in-agent call path cannot send images to this model (its model
 catalog entry declares no image input), so the gateway is queried
-directly via `.scripts/analyze-cv-vision.py`.
+directly via `.scripts/analyze-vision.py` (the script's `--kind` default,
+`cv`, is used throughout this plan).
 
 ## Background
 
@@ -52,14 +53,14 @@ Run from the repo root.
 2. **Text-only smoke test** (validates key, base URL, and model id
    before spending on image tokens):
    ```bash
-   .scripts/analyze-cv-vision.py
+   .scripts/analyze-vision.py
    ```
    Expect exit 0 and the single word `ok`. Any HTTP error here is an
    auth/endpoint/model-id problem, not a vision problem.
 
 3. **Single-page vision test.**
    ```bash
-   .scripts/analyze-cv-vision.py .dev/cv-typst/samples/typst-1.png
+   .scripts/analyze-vision.py .dev/cv-typst/samples/typst-1.png
    ```
    Expect exit 0 and an answer that names **Alex Carter**, both
    position titles (Data Scientist, Machine Learning Engineer), the
@@ -67,14 +68,14 @@ Run from the repo root.
 
 4. **Two-page single-request test** (both pages, one call).
    ```bash
-   .scripts/analyze-cv-vision.py \
+   .scripts/analyze-vision.py \
        .dev/cv-typst/samples/typst-1.png .dev/cv-typst/samples/typst-2.png
    ```
    Expect exit 0 and content from **both** pages, including page-2
    items such as the References section and "Available upon request."
 
 5. **Failure modes.**
-   - Missing file: `.scripts/analyze-cv-vision.py no-such.png` → exit 66.
+   - Missing file: `.scripts/analyze-vision.py no-such.png` → exit 66.
    - No key: temporarily move `.env` aside, unset `LLM_API_KEY` → exit 69.
    - Bad key: set a wrong `LLM_API_KEY` (env var overrides `.env`) →
      exit 75 with the gateway's error body, and the wrong key must not
@@ -131,7 +132,7 @@ Run from the repo root.
 ## Manual CV analysis prompt (for ad-hoc runs)
 
 ```bash
-.scripts/analyze-cv-vision.py cv/<YYMMDD>_<company>_<position-slug>.pdf-page-1.png \
+.scripts/analyze-vision.py cv/<YYMMDD>_<company>_<position-slug>.pdf-page-1.png \
     --prompt "This is page 1 of a CV. List every rendering defect: \
 clipped or overlapping text, missing glyphs, orphaned headings, misaligned \
 columns. Say 'none found' if the page is clean."

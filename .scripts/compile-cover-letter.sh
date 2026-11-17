@@ -64,6 +64,11 @@ awk '
   inblk && /^#letter-heading\(/ { inblk = 0 }
 ' "$TYP" > "$TYP.tmp" && mv "$TYP.tmp" "$TYP"
 
+# The letter-heading font override in cover.typ loads the package's lang.toml
+# relative to the generated .typ file; copy the vendored package file next
+# to it so the localized strings resolve.
+cp "$ROOT/md-typst-templates/modern-cv/0.10.0/lang.toml" "$BUILD_DIR/lang.toml"
+
 FONT_ARGS=()
 if [[ -d "$FONTS" ]]; then
   FONT_ARGS=(--font-path "$FONTS")

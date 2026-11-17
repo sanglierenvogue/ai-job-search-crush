@@ -148,9 +148,9 @@ If you have salary data (from a union, salary survey, Glassdoor, or personal res
 
 This creates `salary_data.json` which the `project:apply` workflow uses for salary benchmarking. If you skip this step, salary lookup is simply omitted.
 
-## 6. Optional: CV vision analysis
+## 6. Vision analysis
 
-`.scripts/analyze-cv-vision.py` sends rendered CV pages to a vision-capable LLM (an OpenAI-compatible chat-completions gateway serving `qwen3.8-27b`) for layout and content analysis. The core workflows do not need it.
+`.scripts/analyze-vision.py` sends rendered document pages (CV, cover letter) to a vision-capable LLM (an OpenAI-compatible chat-completions gateway serving `qwen3.8-27b`) for layout and content analysis. The agent model rejects image input, so this script is the only vision path in this environment; the apply workflow's compiled-PDF verification (see AGENTS.md) uses it. Without a key, skip the visual pass and rely on the programmatic checks.
 
 1. Get an API key for your OpenAI-compatible chat-completions gateway from your provider console.
 2. Configure it:
@@ -158,10 +158,13 @@ This creates `salary_data.json` which the `project:apply` workflow uses for sala
    cp .env.example .env   # set LLM_API_KEY (and LLM_BASE_URL if your
                           # gateway is not the OpenAI default)
    ```
-3. Render a CV PDF to page images, then analyze:
+3. Render a document PDF to page images, then analyze (use `--kind cover`
+   for cover letters):
    ```bash
    .scripts/render-pdf.sh job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<initials>_CV_<position-slug>.pdf /tmp/cv
-   .scripts/analyze-cv-vision.py /tmp/cv-1.png /tmp/cv-2.png
+   .scripts/analyze-vision.py /tmp/cv-1.png /tmp/cv-2.png --kind cv
+   .scripts/render-pdf.sh job-applications/<company>/<YYMMDD>_<position-slug>/<YYMM>_<initials>_cover-letter_<position-slug>.pdf /tmp/letter
+   .scripts/analyze-vision.py /tmp/letter-1.png --kind cover
    ```
 
 `.env` is gitignored; never commit it. See `.dev/cv-vision/TEST-PLAN.md` for the test workflow.

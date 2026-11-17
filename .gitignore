@@ -61,6 +61,9 @@ Thumbs.db
 # Cover letter pipeline development samples (regenerable test fixtures, fictional persona)
 .dev/cover-letter-typst/samples/
 
+# Font override development samples (regenerable test fixtures, fictional persona)
+.dev/font-override/samples/
+
 # Skills lock (auto-generated)
 skills-lock.json
 

@@ -11,7 +11,7 @@ location, so it works from any working directory.
 | `compile-cover-letter.sh` | Markdown cover letter -> PDF via `pandoc` (template `md-typst-templates/cover.typ`, modern-cv `coverletter`) then `typst compile` (bundled fonts). Prints the page count; warns if it is not 1 | `<letter.md> [out.pdf]` |
 | `compile-report.sh` | Generic multi-section Markdown (company research, job fit evaluation) -> PDF via `pandoc` (template `md-typst-templates/report.typ`) then `typst compile` (bundled fonts). Optional `paper-size` and `accent-color` frontmatter keys. Prints the page count; no fixed page expectation | `<report.md> [out.pdf]` |
 | `render-pdf.sh` | Render a PDF's pages to PNG (for visual inspection). Prints the produced files | `<in.pdf> [out-prefix] [dpi=100]` |
-| `analyze-cv-vision.py` | Analyze rendered CV page images with a vision-capable LLM via an OpenAI-compatible chat-completions gateway; prints the model's analysis (text-only smoke mode when given no images) | `[image.png ...] [--prompt P] [--model M] [--base-url U] [--detail D] [--max-tokens N] [--reasoning-effort E] [--save FILE] [--json]` |
+| `analyze-vision.py` | Analyze rendered CV / cover letter page images with a vision-capable LLM via an OpenAI-compatible chat-completions gateway; prints the model's analysis (text-only smoke mode when given no images). The only vision path in this environment (the agent model rejects image input) | `[image.png ...] [--kind cv\|cover\|generic] [--prompt P] [--model M] [--base-url U] [--detail D] [--max-tokens N] [--reasoning-effort E] [--save FILE] [--json]` |
 | `sync-package.sh` | Install the vendored Typst packages into the repo-root `system-package/` for offline compiles | none |
 
 ## Examples
@@ -22,6 +22,7 @@ location, so it works from any working directory.
 .scripts/compile-cover-letter.sh job-applications/braun/260515_applied-data-scientist/2605_jh_cover-letter_applied-data-scientist.md
 .scripts/compile-report.sh job-applications/braun/braun_research_260515.md
 .scripts/render-pdf.sh job-applications/braun/260515_applied-data-scientist/2605_jh_CV_applied-data-scientist.pdf
+.scripts/analyze-vision.py job-applications/braun/260515_applied-data-scientist/2605_jh_CV_applied-data-scientist-1.png --kind cv
 .scripts/sync-package.sh        # only needed on machines without network
 ```
 
@@ -37,8 +38,9 @@ location, so it works from any working directory.
   soft-hyphen check.
 - `render-pdf.sh` outputs `<prefix>-1.png`, `<prefix>-2.png`, ... The default
   prefix is the PDF basename without extension.
-- `analyze-cv-vision.py` is stdlib-only Python (3.10+) and needs `LLM_API_KEY`
+- `analyze-vision.py` is stdlib-only Python (3.10+) and needs `LLM_API_KEY`
   (plus `LLM_BASE_URL`/`LLM_MODEL` when not using the defaults) in the
   repo-root `.env` — copy `.env.example` and fill it in; `.env` is
   gitignored. HTTP/network failures are exit code 75; the key is never
-  printed.
+  printed. `--kind` selects the analysis prompt (default `cv`; use `cover`
+  for cover letters, `generic` for reports and other documents).

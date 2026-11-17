@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Analyze rendered CV page images with a vision-capable LLM.
+"""Analyze rendered CV / cover letter page images with a vision-capable LLM.
 
-Sends rendered CV pages (PNG/JPEG/WebP/GIF) to an OpenAI-compatible
+Sends rendered document pages (PNG/JPEG/WebP/GIF) to an OpenAI-compatible
 chat-completions gateway as base64 data URLs in the standard OpenAI
-`image_url` content parts, and prints the model's analysis.
+`image_url` content parts, and prints the model's analysis. The analysis
+prompt is selected with --kind (cv, cover, or generic; default cv).
 
 Usage:
-    .scripts/analyze-cv-vision.py [image.png ...] [options]
+    .scripts/analyze-vision.py [image.png ...] [options]
 
 With no images the script runs in text-only mode (plain string content),
 which is useful to verify credentials and model id before spending on
@@ -44,7 +45,8 @@ MIME_BY_SUFFIX = {
     ".gif": "image/gif",
 }
 
-DEFAULT_PROMPT = """\
+PROMPTS = {
+    "cv": """\
 You are reviewing a rendered CV page (page {page} of {total}). Report \
 precisely, without inventing anything:
 1. Candidate name and all position titles in the header
@@ -54,7 +56,29 @@ precisely, without inventing anything:
 5. Any rendering problems: clipped or overlapping text, missing glyphs \
 or icons, an entry or section heading left alone at the bottom of the \
 page, or inconsistent spacing
-If a requested item is not present on this page, say so explicitly."""
+If a requested item is not present on this page, say so explicitly.""",
+    "cover": """\
+You are reviewing a rendered cover letter page (page {page} of {total}). \
+Report precisely, without inventing anything:
+1. The applicant name in the header and the contact details shown
+2. The addressee block (target, company name, street address) and the date
+3. The underlined position line and the salutation line
+4. The closing line (e.g. "Sincerely,") and the signature name
+5. Any rendering problems: clipped or overlapping text, missing glyphs \
+or icons, a line left alone at the bottom of the page, or inconsistent \
+spacing
+If a requested item is not present on this page, say so explicitly.""",
+    "generic": """\
+You are reviewing a rendered document page (page {page} of {total}). \
+Report precisely, without inventing anything:
+1. The document type (CV, cover letter, report, or other) and the main \
+headings
+2. The name(s) and date(s) visible
+3. Any rendering problems: clipped or overlapping text, missing glyphs \
+or icons, a heading or list item left alone at the bottom of the page, \
+or inconsistent spacing
+If a requested item is not present on this page, say so explicitly.""",
+}
 
 
 def die(code, message):
@@ -141,13 +165,16 @@ def parse_args(argv):
             die(64, message)
 
     parser = _Parser(
-        description="Analyze rendered CV pages with a vision-capable LLM "
-                    "(OpenAI-compatible chat-completions gateway).")
+        description="Analyze rendered CV or cover letter pages with a "
+                    "vision-capable LLM (OpenAI-compatible "
+                    "chat-completions gateway).")
     parser.add_argument(
         "images", nargs="*", type=Path,
-        help="rendered CV page images (PNG/JPEG/WebP/GIF); omit all for a "
-             "text-only smoke test")
-    parser.add_argument("--prompt", help="prompt text (default: CV analysis)")
+        help="rendered document page images (PNG/JPEG/WebP/GIF); omit all "
+             "for a text-only smoke test")
+    parser.add_argument("--kind", choices=sorted(PROMPTS), default="cv",
+                        help="analysis prompt to use (default: cv)")
+    parser.add_argument("--prompt", help="prompt text (default: from --kind)")
     parser.add_argument("--model", help=f"model id (default: $LLM_MODEL or "
                                         f"{DEFAULT_MODEL})")
     parser.add_argument("--base-url", help="gateway base URL (default: "
@@ -191,7 +218,7 @@ def main(argv=None):
              or DEFAULT_MODEL)
 
     if args.images:
-        prompt = (args.prompt or DEFAULT_PROMPT).format(
+        prompt = (args.prompt or PROMPTS[args.kind]).format(
             page="each of", total=len(args.images))
     else:
         prompt = args.prompt or "Reply with the single word: ok"

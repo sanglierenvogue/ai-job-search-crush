@@ -20,6 +20,7 @@
 // structural reference for the template-variable syntax.
 
 #import "@preview/modern-cv:0.10.0": *
+#import "@preview/linguify:0.5.0": linguify
 
 // ATS text-layer safety: the template justifies body text (set par(justify: true)
 // inside modern-cv), and with hyphenation on, Typst breaks compound words at
@@ -27,6 +28,89 @@
 // layer as U+00AD (soft hyphen). Extractors (Tika/PDFBox/pypdf) then see
 // "end-<U+00AD>to-end" split across lines, which breaks keyword matching.
 #set text(hyphenate: false)
+
+// Local font overrides for the modern-cv package, defined in this template
+// (the vendored package is not modified). Each override changes only the
+// requested values and keeps the package's fonts, sizes, and colors.
+// Name header: first name in Regular instead of Thin (Raleway 32pt, accent
+// color, and the bold last name are kept). The rule matches the only text
+// element in the document with an own weight "thin", so the replacement is
+// safe; the first name is re-rendered from the frontmatter. (Must be defined
+// before the coverletter show rule below: rules defined after it do not
+// apply inside the wrapped document content.)
+#show text.where(weight: "thin"): it => text(
+  fill: rgb("$if(accent-color)$$accent-color/nowrap$$else$#3873B3$endif$"),
+  weight: "regular",
+)[#"$firstname/nowrap$"]
+// Addressee (target): 11pt Regular instead of 12pt Bold. The shadow is a
+// copy of the package's hiring-entity-info with only the target's weight and
+// size changed; the date and company block are kept.
+#let hiring-entity-info(
+  entity-info: (:),
+  date: datetime.today().display("[month repr:long] [day], [year]"),
+  use-smallcaps: true,
+) = {
+  set par(leading: 1em, ..default-par)
+  pad(top: 1.5em, bottom: 1.5em)[
+    #__justify_align[
+      #text(weight: "regular", size: 11pt)[#entity-info.target]
+    ][
+      #text(weight: "light", style: "italic", size: 9pt)[#date]
+    ]
+
+    #pad(top: 0.65em, bottom: 0.65em)[
+      #text(weight: "regular", fill: color-gray, size: 9pt)[
+        #__apply_smallcaps(entity-info.name, use-smallcaps) \
+        #entity-info.street-address \
+        #entity-info.city \
+      ]
+    ]
+  ]
+}
+// Position line: 10pt Medium instead of 12pt Bold; salutation ("Dear X,"):
+// 10pt (weight and fill kept). The shadow is a copy of the package's
+// letter-heading with only those values changed. lang.toml sits next to the
+// generated .typ file (compile-cover-letter.sh copies it there).
+#let letter-heading(
+  job-position: "",
+  addressee: "",
+  dear: "",
+  padding: (top: 1em, bottom: 1em),
+) = {
+  set par(..default-par)
+  let lang_data = toml("lang.toml")
+
+  underline(evade: false, stroke: 0.5pt, offset: 0.3em)[
+    #text(weight: "medium", size: 10pt)[#linguify(
+        "letter-position-pretext",
+        from: lang_data,
+      ) #job-position]
+  ]
+  pad(..padding)[
+    #text(weight: "light", fill: color-gray, size: 10pt)[
+      #if dear == "" [
+        #linguify("dear", from: lang_data)
+      ] else [
+        #dear
+      ]
+      #addressee,
+    ]
+  ]
+}
+
+#let __letter-lang-data = toml("lang.toml")
+// Signature: the name in Medium instead of the package's Bold (the size and
+// the light closing line are kept). The closing line is the signature-line
+// frontmatter key, or the package-localized "Sincerely" (comma except for
+// German) when unset - mirroring the package's default-signature.
+#let __letter-signature() = {
+  align(right)[
+    #text(weight: "light")[
+$if(signature-line)$#"$signature-line/nowrap$"$else$#linguify("sincerely", from: __letter-lang-data)#if("$if(language)$$language/nowrap$$else$en$endif$" != "de") [#sym.comma]$endif$
+    ] \
+    #text(weight: "medium")[#"$firstname/nowrap$ $lastname/nowrap$"]
+  ]
+}
 
 #show: coverletter.with(
   author: (
@@ -63,13 +147,7 @@ $endif$
   // Tighten to 1em (via the par-spacing frontmatter key) when a letter is
   // close to the 1-page limit.
   par-spacing: $if(par-spacing)$$par-spacing/nowrap$$else$1.5em$endif$,
-// Optional custom closing line (e.g. a closing for a language the package
-// lang.toml does not localize, or "Kind regards," for English
-// letters following the former stock template). Rendered right-aligned with
-// the bold name below, matching the package's default signature layout.
-$if(signature-line)$
-  signature: align(right)[#text(weight: "light")[#"$signature-line/nowrap$"] \ #text(weight: "bold")[#"$firstname/nowrap$ $lastname/nowrap$"]],
-$endif$
+  signature: __letter-signature(),
 )
 
 #hiring-entity-info(
@@ -83,4 +161,15 @@ $endif$
 
 #letter-heading(job-position: "$job-position/nowrap$", addressee: "$addressee/nowrap$"$if(dear)$, dear: "$dear/nowrap$"$endif$)
 
-$body$
+// Body: 10pt instead of the package's 11pt. The set runs inside the
+// package's coverletter evaluation (after its own set text(size: 11pt)), so
+// it wins for the letter body; the weight stays Light (set by the package)
+// and the signature/closing, rendered after the body, are unaffected.
+#let letter-body() = {
+  set text(size: 10pt)
+  [
+    $body$
+  ]
+}
+
+#letter-body()

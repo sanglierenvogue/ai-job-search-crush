@@ -28,6 +28,20 @@
 // "end-<U+00AD>to-end" split across lines, which breaks keyword matching.
 #set text(hyphenate: false)
 
+// Local font overrides for the modern-cv package, defined in this template
+// (the vendored package is not modified). Each override changes only the
+// requested values and keeps the package's fonts, sizes, and colors.
+// Name header: first name in Regular instead of Thin (Raleway 32pt, accent
+// color, and the bold last name are kept). The rule matches the only text
+// element in the document with an own weight "thin", so the replacement is
+// safe; the first name is re-rendered from the frontmatter. (Must be defined
+// before the resume show rule below: rules defined after it do not apply
+// inside the wrapped document content.)
+#show text.where(weight: "thin"): it => text(
+  fill: rgb("$if(accent-color)$$accent-color/nowrap$$else$#3873B3$endif$"),
+  weight: "regular",
+)[#"$firstname/nowrap$"]
+
 #show: resume.with(
   author: (
     firstname: "$firstname$",
@@ -62,4 +76,47 @@ $endif$
   show-footer: false,
 )
 
-$body$
+// Skill category: Medium instead of Bold; skill values keep the package's
+// Light weight. resume-skill-item is shadowed too because its internal
+// call to resume-skill-category resolves inside the package module.
+#let resume-skill-category(category) = {
+  set text(size: 11pt, style: "normal", weight: "medium", hyphenate: false)
+  category
+}
+
+#let resume-skill-item(category, items) = {
+  set block(below: 0.65em)
+  set pad(top: 2pt)
+
+  pad[
+    #grid(
+      columns: (3fr, 8fr),
+      gutter: 10pt,
+      align: left + top,
+      resume-skill-category(category), resume-skill-values(items),
+    )
+  ]
+}
+
+// Body default: 10pt instead of the package's 11pt. The set runs inside the
+// package's resume evaluation (after its own set text(size: 11pt)), so it
+// wins for the body text; entries, bullets, and skills carry their own
+// sizes and are unaffected.
+// Section headings (H1): 14pt instead of the package's 16pt. The show rule
+// is defined after the package's own level-1 rule (inside cv-body), so it
+// wins; the styling is the package's H1 rule with only the size changed.
+#let cv-body() = {
+  set text(size: 10pt)
+  show heading.where(level: 1): it => block(sticky: true)[
+    #set text(size: 14pt, weight: "regular")
+    #set align(left)
+    #set block(above: 1em)
+    #text[#strong[#text(rgb("$if(accent-color)$$accent-color/nowrap$$else$#3873B3$endif$"))[#it.body]]]
+    #box(width: 1fr, line(length: 100%))
+  ]
+  [
+    $body$
+  ]
+}
+
+#cv-body()

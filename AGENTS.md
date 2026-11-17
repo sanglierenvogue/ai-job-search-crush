@@ -131,7 +131,7 @@ After creating or updating a CV or cover letter, re-read the generated file and 
 - [ ] Cover letter fits approximately one page
 
 ### Compiled PDF verification (MANDATORY - never skip)
-Both documents MUST be compiled and visually inspected: render each PDF's pages to images (`pdftoppm -png`) and inspect them via the `view` tool (the tool cannot read PDFs directly). "Looks fine in the source" is not acceptable - page-break decisions are unpredictable. Iterate until these all pass:
+Both documents MUST be compiled and visually inspected: render each PDF's pages to images (`.scripts/render-pdf.sh`), then analyze the images with `.scripts/analyze-vision.py` (`--kind cv` for the CV, `--kind cover` for the cover letter). All vision analysis goes through that script: the agent model rejects image input, so the vision gateway it calls is the only vision path. "Looks fine in the source" is not acceptable - page-break decisions are unpredictable. Iterate until these all pass:
 - [ ] CV compiled via `.scripts/compile-cv.sh` and cover letter via `.scripts/compile-cover-letter.sh` (both Pandoc + Typst, zero compile warnings)
 - [ ] **CV is exactly 2 pages** - not 1, not 3
 - [ ] **No orphaned entry titles** - the modern-cv `resume-entry` blocks and section headings are natively sticky, so a title can never sit at the bottom of a page with its bullets on the next page; if a section would start with only one line left, add `#pagebreak(weak: true)` before it

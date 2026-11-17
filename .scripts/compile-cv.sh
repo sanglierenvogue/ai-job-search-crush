@@ -56,6 +56,10 @@ awk '
     gsub(/\\@/, "@"); gsub(/\\_/, "_"); gsub(/\\\$/, "$")
     gsub(/\\#/, "#"); gsub(/\\\*/, "*"); gsub(/\\~/, "~")
   }
+  # accent-color hex is also interpolated outside the .with( block (e.g.
+  # rgb("#...") in the show rules); Pandoc escapes it the same way, so
+  # un-escape those lines too.
+  /rgb\("/ { gsub(/\\#/, "#") }
   { print }
   inblk && /^#let cv-body\(\)/ { inblk = 0 }
 ' "$TYP" > "$TYP.tmp" && mv "$TYP.tmp" "$TYP"

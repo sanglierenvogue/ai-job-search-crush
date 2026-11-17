@@ -81,6 +81,7 @@ $endif$
 // call to resume-skill-category resolves inside the package module.
 #let resume-skill-category(category) = {
   set text(size: 11pt, style: "normal", weight: "medium", hyphenate: false)
+  set par(justify: false)
   category
 }
 
@@ -115,6 +116,11 @@ $endif$
     #box(width: 1fr, line(length: 100%))
   ]
   [
+    // Space above the professional summary (first body block). Combined
+    // with the summary's own 0.5em block spacing this reproduces the gap
+    // between consecutive H1 sections (previous block's below + the
+    // heading's 1em above).
+    #v(1.5em)
     $body$
   ]
 }
